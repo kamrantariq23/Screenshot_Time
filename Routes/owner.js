@@ -1,0 +1,42 @@
+import express from 'express';
+// import SystemAdmin from '../Controllers/systemAdminSignin';
+import events from '../Controllers/OwnerOp';
+import middleware from '../Middlewares/loggedIn';
+
+// auth middlewares for admin
+// import isAdminMiddleware from '../Middlewares/isSuperAdmin';
+// auth middleware for user
+
+
+const eventRouter = express.Router();
+
+
+eventRouter.post('/addEmployee', events.addEmployeeToCompany);
+eventRouter.post('/updateemployee', events.updateEmployeeToCompany);
+eventRouter.get('/companies',middleware.isLoggedIn ,events.getEvents);
+eventRouter.patch('/archived/:userId',middleware.isLoggedIn,  events.updateUserArchiveStatus);
+eventRouter.get('/getDisabledEmployee',middleware.isLoggedIn, events.getcompanyemployees);
+eventRouter.get('/getCompanyemployee',middleware.isLoggedIn, events.getTotalHoursWorkedAllEmployeesT);
+eventRouter.get('/settingsE/:userId', middleware.isLoggedIn, events.updateEmployeeSettings);
+eventRouter.get('/sorted-datebased/:userId', middleware.isLoggedIn, events.getTotalHoursAndScreenshots);
+// eventRouter.post(
+//     '/addProject',
+//     isAdminMiddleware.isManagerOwner,
+//     events.addProjects,
+// );
+
+// eventRouter.get('/', isAdminMiddleware.isManagerOwner, events.getProjects);
+
+eventRouter.get('/:eid',  middleware.isLoggedIn,events.getSingleEmployee);
+
+// eventRouter.delete(
+//     '/deleteEmp/:id',
+//     middleware.isLoggedIn,
+//     events.deleteEmployee,
+// );
+
+eventRouter.patch('/archived/:userId', middleware.isLoggedIn, events.deleteEmployee);
+
+// eventRouter.patch('/edit/:id', events.editEvent);
+
+export default eventRouter;

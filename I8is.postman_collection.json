@@ -1,0 +1,5638 @@
+{
+	"info": {
+		"_postman_id": "23ddbda8-8955-4775-a4a6-daac01a350a0",
+		"name": "I8is",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6522626",
+		"_collection_link": "https://interstellar-water-6435.postman.co/workspace/Qlab~38cc2719-5c01-4031-8b55-ec5f342a289f/collection/6522626-23ddbda8-8955-4775-a4a6-daac01a350a0?action=share&source=collection_link&creator=6522626"
+	},
+	"item": [
+		{
+			"name": "Local",
+			"item": [
+				{
+					"name": "Employee",
+					"item": [
+						{
+							"name": "Employee Signin/signUp",
+							"item": [
+								{
+									"name": "User Sign up",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Ali khan\",\r\n    \"password\": \"alikhan1234\",\r\n    \"email\": \"alikhan@gmail.com\",\r\n    \"company\": \"i8is\",\r\n    \"timezone\":\"\"\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/signup/",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signup",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User Signin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"password\": \"alikhan1234\",\r\n    \"email\": \"alikhan@gmail.com\"\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Active/inActive and online Statuses",
+							"item": [
+								{
+									"name": "User active/inactive status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODIwNTQ2MDksImV4cCI6MTcxMzU5MDYwOX0.2HjKiCp5PLvFzVOS2iapDGbSD9mYPvnRqFBShcA61J0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/userStatus",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userStatus"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User last Active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODIwNTQ2MDksImV4cCI6MTcxMzU5MDYwOX0.2HjKiCp5PLvFzVOS2iapDGbSD9mYPvnRqFBShcA61J0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/users/644122771e346f4b0c1ecec3/last-active",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"users",
+												"644122771e346f4b0c1ecec3",
+												"last-active"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Online Status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDU4ODVmMGNiYjNlZDAwMmM0Y2M0YjYiLCJlbWFpbCI6InNvbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzb25pYSIsInVzZXJUeXBlIjoidXNlciIsImNvbXBhbnkiOiJpOGlzIiwiaWF0IjoxNjgzNjEzMzQxLCJleHAiOjE3MTUxNDkzNDF9.g3MXZnUTudJadPd1LS7Z4bRhiYFA5r0T0Q7ut8xItt8",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/online-status",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"online-status"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Tracking and reports",
+							"item": [
+								{
+									"name": "Start Tracking",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGMyMWU3NmViNjlhOTAwMWNhODZjNzUiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiaGF5YXRAZ21haWwuY29tIiwibmFtZSI6IkhheWF0IEFobWVkIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJ0aW1lem9uZU9mZnNldCI6IjUiLCJpYXQiOjE2OTMxOTk5MjIsImV4cCI6MTcyNDczNTkyMn0.Jj59c9LF75cbK8ioXIx165vr7t4fmBOCZP5h6gi_u-c",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"projectId\": \"643fb528272a1877e4fcf30e\",\r\n    \"description\": \"Working on feature X\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/add",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"add"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Stop Tracking",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU1ZTUyZGNjZTdhNzAwMWQzYjc5YjkiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiZmF0aW1hQGdtYWlsLmNvbSIsIm5hbWUiOiJGYXRpbWEiLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5MzMwNjc0MywiZXhwIjoxNzI0ODQyNzQzfQ.Qbg3R59dN6tzVWNjsoi9rBBfwK33tNfnlGlmhY42q7Q",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/timetrack/edit/64edb91777d3cb001e8d3470",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"edit",
+												"64edb91777d3cb001e8d3470"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activity Report",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTExOTAsImV4cCI6MTcxMzUyNzE5MH0.PRCxUvu9epenwCLMDRUGkZrz1qULLsVhLBSQOMpPcPs",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"visitedUrls\":[\r\n{\r\n        \"url\": \"String\",\r\n        \"visitCount\": \"Number\",\r\n        \"visitDuration\": \"Number\",\r\n         \"activityPercentage\":60\r\n    }\r\n    ]\r\n   \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Screenshot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU3MzRlYTk4YTcyMTAwMzM5NzEzYzYiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYXJoYW1AZ21haWwuY29tIiwibmFtZSI6IkFyaGFtIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJ0aW1lem9uZU9mZnNldCI6IjUiLCJpYXQiOjE2OTI4NzQxNDksImV4cCI6MTcyNDQxMDE0OX0.5KzEJGx9yIBwjnVGgnjNLO5rPMxbC6TsvXXJgaMe_O4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"type": "file",
+													"src": "/C:/Users/Designer/Desktop/STEM DOCS/Nodejs/Screenshot_20200716_092856_com.instagram.android.jpg"
+												},
+												{
+													"key": "description",
+													"value": "aws.s3console",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/timetrack/time-entries/64e735ab7540be001cf9588c/screenshots",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"time-entries",
+												"64e735ab7540be001cf9588c",
+												"screenshots"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Capture screenshot",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/screenShotcap/?url=https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"screenShotcap",
+												""
+											],
+											"query": [
+												{
+													"key": "url",
+													"value": "https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Dashboard",
+							"item": [
+								{
+									"name": "Summary of daily,yesterday,weekly and monthly time",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFuIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODM4ODY3ODYsImV4cCI6MTcxNTQyMjc4Nn0.xZg-0ryllHT2DIBtz94UOCQpUecnje7hTnOp4PhX_BE",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/hours",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"hours"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDU4ODVmMGNiYjNlZDAwMmM0Y2M0YjYiLCJlbWFpbCI6InNvbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzb25pYSIsInVzZXJUeXBlIjoidXNlciIsImNvbXBhbnkiOiJpOGlzIiwiaWF0IjoxNjgzNjEzMzQxLCJleHAiOjE3MTUxNDkzNDF9.g3MXZnUTudJadPd1LS7Z4bRhiYFA5r0T0Q7ut8xItt8",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/userStatus-active",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userStatus-active"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Detailed Report daily",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU1ZTUyZGNjZTdhNzAwMWQzYjc5YjkiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiZmF0aW1hQGdtYWlsLmNvbSIsIm5hbWUiOiJGYXRpbWEiLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5MzMwNjc0MywiZXhwIjoxNzI0ODQyNzQzfQ.Qbg3R59dN6tzVWNjsoi9rBBfwK33tNfnlGlmhY42q7Q",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/timetrack/",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Sorted-screenshots",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTExOTAsImV4cCI6MTcxMzUyNzE5MH0.PRCxUvu9epenwCLMDRUGkZrz1qULLsVhLBSQOMpPcPs",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/sorted-screenshot?date=2023-07-24",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"sorted-screenshot"
+											],
+											"query": [
+												{
+													"key": "date",
+													"value": "2023-07-24"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Split Activity",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFudW0iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lIjoiKEdNVCszOjAwKSBCYWdoZGFkIiwiaWF0IjoxNjg5MzI5NTYwLCJleHAiOjE3MjA4NjU1NjB9.WGyd-0_x85OvYKt0RfvVmpRwgcughbTAp5A93JQWjN0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"timeEntryId\": \"64b11e8149ec08001cc23960\",\r\n    \"activityId\": \"6486c5524faabf48c44a801e\",\r\n    \"splitTime\": \"12:07 PM\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/split-activity",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"split-activity"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Activity",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFudW0iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lIjoiKEdNVCszOjAwKSBCYWdoZGFkIiwiaWF0IjoxNjg5MzI5NTYwLCJleHAiOjE3MjA4NjU1NjB9.WGyd-0_x85OvYKt0RfvVmpRwgcughbTAp5A93JQWjN0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/time-tracking/647eccb250d18f530d8b4343/activity/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"time-tracking",
+												"647eccb250d18f530d8b4343",
+												"activity",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Employee Settings",
+							"item": [
+								{
+									"name": "Delete My account",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDNmYTU0NmFlNTQ4YjczYTBhMWRlZjEiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE4OTI3MDEsImV4cCI6MTcxMzQyODcwMX0.2_BENL8jOGKDcv5m6S55B2fopEDEYhCWRacH-8hXHIQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/userDelete/643fa546ae548b73a0a1def1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userDelete",
+												"643fa546ae548b73a0a1def1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User settings update",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwiaWF0IjoxNjgxODI0MDQwLCJleHAiOjE3MTMzNjAwNDB9.TAtU_3MxFSzJp1GYC_Ghj7wFOZBJtJpcjkcduMDbIoM",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"timezone\": \"Asia/Karachi\"\r\n  \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://dull-gold-indri-kit.cyclic.app/api/v1/signin/users/Update",
+											"protocol": "https",
+											"host": [
+												"dull-gold-indri-kit",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"users",
+												"Update"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Manager",
+					"item": [
+						{
+							"name": "Employees",
+							"item": [
+								{
+									"name": "get all employees",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ0OTc3OTEsImV4cCI6MTcxNjAzMzc5MX0.ZIxkCdoDkO279fl_aaQyCTAsDpTUpDiuOmPWFgDMSHI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/managed-users/643945b9feb67f68dcf5d9df",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"managed-users",
+												"643945b9feb67f68dcf5d9df"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get all history screenshots",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ0OTc3OTEsImV4cCI6MTcxNjAzMzc5MX0.ZIxkCdoDkO279fl_aaQyCTAsDpTUpDiuOmPWFgDMSHI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/history-emp",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"history-emp"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get each employees hours date based",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ3NDk2NTIsImV4cCI6MTcxNjI4NTY1Mn0.gJGoOn2RXqex6K2ZHiHveYa-wyoNnwZCy2Xsu9lgOpg",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/datebasedusers/user/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"datebasedusers",
+												"user",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete screenshot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ3NDk2NTIsImV4cCI6MTcxNjI4NTY1Mn0.gJGoOn2RXqex6K2ZHiHveYa-wyoNnwZCy2Xsu9lgOpg",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/deleteScreenshot/646b215f7f7af21338740121/TimeTracking/646b212b127e45ff38b48925",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"deleteScreenshot",
+												"646b215f7f7af21338740121",
+												"TimeTracking",
+												"646b212b127e45ff38b48925"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove employee from group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ3NDk2NTIsImV4cCI6MTcxNjI4NTY1Mn0.gJGoOn2RXqex6K2ZHiHveYa-wyoNnwZCy2Xsu9lgOpg",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"645885f0cbb3ed002c4cc4b6\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/deleteProject/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"deleteProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add employee from group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ4NDMxNTAsImV4cCI6MTcxNjM3OTE1MH0.WIO5c39J7Uckg2Fz0sC0r1Dcu2myvxKEVsJ4XqiMoj8",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"645885f0cbb3ed002c4cc4b6\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/addEmployeesToProject/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"addEmployeesToProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activity report of a user",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ0OTc3OTEsImV4cCI6MTcxNjAzMzc5MX0.ZIxkCdoDkO279fl_aaQyCTAsDpTUpDiuOmPWFgDMSHI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/activity/645885f0cbb3ed002c4cc4b6",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"activity",
+												"645885f0cbb3ed002c4cc4b6"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Dashboard",
+							"item": [
+								{
+									"name": "Dasboard",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDM5NDViOWZlYjY3ZjY4ZGNmNWQ5ZGYiLCJlbWFpbCI6InNhbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJtYW5hZ2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODQ0OTc3OTEsImV4cCI6MTcxNjAzMzc5MX0.ZIxkCdoDkO279fl_aaQyCTAsDpTUpDiuOmPWFgDMSHI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/manager/dashboard",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"manager",
+												"dashboard"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Signin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n    \"password\": \"sania1234\",\r\n    \"email\": \"sania@gmail.com\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/signin/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"signin",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Employee Operations",
+							"item": [
+								{
+									"name": "AllUsersActive/inActiveStatus",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MTkwMDgzMSwiZXhwIjoxNzEzNDM2ODMxfQ.4baMb9uoU6TqAC7cfp-ztImpNf7AdyDazh31CTt-_9w",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allUsersStatuses",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allUsersStatuses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Total employees worked today + inactive/active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzc5ODQwOCwiZXhwIjoxNzE1MzM0NDA4fQ.YLXP_rdSQc_hwXqVNWopmSApj9G6OED1RqlNEz7Bhb4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allUsersWorkinghours",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allUsersWorkinghours"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "All employees daily,yesterday,monthly,weekly working hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzc5ODQwOCwiZXhwIjoxNzE1MzM0NDA4fQ.YLXP_rdSQc_hwXqVNWopmSApj9G6OED1RqlNEz7Bhb4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allEmployeesworkinghour",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allEmployeesworkinghour"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "each employee daily, yesterday,weekly and monthly",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/user/64536862c1e116002d12c4d4/time-records",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"user",
+												"64536862c1e116002d12c4d4",
+												"time-records"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "SignIn/SignUp",
+							"item": [
+								{
+									"name": "Signin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"password\": \"usama123\",\r\n    \"email\": \"usamaali@gmail.com\"\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Projects",
+							"item": [
+								{
+									"name": "add Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MTgwMTY2OCwiZXhwIjoxNzEzMzM3NjY4fQ.RvOvDbDqveQyZxn-k2EGSzMwSqiq4HyX9Q8h8UsY2f4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \r\n    \"name\": \"y8hr\",\r\n    \"description\": \"sub company\"\r\n \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/addProject",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"addProject"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1NzY3NjksImV4cCI6MTcxNDExMjc2OX0.ovsWnKAEMHf123JZwnDW8sVtXJFwOwQE1bcmioQrxZQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "View project",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Admin Timeline",
+							"item": [
+								{
+									"name": "All employees",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoidXNhbWFhbGlAZ21haWwuY29tIiwibmFtZSI6IlVzYW1hIEFsaSIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5MjM1Nzc4OSwiZXhwIjoxNzIzODkzNzg5fQ.geWun9KsbIXKpX4vXeQAXk6oE14STlrnOpZGr60gCpo",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allEmployeesworkinghour",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allEmployeesworkinghour"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each Employee Daily/yesterday/weekly/monthly Information",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/user/644122771e346f4b0c1ecec3/time-records",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"user",
+												"644122771e346f4b0c1ecec3",
+												"time-records"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each employee daily,yesterday and weekly visited url report",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/activity/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"activity",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each Employee sorted screenshot timeline",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzg3NzM1MiwiZXhwIjoxNzE1NDEzMzUyfQ.6CCk4Pg6_aKdwpe6iJPQqKSjGkosHmzj5wSKLYMNGSA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/sorted-datebased/64c210a395ce83001d3afa2c",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"sorted-datebased",
+												"64c210a395ce83001d3afa2c"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Datebased Each employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzg3NzM1MiwiZXhwIjoxNzE1NDEzMzUyfQ.6CCk4Pg6_aKdwpe6iJPQqKSjGkosHmzj5wSKLYMNGSA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/sorted-datebased/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"sorted-datebased",
+												"644122771e346f4b0c1ecec3"
+											],
+											"query": [
+												{
+													"key": "date",
+													"value": "2023-08-1",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete screenshots",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NjM5NDgsImV4cCI6MTcxNDI5OTk0OH0.zOptcjE3iIpKP-lOr6UGoItrH9c0I-SxXZrs66laRDA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/deleteScreenshot/644d075b0240cf3444e510c8/TimeTracking/644cb5813c1a88373036ed5d",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"deleteScreenshot",
+												"644d075b0240cf3444e510c8",
+												"TimeTracking",
+												"644cb5813c1a88373036ed5d"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NjM5NDgsImV4cCI6MTcxNDI5OTk0OH0.zOptcjE3iIpKP-lOr6UGoItrH9c0I-SxXZrs66laRDA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://zany-pink-chimpanzee-coat.cyclic.app/api/v1/superAdmin/deleteEmp/64b635c8ecc426001cf109a6",
+											"protocol": "https",
+											"host": [
+												"zany-pink-chimpanzee-coat",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"deleteEmp",
+												"64b635c8ecc426001cf109a6"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "history of each user",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NjgwNDksImV4cCI6MTcxNDMwNDA0OX0.XTC_Z9PDIoOmbLThXuao0Q_rqjXyXt6yoJRDrHd2UWQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/history/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"history",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "company employees",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/owner/getCompanyemployee",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"owner",
+												"getCompanyemployee"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "User group and Team Setting",
+							"item": [
+								{
+									"name": "view All User Group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1MTI5OTcsImV4cCI6MTcxNDA0ODk5N30.YYfFXonPO-wdkhLaRblvyCdDvAZp43AzvuXWrmBSnfo",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add Employees to project",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userIds\":[\r\n         \"646f0ece0efaa11354224b08\"\r\n    \r\n       \r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/addEmployeesToProject/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addEmployeesToProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete a UserGroup",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1ODI0ODAsImV4cCI6MTcxNDExODQ4MH0.ZuKvXx3Cz9D4xysI39I_oPUjtjUujfxq7luLgzHbXgQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/deleteG/646338a9c1f122002d5d05db",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"deleteG",
+												"646338a9c1f122002d5d05db"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update user billing",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MTkwMDgzMSwiZXhwIjoxNzEzNDM2ODMxfQ.4baMb9uoU6TqAC7cfp-ztImpNf7AdyDazh31CTt-_9w",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"ratePerHour\":\"5\",\r\n    \"currency\":\"USD\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/UpdateBillingInfo/6458e01245593c002c894616",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"UpdateBillingInfo",
+												"6458e01245593c002c894616"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add user Group",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\":\"I8is Remote\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/add",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"add"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add Employees to group",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userIds\":[\r\n         \"644122771e346f4b0c1ecec3\",\r\n         \"643945b9feb67f68dcf5d9df\"\r\n    \r\n       \r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/addEmployeesToGroup/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addEmployeesToGroup",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete Employees to group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MjQ4ODQzMSwiZXhwIjoxNzE0MDI0NDMxfQ.bFCI5eQ3dFVQW8tTfksOsYna47S07cI9WeX39IKx5ic",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"644122771e346f4b0c1ecec3\" \r\n        \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/delete/644289da000e85002dc4dc15",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"delete",
+												"644289da000e85002dc4dc15"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete Employees to project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1NzY3NjksImV4cCI6MTcxNDExMjc2OX0.ovsWnKAEMHf123JZwnDW8sVtXJFwOwQE1bcmioQrxZQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"646f0ece0efaa11354224b08\" \r\n        \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/deleteProject/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"deleteProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "userRole Update",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1MTI5NTUsImV4cCI6MTcxNDA0ODk1NX0.PliaOydA2DbF7pOS2e8PlB1Rc3KSTMT6cIB2h0V7MNo",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userType\":\"manager\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/edit/643945b9feb67f68dcf5d9df",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"edit",
+												"643945b9feb67f68dcf5d9df"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Company Name and archive statusChanges",
+							"item": [
+								{
+									"name": "Employee Company Name  Change",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDVjYWYxODMxNTcxNDAwMmM3MDgxMzEiLCJlbWFpbCI6InNhbWFyQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW1hciBraGFuIiwidXNlclR5cGUiOiJPd25lciIsImNvbXBhbnkiOiJpOGlzIiwiaWF0IjoxNjgzNzk3Nzg5LCJleHAiOjE3MTUzMzM3ODl9.H91amwr_xJLMkEDoRctVpRZyU86CjBIANpRliD1bMAA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userType\":\"admin\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/editCompanyName/643945b9feb67f68dcf5d9df",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"editCompanyName",
+												"643945b9feb67f68dcf5d9df"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Employee Archived",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMDU0OTEsImV4cCI6MTcxNDU0MTQ5MX0.z6Pp_t_5cvFbY_RFKllLTe04mRUnaNhwOoJANtD4RIw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isArchived\":true\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/archived/64509fe3f5a57d3ec8e315d3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"archived",
+												"64509fe3f5a57d3ec8e315d3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "All employees Company Name change",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MTkwMDgzMSwiZXhwIjoxNzEzNDM2ODMxfQ.4baMb9uoU6TqAC7cfp-ztImpNf7AdyDazh31CTt-_9w",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"company\":\"i8is\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/editCompanyNameForAllEmployee",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"editCompanyNameForAllEmployee"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Effective setting",
+							"item": [
+								{
+									"name": "Effective settings",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMTYxMTYsImV4cCI6MTcxNDU1MjExNn0.UYkPcQ7u9gwbM1vmku2ofXeBfl4sVJRWJxfI59zmEkI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"screenshots\": {\r\n    \"frequency\": \"12/hr\",\r\n    \"allowBlur\": true\r\n  },\r\n  \"activityLevelTracking\": true,\r\n  \"urlTracking\": true,\r\n  \"weeklyTimeLimit\": 40,\r\n  \"autoPauseTrackingAfter\": 10,\r\n  \"allowAddingOfflineTime\": true,\r\n  \"notifyWhenScreenshotIsTaken\": true\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/settingsE/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"settingsE",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Each users effective settings",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjU1ODEsImV4cCI6MTcxNDU2MTU4MX0.iMLM1nK3eSmSWiWsVJQAAxZA0T2fqIA5WT4GSKA8_qM",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/Settings/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"Settings",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Email Requests",
+							"item": [
+								{
+									"name": "email employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4NDE1MDU0MywiZXhwIjoxNzE1Njg2NTQzfQ.zsBwopBAWM2rc7HUcfn_RaxW9uxeowU6VjDrDU9Bv4M",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"toEmail\":\"fatimazohrai8is@gmail.com\"\r\n\r\n\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/email",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"email"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Client Employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4NDE1MDU0MywiZXhwIjoxNzE1Njg2NTQzfQ.zsBwopBAWM2rc7HUcfn_RaxW9uxeowU6VjDrDU9Bv4M",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"toEmail\":\"fatimazohrai8is@gmail.com\"\r\n\r\n\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://fragile-suit-cod.cyclic.app/api/v1/superAdmin/client-email",
+											"protocol": "https",
+											"host": [
+												"fragile-suit-cod",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"client-email"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Clients",
+							"item": [
+								{
+									"name": "Get All Clients",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/Clients",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"Clients"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Client to group",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"clientId\":[\r\n         \"646f38d5ce8b2645b820d1df\" ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/userGroup/addClientToProject/643fb528272a1877e4fcf30e",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addClientToProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Trim/Delete/Split Activities",
+							"item": [
+								{
+									"name": "Split Activity",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lIjoiKEdNVCszOjAwKSBKZXJ1c2FsZW0iLCJpYXQiOjE2ODY1NTM5MjQsImV4cCI6MTcxODA4OTkyNH0.krQt78W_TE6-1jwCu4aXT5kJgGjMN6HHpxCGvG8rkNw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"timeEntryId\": \"6486c3f26e087f001d9f0cff\",\r\n    \"userId\":\"644122771e346f4b0c1ecec3\",\r\n    \"activityId\": \"6486c5524faabf48c44a801e\",\r\n    \"splitTime\": \"12:07 PM\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/split-activity",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"split-activity"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add offline time",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"startTime\": \"03:00 PM\",\r\n  \"endTime\": \"04:00 PM\",\r\n  \"notes\": \"Offline activity description\"\r\n\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/offline-time/644122771e346f4b0c1ecec3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"offline-time",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Activity",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/time-tracking/647eccb250d18f530d8b4343/activity/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"time-tracking",
+												"647eccb250d18f530d8b4343",
+												"activity",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Trim activity",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzg3NzM1MiwiZXhwIjoxNzE1NDEzMzUyfQ.6CCk4Pg6_aKdwpe6iJPQqKSjGkosHmzj5wSKLYMNGSA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n \r\n  \"startTime\": \"12:29 PM\",\r\n  \"endTime\": \"12:34 PM\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/trim-activity/644122771e346f4b0c1ecec3/64ae550af9a7a5001b99017c/64ae550af9a7a5001b99017d",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"trim-activity",
+												"644122771e346f4b0c1ecec3",
+												"64ae550af9a7a5001b99017c",
+												"64ae550af9a7a5001b99017d"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "history changes",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzg3NzM1MiwiZXhwIjoxNzE1NDEzMzUyfQ.6CCk4Pg6_aKdwpe6iJPQqKSjGkosHmzj5wSKLYMNGSA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/historyChanges",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"historyChanges"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Assign users to Manager",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":\"644122771e346f4b0c1ecec3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/superAdmin/assign-user-to-manager/643945b9feb67f68dcf5d9df",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"superAdmin",
+										"assign-user-to-manager",
+										"643945b9feb67f68dcf5d9df"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Owner",
+					"item": [
+						{
+							"name": "Signin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"Ellamark@gmail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/signin/ownerSignIn",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"signin",
+										"ownerSignIn"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Owner Sign up",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Ella mark\",\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"Ellamark@gmail.com\",\r\n    \"company\": \"i8is\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/signup/ownerSignUp",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"signup",
+										"ownerSignUp"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Production Api's",
+			"item": [
+				{
+					"name": "Employee",
+					"item": [
+						{
+							"name": "Employee Signin/signUp",
+							"item": [
+								{
+									"name": "User Sign up",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"fatima\",\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"fatimazohra22qqq@gmail.com\",\r\n    \"company\": \"GeoxHr\",\r\n    \"userType\":\"owner\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signup/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signup",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User Signin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"samar09@gmail.com\"\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Active/inActive and online Statuses",
+							"item": [
+								{
+									"name": "User active/inactive status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODIwNTQ2MDksImV4cCI6MTcxMzU5MDYwOX0.2HjKiCp5PLvFzVOS2iapDGbSD9mYPvnRqFBShcA61J0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/userStatus",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userStatus"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User last Active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODIwNTQ2MDksImV4cCI6MTcxMzU5MDYwOX0.2HjKiCp5PLvFzVOS2iapDGbSD9mYPvnRqFBShcA61J0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/users/644122771e346f4b0c1ecec3/last-active",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"users",
+												"644122771e346f4b0c1ecec3",
+												"last-active"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Online Status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDU4ODVmMGNiYjNlZDAwMmM0Y2M0YjYiLCJlbWFpbCI6InNvbmlhQGdtYWlsLmNvbSIsIm5hbWUiOiJzb25pYSIsInVzZXJUeXBlIjoidXNlciIsImNvbXBhbnkiOiJpOGlzIiwiaWF0IjoxNjgzNjEzMzQxLCJleHAiOjE3MTUxNDkzNDF9.g3MXZnUTudJadPd1LS7Z4bRhiYFA5r0T0Q7ut8xItt8",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/timetrack/online-status",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"online-status"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Tracking",
+							"item": [
+								{
+									"name": "Start Tracking",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU3MzRlYTk4YTcyMTAwMzM5NzEzYzYiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYXJoYW1AZ21haWwuY29tIiwibmFtZSI6IkFyaGFtIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJ0aW1lem9uZU9mZnNldCI6IjUiLCJpYXQiOjE2OTI5NjE2MDAsImV4cCI6MTcyNDQ5NzYwMH0.HefAroPLRSeT6Lz0tjOBJvLLxM6o6eaTxedgSEAfIlg",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"projectId\": \"64e89973172014001c8d2618\",\r\n    \"description\": \"Working on feature X\"\r\n \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/timetrack/add",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"add"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Stop Tracking",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGNjZDFlMjk3NTI3YjAwMWQ1YzU5YmIiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYmlsYXdhbEBnbWFpbC5jb20iLCJuYW1lIjoiQmlsYXdhbCIsInVzZXJUeXBlIjoidXNlciIsImNvbXBhbnkiOiJpOGlzIiwidGltZXpvbmVPZmZzZXQiOiI1IiwiaWF0IjoxNjkzMzczNzk1LCJleHAiOjE3MjQ5MDk3OTV9.eKR3QJRUr9yEPyLZFZQSz9ytMIUKfQhXF9kAYm1J5P0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://tense-khakis-foal.cyclic.app/api/v1/timetrack/edit/64edd1087eadb9001df67323",
+											"protocol": "https",
+											"host": [
+												"tense-khakis-foal",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"edit",
+												"64edd1087eadb9001df67323"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Screenshot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5MjM2MjI5MywiZXhwIjoxNzIzODk4MjkzfQ._sWEjN0v1xs00wYpX646WpsCnKpP7NVzn1GXTFZscY8",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"type": "file",
+													"src": "/C:/Users/Designer/Desktop/STEM DOCS/Nodejs/Screenshot_20200716_092856_com.instagram.android.jpg"
+												},
+												{
+													"key": "description",
+													"value": "aws.s3console",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "https://tense-khakis-foal.cyclic.app/api/v1/timetrack/time-entries/64ccafc41c94652494f4a050/screenshots",
+											"protocol": "https",
+											"host": [
+												"tense-khakis-foal",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"time-entries",
+												"64ccafc41c94652494f4a050",
+												"screenshots"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activity Report",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTExOTAsImV4cCI6MTcxMzUyNzE5MH0.PRCxUvu9epenwCLMDRUGkZrz1qULLsVhLBSQOMpPcPs",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"visitedUrls\":[\r\n{\r\n        \"url\": \"www.chat.com\",\r\n        \"visitCount\": 4,\r\n        \"visitDuration\": 30,\r\n         \"activityPercentage\":60\r\n    }\r\n    ]\r\n   \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/ReportActivity",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"ReportActivity"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Dashboard",
+							"item": [
+								{
+									"name": "Summary of daily,yesterday,weekly and monthly time",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFuIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODM4ODY3ODYsImV4cCI6MTcxNTQyMjc4Nn0.xZg-0ryllHT2DIBtz94UOCQpUecnje7hTnOp4PhX_BE",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://tense-khakis-foal.cyclic.app/api/v1/timetrack/hours",
+											"protocol": "https",
+											"host": [
+												"tense-khakis-foal",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"hours"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDU4ZTAxMjQ1NTkzYzAwMmM4OTQ2MTYiLCJlbWFpbCI6ImFzYWRAZ21haWwuY29tIiwibmFtZSI6ImFzYWQiLCJ1c2VyVHlwZSI6InVzZXIiLCJpYXQiOjE2ODM2MDY5OTUsImV4cCI6MTcxNTE0Mjk5NX0.zlSkT99JJqA3oOFGQDhRTi9iZvYi8GYZcvV18J6Nqbw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/userStatus-active",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userStatus-active"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Detailed Report daily",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGNjZDFlMjk3NTI3YjAwMWQ1YzU5YmIiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYmlsYXdhbEBnbWFpbC5jb20iLCJuYW1lIjoiQmlsYXdhbCIsInVzZXJUeXBlIjoidXNlciIsImNvbXBhbnkiOiJpOGlzIiwidGltZXpvbmVPZmZzZXQiOiI1IiwiaWF0IjoxNjkzMzczNzk1LCJleHAiOjE3MjQ5MDk3OTV9.eKR3QJRUr9yEPyLZFZQSz9ytMIUKfQhXF9kAYm1J5P0",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://tense-khakis-foal.cyclic.app/api/v1/timetrack/",
+											"protocol": "https",
+											"host": [
+												"tense-khakis-foal",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Detailed Activity Report",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTAyNzMsImV4cCI6MTcxMzUyNjI3M30.UXJ3Jclk4h1SNn5JH9ZoQG95T-j8r2KteSOYrL7AhjQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/timetrack/Activities ",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"Activities "
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Sorted-screenshots",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFuIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODM4ODY3ODYsImV4cCI6MTcxNTQyMjc4Nn0.xZg-0ryllHT2DIBtz94UOCQpUecnje7hTnOp4PhX_BE",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/sorted-screenshot?date=2023-06-16",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"sorted-screenshot"
+											],
+											"query": [
+												{
+													"key": "date",
+													"value": "2023-06-16"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Detailed Activity Report",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTAyNzMsImV4cCI6MTcxMzUyNjI3M30.UXJ3Jclk4h1SNn5JH9ZoQG95T-j8r2KteSOYrL7AhjQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/timetrack/Activities",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"Activities"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete screenshot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE5OTExOTAsImV4cCI6MTcxMzUyNzE5MH0.PRCxUvu9epenwCLMDRUGkZrz1qULLsVhLBSQOMpPcPs",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/deleteScreenshot/64ccc335da92212600b7d6ef/TimeTracking/64cb4128bcd0b7633a857cf3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"deleteScreenshot",
+												"64ccc335da92212600b7d6ef",
+												"TimeTracking",
+												"64cb4128bcd0b7633a857cf3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Screenshot",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaWtoYW5AZ21haWwuY29tIiwibmFtZSI6IkFsaSBraGFuIiwidXNlclR5cGUiOiJ1c2VyIiwiY29tcGFueSI6Imk4aXMiLCJpYXQiOjE2ODM4ODY3ODYsImV4cCI6MTcxNTQyMjc4Nn0.xZg-0ryllHT2DIBtz94UOCQpUecnje7hTnOp4PhX_BE",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/timetrack/history",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"history"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Datebased hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/totalDate?startDate=2023-07-12&endDate=2023-08-21",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"totalDate"
+											],
+											"query": [
+												{
+													"key": "startDate",
+													"value": "2023-07-12"
+												},
+												{
+													"key": "endDate",
+													"value": "2023-08-21"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "monthly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/month?monthSpecifier=this",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"month"
+											],
+											"query": [
+												{
+													"key": "monthSpecifier",
+													"value": "this"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "yearly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjk0ODg1NiwiZXhwIjoxNzI0NDg0ODU2fQ.oLOeIaRr0iTwbyxfvNnOifRCF32jO0fC2kJJqhyBU3k",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/year",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"year"
+											],
+											"query": [
+												{
+													"key": "year",
+													"value": "this",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "weekly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/timetrack/week?weekSpecifier=this",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"timetrack",
+												"week"
+											],
+											"query": [
+												{
+													"key": "weekSpecifier",
+													"value": "this"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Employee Settings",
+							"item": [
+								{
+									"name": "Delete My account",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDNmYTU0NmFlNTQ4YjczYTBhMWRlZjEiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJpYXQiOjE2ODE4OTI3MDEsImV4cCI6MTcxMzQyODcwMX0.2_BENL8jOGKDcv5m6S55B2fopEDEYhCWRacH-8hXHIQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/userDelete/643fa546ae548b73a0a1def1",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"userDelete",
+												"643fa546ae548b73a0a1def1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "User settings update",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJlbWFpbCI6ImFsaUBnbWFpbC5jb20iLCJuYW1lIjoiQUxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMTEzNiwiZXhwIjoxNzE1MjM3MTM2fQ.cCfSra5aovwkLTdcn71b-Yw64HZvC6VpCNM0MEOW-pM",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"email\":\"alikhan@gmail.com\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/users/Update",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"users",
+												"Update"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Manager",
+					"item": [
+						{
+							"name": "Manager sign in",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n    \"password\": \"sania1234\",\r\n    \"email\": \"sania@gmail.com\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/signin/",
+									"protocol": "https",
+									"host": [
+										"sleepy-pig-slippers",
+										"cyclic",
+										"app"
+									],
+									"path": [
+										"api",
+										"v1",
+										"signin",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Employee Operations",
+							"item": [
+								{
+									"name": "AllUsersActive/inActiveStatus",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1ODI0ODAsImV4cCI6MTcxNDExODQ4MH0.ZuKvXx3Cz9D4xysI39I_oPUjtjUujfxq7luLgzHbXgQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/allUsersStatuses",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allUsersStatuses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Total employees worked today + inactive/active status",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1ODI0ODAsImV4cCI6MTcxNDExODQ4MH0.ZuKvXx3Cz9D4xysI39I_oPUjtjUujfxq7luLgzHbXgQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/allUsersWorkinghours",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allUsersWorkinghours"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "All employees daily,yesterday,monthly,weekly working hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4Mzc5ODQwOCwiZXhwIjoxNzE1MzM0NDA4fQ.YLXP_rdSQc_hwXqVNWopmSApj9G6OED1RqlNEz7Bhb4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allEmployeesworkinghour",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allEmployeesworkinghour"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "each employee daily, yesterday,weekly and monthly",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/user/644122771e346f4b0c1ecec3/time-records",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"user",
+												"644122771e346f4b0c1ecec3",
+												"time-records"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "SignIn/SignUp",
+							"item": [
+								{
+									"name": "admin sign in",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\r\n    \"password\": \"usama123\",\r\n    \"email\": \"usamaali@gmail.com\"\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Projects",
+							"item": [
+								{
+									"name": "add Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoidXNhbWFhbGlAZ21haWwuY29tIiwibmFtZSI6IlVzYW1hIEFsaSIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjk2MjQ3MiwiZXhwIjoxNzI0NDk4NDcyfQ.UpEMmOSL-SG6xF9jEbQTB0ty-SgxvE19YqpZ3BCA7ZM ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \r\n    \"name\": \"I8is Project\",\r\n    \"description\": \"sub company\"\r\n \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/superAdmin/addProject",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"addProject"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMDYzMSwiZXhwIjoxNzE1MjM2NjMxfQ.pmDtXwg--CGQ6ZUvvN8Pqj4-dc99MN2zvjNmNDGtg9U",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "View project",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/643e445223ebc97bac33e453",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"643e445223ebc97bac33e453"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Edit Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1MTI5NTUsImV4cCI6MTcxNDA0ODk1NX0.PliaOydA2DbF7pOS2e8PlB1Rc3KSTMT6cIB2h0V7MNo",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\":\"I8IS\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/editProjectName/643fb528272a1877e4fcf30e",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"editProjectName",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMDYzMSwiZXhwIjoxNzE1MjM2NjMxfQ.pmDtXwg--CGQ6ZUvvN8Pqj4-dc99MN2zvjNmNDGtg9U",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/deleteProject/64428a4f000e85002dc4dc1a",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"deleteProject",
+												"64428a4f000e85002dc4dc1a"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Archive Project",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMDYzMSwiZXhwIjoxNzE1MjM2NjMxfQ.pmDtXwg--CGQ6ZUvvN8Pqj4-dc99MN2zvjNmNDGtg9U",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isArchived\":true\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/archiveProject/64428a4f000e85002dc4dc1a",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"archiveProject",
+												"64428a4f000e85002dc4dc1a"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "allow tracking in project",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"allowTracking\":true\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/allowTracking/643fb528272a1877e4fcf30e/user/643945b9feb67f68dcf5d9df",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"allowTracking",
+												"643fb528272a1877e4fcf30e",
+												"user",
+												"643945b9feb67f68dcf5d9df"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Count on employees",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMDYzMSwiZXhwIjoxNzE1MjM2NjMxfQ.pmDtXwg--CGQ6ZUvvN8Pqj4-dc99MN2zvjNmNDGtg9U",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/project/6465dad32c3b7a579cb3f952",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"project",
+												"6465dad32c3b7a579cb3f952"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Admin Timeline",
+							"item": [
+								{
+									"name": "All employees",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvVGVocmFuIiwiZW1haWwiOiJ1c2FtYWFsaUBnbWFpbC5jb20iLCJuYW1lIjoiVXNhbWEgQWxpIiwidXNlclR5cGUiOiJhZG1pbiIsImNvbXBhbnkiOiJpOGlzIiwidGltZXpvbmVPZmZzZXQiOiIzLjUiLCJpYXQiOjE2OTMzNzc1MDgsImV4cCI6MTcyNDkxMzUwOH0.28_ECUao1a4lPOCuq98IWlcJnF-W_hQVXt1ZG1Maohw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/employees",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"employees"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "All employees working hour",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvVGVocmFuIiwiZW1haWwiOiJ1c2FtYWFsaUBnbWFpbC5jb20iLCJuYW1lIjoiVXNhbWEgQWxpIiwidXNlclR5cGUiOiJhZG1pbiIsImNvbXBhbnkiOiJpOGlzIiwidGltZXpvbmVPZmZzZXQiOiIzLjUiLCJpYXQiOjE2OTMzNzc1MDgsImV4cCI6MTcyNDkxMzUwOH0.28_ECUao1a4lPOCuq98IWlcJnF-W_hQVXt1ZG1Maohw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/allEmployeesworkinghour",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"allEmployeesworkinghour"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4MzcwMDYzMSwiZXhwIjoxNzE1MjM2NjMxfQ.pmDtXwg--CGQ6ZUvvN8Pqj4-dc99MN2zvjNmNDGtg9U",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/emp/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"emp",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each Employee Daily/yesterday/weekly/monthly Information",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/user/644122771e346f4b0c1ecec3/time-records",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"user",
+												"644122771e346f4b0c1ecec3",
+												"time-records"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each Employee sorted screenshot timeline",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NDg3NTAsImV4cCI6MTcxNDI4NDc1MH0.6hGxOew-gCclNnRmmLqYKyKRYuiNJDXQO7JXE9QlKCw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/sorted-screenshots/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"sorted-screenshots",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Datebased records",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NDg3NTAsImV4cCI6MTcxNDI4NDc1MH0.6hGxOew-gCclNnRmmLqYKyKRYuiNJDXQO7JXE9QlKCw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://spotless-sweatpants-lamb.cyclic.app/api/v1/superAdmin/sorted-datebased/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"spotless-sweatpants-lamb",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"sorted-datebased",
+												"644122771e346f4b0c1ecec3"
+											],
+											"query": [
+												{
+													"key": "date",
+													"value": "2023-05-6",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete screenshots",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MjQ4ODQzMSwiZXhwIjoxNzE0MDI0NDMxfQ.bFCI5eQ3dFVQW8tTfksOsYna47S07cI9WeX39IKx5ic",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/deleteScreenshot/6448ba1be4fa1311bcc605c4/TimeTracking/6448b9e9d2af09f7c0495af5",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"deleteScreenshot",
+												"6448ba1be4fa1311bcc605c4",
+												"TimeTracking",
+												"6448b9e9d2af09f7c0495af5"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "history of each user",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NjgwNDksImV4cCI6MTcxNDMwNDA0OX0.XTC_Z9PDIoOmbLThXuao0Q_rqjXyXt6yoJRDrHd2UWQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/history/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"history",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Employee",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI3NjM5NDgsImV4cCI6MTcxNDI5OTk0OH0.zOptcjE3iIpKP-lOr6UGoItrH9c0I-SxXZrs66laRDA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://tense-khakis-foal.cyclic.app/api/v1/superAdmin/deleteEmp/64d5fe956b8f6b001c96004e",
+											"protocol": "https",
+											"host": [
+												"tense-khakis-foal",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"deleteEmp",
+												"64d5fe956b8f6b001c96004e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Each employee daily,yesterday and weekly visited url report Copy",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/activity/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"activity",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Datebased hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/totalDate?startDate=2023-07-12&endDate=2023-08-21",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"totalDate"
+											],
+											"query": [
+												{
+													"key": "startDate",
+													"value": "2023-07-12"
+												},
+												{
+													"key": "endDate",
+													"value": "2023-08-21"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "monthly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/month?monthSpecifier=this",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"month"
+											],
+											"query": [
+												{
+													"key": "monthSpecifier",
+													"value": "this"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "yearly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjk0ODg1NiwiZXhwIjoxNzI0NDg0ODU2fQ.oLOeIaRr0iTwbyxfvNnOifRCF32jO0fC2kJJqhyBU3k",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/year",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"year"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "weekly hours",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQxMjI3NzFlMzQ2ZjRiMGMxZWNlYzMiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoiYWxpa2hhbkBnbWFpbC5jb20iLCJuYW1lIjoiQWxpIGtoYW4iLCJ1c2VyVHlwZSI6InVzZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjg2NDA0NywiZXhwIjoxNzI0NDAwMDQ3fQ.e4zgK-luP-cba60vpAt-IGpvFoarq-JRzuWZs6u8TjA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/week?weekSpecifier=this",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"week"
+											],
+											"query": [
+												{
+													"key": "weekSpecifier",
+													"value": "this"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "yearly records",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvVGVocmFuIiwiZW1haWwiOiJ1c2FtYWFsaUBnbWFpbC5jb20iLCJuYW1lIjoiVXNhbWEgQWxpIiwidXNlclR5cGUiOiJhZG1pbiIsImNvbXBhbnkiOiJpOGlzIiwidGltZXpvbmVPZmZzZXQiOiIzLjUiLCJpYXQiOjE2OTMzNzc1MDgsImV4cCI6MTcyNDkxMzUwOH0.28_ECUao1a4lPOCuq98IWlcJnF-W_hQVXt1ZG1Maohw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/annualRecord/2023",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"annualRecord",
+												"2023"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "User group and Team Setting",
+							"item": [
+								{
+									"name": "view All User Group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1ODI0ODAsImV4cCI6MTcxNDExODQ4MH0.ZuKvXx3Cz9D4xysI39I_oPUjtjUujfxq7luLgzHbXgQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add Employees to group",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userIds\":[\r\n         \"644122771e346f4b0c1ecec3\",\r\n         \"643945b9feb67f68dcf5d9df\"\r\n    \r\n       \r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/addEmployeesToGroup/644289da000e85002dc4dc15",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addEmployeesToGroup",
+												"644289da000e85002dc4dc15"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete a UserGroup",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1ODI0ODAsImV4cCI6MTcxNDExODQ4MH0.ZuKvXx3Cz9D4xysI39I_oPUjtjUujfxq7luLgzHbXgQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/deleteg/64632acc68aff2002d421e19",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"deleteg",
+												"64632acc68aff2002d421e19"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update user billing",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGI2NzZkZjYxMTE4OTAwMWM3OTJlMjUiLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoidXNhbWFhbGlAZ21haWwuY29tIiwibmFtZSI6IlVzYW1hIEFsaSIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5Mjk2MjQ3MiwiZXhwIjoxNzI0NDk4NDcyfQ.UpEMmOSL-SG6xF9jEbQTB0ty-SgxvE19YqpZ3BCA7ZM ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"ratePerHour\":\"5\",\r\n    \"currency\":\"USD\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://weak-plum-codfish-boot.cyclic.cloud/api/v1/superAdmin/UpdateBillingInfo/64e734ea98a72100339713c6",
+											"protocol": "https",
+											"host": [
+												"weak-plum-codfish-boot",
+												"cyclic",
+												"cloud"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"UpdateBillingInfo",
+												"64e734ea98a72100339713c6"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add user Group",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\":\"I8is Remote\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/add",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"add"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "userRole Update",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1MTI5NTUsImV4cCI6MTcxNDA0ODk1NX0.PliaOydA2DbF7pOS2e8PlB1Rc3KSTMT6cIB2h0V7MNo",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userType\":\"admin\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/edit/64491c0637851b503cb24e62",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"edit",
+												"64491c0637851b503cb24e62"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete Employees to group",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MjQ4ODQzMSwiZXhwIjoxNzE0MDI0NDMxfQ.bFCI5eQ3dFVQW8tTfksOsYna47S07cI9WeX39IKx5ic",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"644122771e346f4b0c1ecec3\" \r\n        \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/delete/644289da000e85002dc4dc15",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"delete",
+												"644289da000e85002dc4dc15"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete Employees to project Copy",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODI1NzY3NjksImV4cCI6MTcxNDExMjc2OX0.ovsWnKAEMHf123JZwnDW8sVtXJFwOwQE1bcmioQrxZQ",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userId\":\"644122771e346f4b0c1ecec3\" \r\n        \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/userGroup/deleteProject/643fb528272a1877e4fcf30e",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"deleteProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Employee Archived",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMDU0OTEsImV4cCI6MTcxNDU0MTQ5MX0.z6Pp_t_5cvFbY_RFKllLTe04mRUnaNhwOoJANtD4RIw",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isArchived\":false\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/superAdmin/archived/64ccd1e297527b001d5c59bb",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"archived",
+												"64ccd1e297527b001d5c59bb"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add Employees to project Copy",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userIds\":[\r\n         \"644122771e346f4b0c1ecec3\",\r\n         \"643945b9feb67f68dcf5d9df\"\r\n    \r\n       \r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://fragile-suit-cod.cyclic.app/api/v1/userGroup/addEmployeesToProject/643fb528272a1877e4fcf30e",
+											"protocol": "https",
+											"host": [
+												"fragile-suit-cod",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addEmployeesToProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add Client to project",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"userIds\":[\r\n         \"644122771e346f4b0c1ecec3\",\r\n         \"643945b9feb67f68dcf5d9df\"\r\n    \r\n       \r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://fragile-suit-cod.cyclic.app/api/v1/userGroup/addEmployeesToProject/643fb528272a1877e4fcf30e",
+											"protocol": "https",
+											"host": [
+												"fragile-suit-cod",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"userGroup",
+												"addEmployeesToProject",
+												"643fb528272a1877e4fcf30e"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Company Name Changes",
+							"item": [
+								{
+									"name": "Employee Company Name  Change",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjk3MDQsImV4cCI6MTcxNDU2NTcwNH0.dd9mzVQyvqD3PvT5fRvO_Z4pko0ancfbM1MSo444bW4",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\":\"Mary Gonzalez\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://dull-gold-indri-kit.cyclic.app/api/v1/superAdmin/editCompanyName/646f38d5ce8b2645b820d1df",
+											"protocol": "https",
+											"host": [
+												"dull-gold-indri-kit",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"editCompanyName",
+												"646f38d5ce8b2645b820d1df"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "All employees Company Name change",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTk0NGViMmIyYmFkZjFiOTg0ZTcyODQiLCJlbWFpbCI6InN1cGVyYWRtaW5AZ21haWwuY29tIiwibmFtZSI6IlN1cGVyIEFkbWluIiwidXNlclR5cGUiOiJzdXBlciBhZG1pbiIsImlhdCI6MTY4MTkwMDgzMSwiZXhwIjoxNzEzNDM2ODMxfQ.4baMb9uoU6TqAC7cfp-ztImpNf7AdyDazh31CTt-_9w",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"company\":\"i8is\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/editCompanyNameForAllEmployee",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"editCompanyNameForAllEmployee"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Effective settings",
+							"item": [
+								{
+									"name": "Effective settings",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMTYxMTYsImV4cCI6MTcxNDU1MjExNn0.UYkPcQ7u9gwbM1vmku2ofXeBfl4sVJRWJxfI59zmEkI",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"screenshots\": {\r\n    \"frequency\": \"12/hr\",\r\n    \"allowBlur\": true\r\n  },\r\n  \"activityLevelTracking\": true,\r\n  \"urlTracking\": true,\r\n  \"weeklyTimeLimit\": 40,\r\n  \"autoPauseTrackingAfter\": 10,\r\n  \"allowAddingOfflineTime\": true,\r\n  \"notifyWhenScreenshotIsTaken\": true\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/settingsE/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"settingsE",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Each users effective settings",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJpYXQiOjE2ODMwMjU1ODEsImV4cCI6MTcxNDU2MTU4MX0.iMLM1nK3eSmSWiWsVJQAAxZA0T2fqIA5WT4GSKA8_qM",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/Settings/644122771e346f4b0c1ecec3",
+											"protocol": "https",
+											"host": [
+												"sleepy-pig-slippers",
+												"cyclic",
+												"app"
+											],
+											"path": [
+												"api",
+												"v1",
+												"superAdmin",
+												"Settings",
+												"644122771e346f4b0c1ecec3"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "email invite admin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDQ5MWMwNjM3ODUxYjUwM2NiMjRlNjIiLCJlbWFpbCI6InNhbmlhYWxpQGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBBTGkga2hhbiIsInVzZXJUeXBlIjoiYWRtaW4iLCJjb21wYW55IjoiaThpcyIsImlhdCI6MTY4NDE1MDU0MywiZXhwIjoxNzE1Njg2NTQzfQ.zsBwopBAWM2rc7HUcfn_RaxW9uxeowU6VjDrDU9Bv4M",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"toEmail\":\"fatimazohrai8is@gmail.com\"\r\n\r\n\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://sleepy-pig-slippers.cyclic.app/api/v1/superAdmin/email",
+									"protocol": "https",
+									"host": [
+										"sleepy-pig-slippers",
+										"cyclic",
+										"app"
+									],
+									"path": [
+										"api",
+										"v1",
+										"superAdmin",
+										"email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add Client to project",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"clientId\": \"644122771e346f4b0c1ecec3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/userGroup/addClientToProject/6465dad32c3b7a579cb3f952",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"userGroup",
+										"addClientToProject",
+										"6465dad32c3b7a579cb3f952"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "System Admin",
+					"item": [
+						{
+							"name": "signIn/signUp",
+							"item": [
+								{
+									"name": "Signin",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"Ellamarks2@gmail.com\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signin/ownerSignIn",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signin",
+												"ownerSignIn"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Owner Sign up",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Ella mark\",\r\n    \"password\": \"ali1234\",\r\n    \"email\": \"Ellamarks2@gmail.com\"\r\n   \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:9094/api/v1/signup/ownerSignUp",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "9094",
+											"path": [
+												"api",
+												"v1",
+												"signup",
+												"ownerSignUp"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Get companies",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRiMjZlN2UxZmE3YTIwODg0YmRjZjQiLCJlbWFpbCI6IkVsbGFtYXJrczJAZ21haWwuY29tIiwibmFtZSI6IkVsbGEgbWFyayIsInVzZXJUeXBlIjoic3lzdGVtIEFkbWluIiwiaWF0IjoxNjkyMDgzOTkwLCJleHAiOjE3MjM2MTk5OTB9.5StISy85hESKwJz0OFHZY-YPLSoRbLcxHN6SW3jQk2M",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/SystemAdmin/companies",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"SystemAdmin",
+										"companies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "disabled companies",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRiMjZlN2UxZmE3YTIwODg0YmRjZjQiLCJlbWFpbCI6IkVsbGFtYXJrczJAZ21haWwuY29tIiwibmFtZSI6IkVsbGEgbWFyayIsInVzZXJUeXBlIjoic3lzdGVtIEFkbWluIiwiaWF0IjoxNjkyMDgzOTkwLCJleHAiOjE3MjM2MTk5OTB9.5StISy85hESKwJz0OFHZY-YPLSoRbLcxHN6SW3jQk2M",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/SystemAdmin/disbledCompanies",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"SystemAdmin",
+										"disbledCompanies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get companies employees",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRiMjZlN2UxZmE3YTIwODg0YmRjZjQiLCJlbWFpbCI6IkVsbGFtYXJrczJAZ21haWwuY29tIiwibmFtZSI6IkVsbGEgbWFyayIsInVzZXJUeXBlIjoic3lzdGVtIEFkbWluIiwiaWF0IjoxNjkyMDgzOTkwLCJleHAiOjE3MjM2MTk5OTB9.5StISy85hESKwJz0OFHZY-YPLSoRbLcxHN6SW3jQk2M",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/SystemAdmin/getCompany/i8is",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"SystemAdmin",
+										"getCompany",
+										"i8is"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete company",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRiMjZlN2UxZmE3YTIwODg0YmRjZjQiLCJlbWFpbCI6IkVsbGFtYXJrczJAZ21haWwuY29tIiwibmFtZSI6IkVsbGEgbWFyayIsInVzZXJUeXBlIjoic3lzdGVtIEFkbWluIiwiaWF0IjoxNjkyMDgzOTkwLCJleHAiOjE3MjM2MTk5OTB9.5StISy85hESKwJz0OFHZY-YPLSoRbLcxHN6SW3jQk2M",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isArchived\":false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/SystemAdmin/archived/64ddf3c414cb14001c72dc8f",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"SystemAdmin",
+										"archived",
+										"64ddf3c414cb14001c72dc8f"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Company owner",
+					"item": [
+						{
+							"name": "Add Employee",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"sania khan\",\r\n    \"password\": \"ali1234@\",\r\n    \"email\": \"ssania@gmail.com\",\r\n    \"company\": \"i8is\",\r\n    \"userType\": \"user\",\r\n    \"timezone\": \"Asia/Karachi\",\r\n    \"timezoneOffset\": \"5\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/addEmployee",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"addEmployee"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "company employees",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/companies",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"companies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DisableEmployees",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/getDisabledEmployee",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"getDisabledEmployee"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "company employee timeline",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU1NzZiOGY2YjAwMWM5NjAwNDciLCJ0aW1lem9uZSI6IkFzaWEvS2FyYWNoaSIsImVtYWlsIjoic2FtYXIwOUBnbWFpbC5jb20iLCJuYW1lIjoic2FtYXIga2hhbiIsInVzZXJUeXBlIjoib3duZXIiLCJjb21wYW55IjoiaThpcyIsInRpbWV6b25lT2Zmc2V0IjoiNSIsImlhdCI6MTY5MzIyNDQ0OCwiZXhwIjoxNzI0NzYwNDQ4fQ.azT-mQH-l_hNWoujff6QUA6mUz8ovGCYbyKkHIPNMQA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/getCompanyemployee",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"getCompanyemployee"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "each employee timeline",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/sorted-datebased/64c21e76eb69a9001ca86c75",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"sorted-datebased",
+										"64c21e76eb69a9001ca86c75"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "2023-08-21",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "single employee",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://tense-khakis-foal.cyclic.app/api/v1/owner/644122771e346f4b0c1ecec3",
+									"protocol": "https",
+									"host": [
+										"tense-khakis-foal",
+										"cyclic",
+										"app"
+									],
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"644122771e346f4b0c1ecec3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "company employee delete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ZmU3ZTZiOGY2YjAwMWM5NjAwNGIiLCJ0aW1lem9uZSI6IiIsImVtYWlsIjoic2FuaWFraGFuMTM0QGdtYWlsLmNvbSIsIm5hbWUiOiJzYW5pYSBraGFuIiwidXNlclR5cGUiOiJvd25lciIsImNvbXBhbnkiOiJ5OGhyIiwiaWF0IjoxNjkyMDg5NzE2LCJleHAiOjE3MjM2MjU3MTZ9.XoLUx4lhVXUoblWYiFRlTKYK8B58fanzEaiUCaKxtLk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9094/api/v1/owner/archived/644122771e346f4b0c1ecec3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9094",
+									"path": [
+										"api",
+										"v1",
+										"owner",
+										"archived",
+										"644122771e346f4b0c1ecec3"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
