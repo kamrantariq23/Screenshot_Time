@@ -22,7 +22,11 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
     },
-
+    verification:
+    {
+        type: String,
+        default:'null'
+    },
     userType: {
         type: String,
         default: 'user',
@@ -75,6 +79,9 @@ const userSchema = new mongoose.Schema({
         type:String
     },
     expirationTimestamp : {
+        type: String
+    },
+    otpTime : {
         type: String
     },
     inviteStatus: {

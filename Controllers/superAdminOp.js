@@ -285,7 +285,7 @@ const getUsersWorkingToday = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 isActive: isActive,
-                isArchived : user.isArchived,
+                isArchived: user.isArchived,
                 activeStatus: activeStatus,
                 totalHoursWorkedToday: totalHoursWorkedToday,
                 totalHoursWorkedYesterday: totalHoursWorkedYesterday,
@@ -545,8 +545,8 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
                     recentScreenshot: recentScreenshot,
                     minutesAgo,
                     isActive,
-                    isArchived : user.isArchived,
-                    UserStatus:user.inviteStatus,
+                    isArchived: user.isArchived,
+                    UserStatus: user.inviteStatus,
 
                     totalHours: {
                         daily: formatHoursAndMinutes(totalHoursWorkedDaily),
@@ -1269,6 +1269,73 @@ const emailInviteExp = async (req, res) => {
     }
 }
 
+const random = (length) => {
+    // Implement your random number generation logic here
+    // For example, you can use a library like 'crypto' to generate a secure random number.
+    // Here's a basic example for generating a random number between 100000 and 999999:
+    return Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+};
+
+const checkPass = async (req, res) => {
+    const verification = req.body.verification;
+    const user_id = req.user._id;
+    const user = await User.findOne({ verification: verification, _id: user_id })
+    if (user) {
+        const currentTimestamp = Date.now();
+
+        if (currentTimestamp > user.otpTime) {
+            // The link has expired
+            res.status(403).json({ success: false, message: 'Verification code expired' });
+            return;
+        }
+        else {
+            res.status(200).json({ success: true, message: 'Token verified' });
+        }
+
+    }
+    else {
+        res.status(400).json({ success: false, message: 'Invalid verification code' });
+    }
+}
+
+const forgotPassword = async (req, res) => {
+    const expirationTimeInHours = 2;
+    const otpTime = Date.now() + expirationTimeInHours * 60 * 60 * 1000; // Calculate the expiration timestamp (2 hours from now)
+    const number = random(6); // Generate a random 6-digit number
+    
+    const email = req.body.email;
+
+    try {
+        // Find the user by email and _id
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Update the user's verification field with the generated number
+        user.verification = number;
+        user.otpTime = otpTime;
+        await user.save();
+
+        // Send the verification email
+        const msg = {
+            to: email,
+            from: 'invites@screenshottime.com', // replace this with your own email
+            subject: 'Your reset password verification code is here',
+            text: `Please reset your password using this code: ${number}`,
+            html: ` Reset your password using this code: ${number} Please don't share this code with anyone else`
+        };
+
+        await sgMail.send(msg);
+
+        res.status(200).json({ success: true, user, message: 'Verification code sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ success: false, message: 'Failed to send verification code' });
+    }
+};
+
 const emailInvite = async (req, res) => {
     const email = req.body.toEmail;
     const company = req.body.company;
@@ -1289,18 +1356,18 @@ const emailInvite = async (req, res) => {
             company,
         });
         try {
-        const savedUser = await newUser.save();
+            const savedUser = await newUser.save();
 
-        const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
-        const msg = {
-            to: email,
-            from: 'invites@screenshottime.com', // replace this with your own email
-            subject: 'You have been invited',
-            text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
-            html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
-        };
+            const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
+            const msg = {
+                to: email,
+                from: 'invites@screenshottime.com', // replace this with your own email
+                subject: 'You have been invited',
+                text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
+                html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
+            };
 
-        
+
             await sgMail.send(msg);
             res.status(200).json({ success: true, savedUser, msg, message: 'Email sent successfully' });
         } catch (error) {
@@ -3023,4 +3090,4 @@ const getTotalMonthlyWorkingHours = async (req, res) => {
 
 
 
-export default { getProjects, getCustomDateRangeRecords, getWorkingHoursSummary, getAllemployeesr, getTotalMonthlyWorkingHours, getTotalHoursAndScreenshote, getWeeklyRecords, getTotalAnnualWorkingHours, getAllClients, splitActivity, countEmployeesInProject, getTotalHoursAndScreenshots, getHistoryChanges, getMonthlyScreenshots, deleteActivity, trimActivityInTimeEntry, getActivityData, getSingleEmployee, assignUserToManager, emailInviteExp, emailInviteClient, emailInvite, getTotalHoursQ, getEffectiveSettingsEachUser, archiveProject, deleteEmployee, updateEmployeeSettings, deleteScreenshotAndDeductTime, moveMonthsScreenshotsToHistory, addProjects, deleteEvent, updateUserArchiveStatus, editEvent, getSingleEvent, getUsersStatus, updateBillingInfo, getUsersWorkingToday, updateCompanyNameForAllEmployees, getAllemployees, editCompanyName, getTotalHoursWorked, editProject, getTotalHoursWorkedAllEmployees, sortedScreenshotsEachEmployee, deleteProject, addOfflineTime };
+export default { checkPass, forgotPassword, getProjects, getCustomDateRangeRecords, getWorkingHoursSummary, getAllemployeesr, getTotalMonthlyWorkingHours, getTotalHoursAndScreenshote, getWeeklyRecords, getTotalAnnualWorkingHours, getAllClients, splitActivity, countEmployeesInProject, getTotalHoursAndScreenshots, getHistoryChanges, getMonthlyScreenshots, deleteActivity, trimActivityInTimeEntry, getActivityData, getSingleEmployee, assignUserToManager, emailInviteExp, emailInviteClient, emailInvite, getTotalHoursQ, getEffectiveSettingsEachUser, archiveProject, deleteEmployee, updateEmployeeSettings, deleteScreenshotAndDeductTime, moveMonthsScreenshotsToHistory, addProjects, deleteEvent, updateUserArchiveStatus, editEvent, getSingleEvent, getUsersStatus, updateBillingInfo, getUsersWorkingToday, updateCompanyNameForAllEmployees, getAllemployees, editCompanyName, getTotalHoursWorked, editProject, getTotalHoursWorkedAllEmployees, sortedScreenshotsEachEmployee, deleteProject, addOfflineTime };

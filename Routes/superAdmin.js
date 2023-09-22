@@ -14,6 +14,17 @@ eventRouter.post(
     events.addProjects,
 );
 
+eventRouter.post(
+    '/checkpass',
+    isLoggedInUser.isLoggedIn,
+    events.checkPass,
+);
+
+eventRouter.post(
+    '/forgotpassword',
+    isLoggedInUser.isLoggedIn,
+    events.forgotPassword,
+);
 
 eventRouter.post(
     '/email',

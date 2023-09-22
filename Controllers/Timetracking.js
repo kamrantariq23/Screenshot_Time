@@ -7,7 +7,7 @@ import moment from 'moment-timezone';
 // import mongoose from 'mongoose';
 import { DateTime } from 'luxon';
 import TimeTracking from '../Models/timeSchema';
-// git new 
+
 import ProjectSchema from '../Models/projectSchema';
 import User from '../Models/userSchema';
 import ScreenshotHistory from '../Models/screenshotHistorySchema';
@@ -310,7 +310,7 @@ const addScreenshot = async (req, res) => {
             timeEntryId: timeEntryId
         };
 
-        io.emit('newActivity', newTimeEntry);
+  
         // Update the user's lastActive field to the current time
         await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
         const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
@@ -445,6 +445,33 @@ const getUserOnlineStatus = async (req, res) => {
     }
 };
 
+const newDayEntry = async (req, res) =>{
+ 
+    const timeTracking = await TimeTracking.findOne({
+        userId: req.user._id,
+        'timeEntries._id': req.params.timeEntryId,
+    });
+
+    if (!timeTracking) {
+        return res.status(404).json({ success: false, message: 'Time entry not found' });
+    }
+
+    // Find and update the specified time entry
+    const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
+    if (!activeTimeEntry.endTime) {
+        // Set the endTime to the current time (server-side)
+        activeTimeEntry.endTime = new Date();
+
+        if (activeTimeEntry.activities.length > 0) {
+            const lastActivity = activeTimeEntry.activities[activeTimeEntry.activities.length - 1];
+            // Set the endTime of the last activity to the current time (server-side)
+            lastActivity.endTime = new Date();
+        }
+
+        // Save the time tracking document
+        await timeTracking.save();
+    }
+}
 
 const stopTracking = async (req, res) => {
     try {
