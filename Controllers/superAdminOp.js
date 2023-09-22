@@ -1278,8 +1278,8 @@ const random = (length) => {
 
 const checkPass = async (req, res) => {
     const verification = req.body.verification;
-    const user_id = req.user._id;
-    const user = await User.findOne({ verification: verification, _id: user_id })
+    const email = req.body.email;
+    const user = await User.findOne({ verification: verification, email: email })
     if (user) {
         const currentTimestamp = Date.now();
 
@@ -1321,10 +1321,10 @@ const forgotPassword = async (req, res) => {
         // Send the verification email
         const msg = {
             to: email,
-            from: 'invites@screenshottime.com', // replace this with your own email
+            from: 'invites@screenshottime.com', // Replace with your own email or a verified sender in SendGrid
             subject: 'Your reset password verification code is here',
             text: `Please reset your password using this code: ${number}`,
-            html: ` Reset your password using this code: ${number} Please don't share this code with anyone else`
+            html: `<p>Reset your password using this code: <strong>${number}</strong></p><p>Please don't share this code with anyone else</p>`
         };
 
         await sgMail.send(msg);
@@ -1356,18 +1356,18 @@ const emailInvite = async (req, res) => {
             company,
         });
         try {
-            const savedUser = await newUser.save();
+        const savedUser = await newUser.save();
 
-            const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
-            const msg = {
-                to: email,
-                from: 'invites@screenshottime.com', // replace this with your own email
-                subject: 'You have been invited',
-                text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
-                html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
-            };
+        const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
+        const msg = {
+            to: email,
+            from: 'invites@screenshottime.com', // replace this with your own email
+            subject: 'You have been invited',
+            text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
+            html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
+        };
 
-
+        
             await sgMail.send(msg);
             res.status(200).json({ success: true, savedUser, msg, message: 'Email sent successfully' });
         } catch (error) {
