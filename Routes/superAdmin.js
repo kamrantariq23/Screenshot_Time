@@ -15,14 +15,12 @@ eventRouter.post(
 );
 
 eventRouter.post(
-    '/checkpass',
-    isLoggedInUser.isLoggedIn,
+    '/verifycode',
     events.checkPass,
 );
 
 eventRouter.post(
-    '/forgotpassword',
-    isLoggedInUser.isLoggedIn,
+    '/resetpassword',
     events.forgotPassword,
 );
 
