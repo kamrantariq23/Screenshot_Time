@@ -194,6 +194,9 @@ const updatePassword = async (req, res) => {
         if (!findUser) {
             return res.status(404).json({ success: false, message: 'Invalid user id' });
         }
+        if (password === "") {
+            return res.status(404).json({ success: false, message: 'Password is required' });
+        }
         const hashedPassword = await bcryptjs.hash(password, 12);
         findUser.password = hashedPassword
         const updatedUser = await findUser.save()
