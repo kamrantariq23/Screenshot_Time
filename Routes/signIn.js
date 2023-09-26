@@ -20,6 +20,8 @@ signInRouter.patch('/users/:id/last-active', isLoggedIn.isLoggedIn, userSignIn.u
 
 signInRouter.patch('/users/Update', isLoggedIn.isLoggedIn, userSignIn.updateSetting);
 
+signInRouter.patch('/users/update-password/:id', userSignIn.updatePassword);
+
 signInRouter.post('/admin', adminSignIn);
 
 signInRouter.post('/ownerSignIn', superAdminSignIn);

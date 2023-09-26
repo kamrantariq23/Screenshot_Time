@@ -1302,7 +1302,7 @@ const forgotPassword = async (req, res) => {
     const expirationTimeInHours = 2;
     const otpTime = Date.now() + expirationTimeInHours * 60 * 60 * 1000; // Calculate the expiration timestamp (2 hours from now)
     const number = random(6); // Generate a random 6-digit number
-    
+
     const email = req.body.email;
 
     try {
@@ -1356,18 +1356,18 @@ const emailInvite = async (req, res) => {
             company,
         });
         try {
-        const savedUser = await newUser.save();
+            const savedUser = await newUser.save();
 
-        const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
-        const msg = {
-            to: email,
-            from: 'invites@screenshottime.com', // replace this with your own email
-            subject: 'You have been invited',
-            text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
-            html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
-        };
+            const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
+            const msg = {
+                to: email,
+                from: 'invites@screenshottime.com', // replace this with your own email
+                subject: 'You have been invited',
+                text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
+                html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
+            };
 
-        
+
             await sgMail.send(msg);
             res.status(200).json({ success: true, savedUser, msg, message: 'Email sent successfully' });
         } catch (error) {

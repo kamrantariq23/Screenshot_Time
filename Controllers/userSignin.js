@@ -4,11 +4,10 @@ import bcryptjs from 'bcryptjs';
 import status from 'http-status';
 import jwt from 'jsonwebtoken';
 import moment from 'moment-timezone';
-
 import Model from '../Models/Model';
 
 const createToken = (user, res, next) => {
-    const { id, email, name, userType, company, timezone,timezoneOffset } = user;
+    const { id, email, name, userType, company, timezone, timezoneOffset } = user;
     const payload = {
         _id: id,
         timezone, // Add the timezone property to the payload
@@ -23,8 +22,8 @@ const createToken = (user, res, next) => {
     jwt.sign(
         payload,
         process.env.JwtSecret, {
-            expiresIn: '365d',
-        },
+        expiresIn: '365d',
+    },
         (err, token) => {
             // Error Create the Token
             if (err) {
@@ -40,28 +39,27 @@ const createToken = (user, res, next) => {
     );
 };
 
-
 const userSignIn = (req, res, next) => {
     const { email, password } = req.body;
     // Find user with the passed email
     Model.UserModel.findOne({ email }).then(user => {
         if (user) {
-            if(!user.isArchived){
-            // if email found compare the password
-            bcryptjs.compare(password, user.password).then(result => {
-                // if password match create payload
-                if (result) {
-                    createToken(user, res, next);
-                } else {
-                    res.status(400);
-                    next(new Error('Invalid Password'));
-                }
-            });
-        }
-        else{
-            res.status(400);
-            next(new Error('Something went wrong With This Email'));
-        }
+            if (!user.isArchived) {
+                // if email found compare the password
+                bcryptjs.compare(password, user.password).then(result => {
+                    // if password match create payload
+                    if (result) {
+                        createToken(user, res, next);
+                    } else {
+                        res.status(400);
+                        next(new Error('Invalid Password'));
+                    }
+                });
+            }
+            else {
+                res.status(400);
+                next(new Error('Something went wrong With This Email'));
+            }
 
         } else {
             // Wrong Password.
@@ -71,7 +69,7 @@ const userSignIn = (req, res, next) => {
     });
 };
 
-const onlineStatus = async(req, res) => {
+const onlineStatus = async (req, res) => {
     const userId = req.user._id;
 
     try {
@@ -98,7 +96,8 @@ const onlineStatus = async(req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to update user status' });
     }
 };
-const getUserActiveStatus = async(req, res) => {
+
+const getUserActiveStatus = async (req, res) => {
     const userId = req.user._id;
 
     try {
@@ -124,8 +123,7 @@ const getUserActiveStatus = async(req, res) => {
     }
 };
 
-
-const updateLastActiveTime = async(req, res) => {
+const updateLastActiveTime = async (req, res) => {
     const userId = req.params.id;
 
     try {
@@ -146,7 +144,7 @@ const updateLastActiveTime = async(req, res) => {
     }
 };
 
-const updateSetting = async(req, res) => {
+const updateSetting = async (req, res) => {
     const userId = req.user._id;
     const updateFields = req.body;
 
@@ -189,7 +187,22 @@ const updateSetting = async(req, res) => {
     }
 };
 
-
+const updatePassword = async (req, res) => {
+    const { password } = req.body;
+    try {
+        const findUser = await Model.UserModel.findById(req.params.id)
+        if (!findUser) {
+            return res.status(404).json({ success: false, message: 'Invalid user id' });
+        }
+        const hashedPassword = await bcryptjs.hash(password, 12);
+        findUser.password = hashedPassword
+        const updatedUser = await findUser.save()
+        return res.status(200).json({ success: true, message: "Password update successfully", user: updatedUser });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ success: false, message: 'Failed to update user' });
+    }
+};
 
 const deleteUser = (req, res) => {
     const { id } = req.params;
@@ -206,4 +219,13 @@ const deleteUser = (req, res) => {
         }
     });
 };
-export default { userSignIn, onlineStatus, updateLastActiveTime, updateSetting, deleteUser, getUserActiveStatus };
+
+export default {
+    userSignIn,
+    onlineStatus,
+    updateLastActiveTime,
+    updateSetting,
+    deleteUser,
+    getUserActiveStatus,
+    updatePassword
+};
