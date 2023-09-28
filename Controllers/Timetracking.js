@@ -593,11 +593,17 @@ const getUserScreenshot = async (userId) => {
 
         console.log('Time entries:', timeEntries);
 
+        const endTime = 0;
         const allScreenshots = [];
+
         timeEntries.forEach((entry) => {
             entry.timeEntries.forEach((timeEntry) => {
                 if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
-                    allScreenshots.push(...timeEntry.screenshots);
+                    const obj = {
+                        allScreenshots: timeEntry.screenshots,
+                        endTime: timeEntry.endTime || endTime, // Use timeEntry.endTime if available, otherwise use the default endTime
+                    };
+                    allScreenshots.push(obj);
                 }
             });
         });
