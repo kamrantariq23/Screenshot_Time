@@ -5,7 +5,7 @@ import Model from '../Models/Model';
 
 const userSignUp = async (req, res, next) => {
     try {
-        const { name, password, email, company, userType, timezone } = req.body;
+        const { name, password, email, company, userType, timezone, timezoneOffset } = req.body;
 
         const query = { email };
 
@@ -37,6 +37,7 @@ const userSignUp = async (req, res, next) => {
                 company,
                 userType,
                 timezone,
+                timezoneOffset,
             });
 
             User.save()
