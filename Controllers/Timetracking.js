@@ -310,7 +310,7 @@ const addScreenshot = async (req, res) => {
             timeEntryId: timeEntryId
         };
 
-  
+
         // Update the user's lastActive field to the current time
         await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
         const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
@@ -445,8 +445,8 @@ const getUserOnlineStatus = async (req, res) => {
     }
 };
 
-const newDayEntry = async (req, res) =>{
- 
+const newDayEntry = async (req, res) => {
+
     const timeTracking = await TimeTracking.findOne({
         userId: req.user._id,
         'timeEntries._id': req.params.timeEntryId,
@@ -696,6 +696,11 @@ const getTotalHoursWorked = async (req, res) => {
                     },
                     lastActiveTime: `${minutesAgo}`,
                     lastScreenshot,
+                    timezone: user.timezone,
+                    isActive,
+                    company: user.company,
+                    email: user.email,
+                    name: user.name,
 
                 }
             });
@@ -710,7 +715,7 @@ const getTotalHoursWorked = async (req, res) => {
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
-                
+
                 const startTime = new Date(timeEntry.startTime);
                 const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
@@ -764,7 +769,7 @@ const getTotalHoursWorked = async (req, res) => {
                 isActive,
                 company: user.company,
                 email: user.email,
-                name:user.name,
+                name: user.name,
 
             }
         });

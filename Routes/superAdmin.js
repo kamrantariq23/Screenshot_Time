@@ -26,7 +26,7 @@ eventRouter.post(
 
 eventRouter.post(
     '/email',
-    isLoggedInUser.isLoggedIn,
+    // isLoggedInUser.isLoggedIn,
     events.emailInvite,
 );
 
