@@ -120,7 +120,7 @@ const calculateHoursWorked = async (user, period) => {
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            let endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : user.lastActive;
+            let endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : now;
             return acc + (endTime - entry.timeEntries.startTime);
         }
         return acc;
