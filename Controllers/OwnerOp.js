@@ -450,7 +450,7 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
                 for (const timeTracking of timeTrackings) {
                     for (const timeEntry of timeTracking.timeEntries) {
                         const startTime = new Date(timeEntry.startTime);
-                        const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : new Date();
+                        const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
 
                         // console.log('startTime:', startTime);
                         // console.log('endTime:', endTime);

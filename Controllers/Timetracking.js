@@ -473,13 +473,17 @@ const newDayEntry = async (req, res) =>{
     }
 }
 
+
 const stopTracking = async (req, res) => {
+    
     try {
         // Find the time tracking document containing the specified time entry
         const timeTracking = await TimeTracking.findOne({
             userId: req.user._id,
             'timeEntries._id': req.params.timeEntryId,
         });
+        
+        const user = await User.findById(req.user._id);
 
         if (!timeTracking) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
@@ -488,8 +492,18 @@ const stopTracking = async (req, res) => {
         // Find and update the specified time entry
         const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
         if (!activeTimeEntry.endTime) {
-            // Set the endTime to the current time (server-side)
-            activeTimeEntry.endTime = new Date();
+            const lastTimer = req.body.lastTimer;
+
+            // if user forgot to stop the timer end the time entry on user last active time
+            if (lastTimer=='yes') {
+                // var endtimeEntry = converttimezone(user.lastActive, user.timezoneOffset)
+
+                activeTimeEntry.endTime = user.lastActive
+            }
+            else {
+                // Set the endTime to the current time (server-side)
+                activeTimeEntry.endTime = new Date();
+            }
 
             if (activeTimeEntry.activities.length > 0) {
                 const lastActivity = activeTimeEntry.activities[activeTimeEntry.activities.length - 1];
@@ -502,7 +516,7 @@ const stopTracking = async (req, res) => {
 
             // Assuming you have a User model defined in Mongoose
             // Find the user associated with this time entry
-            const user = await User.findById(req.user._id);
+
 
             if (user) {
                 // Update the user's isActive field to false
@@ -518,8 +532,6 @@ const stopTracking = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to stop time entry' });
     }
 };
-
-
 
 
 const getTimeAgo = (lastActiveTime) => {

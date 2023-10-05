@@ -184,7 +184,7 @@ const getUsersStatus = async (req, res) => {
 };
 
 // Helper function to calculate total hours
-const getTotalHours = (timeEntries) => {
+const getTotalHours = (timeEntries, lastActive) => {
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
             const endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : new Date();
@@ -267,7 +267,7 @@ const getUsersWorkingToday = async (req, res) => {
                 { $match: { 'timeEntries.startTime': { $gte: startOfMonth, $lt: endOfToday } } },
             ]);
 
-            const totalHoursWorkedToday = formatHours(getTotalHours(workedToday));
+            const totalHoursWorkedToday = formatHours(getTotalHours(workedToday, user.lastActive ));
             const totalHoursWorkedYesterday = formatHours(getTotalHours(workedYesterday));
             const totalHoursWorkedThisWeek = formatHours(getTotalHours(workedThisWeek));
             const totalHoursWorkedThisMonth = formatHours(getTotalHours(workedThisMonth));
@@ -616,8 +616,6 @@ const getTotalHoursWorked = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-
-
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
 
         // Get the start and end times for the current day, week, and month
@@ -658,7 +656,7 @@ const getTotalHoursWorked = async (req, res) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
                 const startTime = new Date(timeEntry.startTime);
-                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : new Date();
+                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
                 if (startTime >= startOfToday) {
@@ -1474,7 +1472,7 @@ const getTotalHoursQ = async (req, res) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
                 const startTime = new Date(timeEntry.startTime);
-                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : new Date();
+                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
                 if (startTime >= startOfToday && startTime < endOfToday) {
@@ -2524,7 +2522,7 @@ const calculateTotalAnnualWorkingHours = async (users, year) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
                 const startTime = new Date(timeEntry.startTime);
-                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : new Date();
+                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
 
                 if (startTime >= startOfYear && startTime < endOfYear) {
                     const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
@@ -3047,7 +3045,7 @@ const calculateTotalMonthlyWorkingHours = async (users, monthSpecifier) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
                 const startTime = new Date(timeEntry.startTime);
-                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : new Date();
+                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
 
                 if (startTime >= startOfMonth && startTime <= endOfMonth) {
                     const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
