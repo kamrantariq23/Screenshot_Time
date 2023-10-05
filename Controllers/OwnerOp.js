@@ -120,7 +120,7 @@ const calculateHoursWorked = async (user, period) => {
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            let endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : now;
+            let endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : user.lastActive;
             return acc + (endTime - entry.timeEntries.startTime);
         }
         return acc;
@@ -949,7 +949,7 @@ const getTotalHoursAndScreenshotstest = async (req, res) => {
 
         const groupedScreenshots = [];
 
-        const now = new Date(); // Current time for handling ongoing time entries
+        const now = user.lastActive; // Current time for handling ongoing time entries
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
