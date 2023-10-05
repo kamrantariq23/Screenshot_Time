@@ -169,7 +169,7 @@ const getManagerHoursWorked = async(req, res) => {
 
         const groupedScreenshots = [];
 
-        const now = user.lastActive; // Current time for handling ongoing time entries
+        const now = new Date(); // Current time for handling ongoing time entries
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
