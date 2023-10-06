@@ -648,39 +648,6 @@ async function retrieveScreenshotsForUser(userId) {
         });
         const latestScreenshot = mostRecentTimeEntry.screenshots[0];
 
-        const originalTime = latestScreenshot.time;
-        const userTimeZone = user.timezone; // Replace with the desired timezone
-
-        // Create a Date object with the original time (assuming today's date)
-        const date = new Date();
-        let [hours, minutes, ampm] = originalTime.match(/\d+|AM|PM/g).map((value) => {
-            if (isNaN(value)) {
-                return value; // Return "AM" or "PM" as is
-            }
-            return Number(value); // Parse numeric values as numbers
-        });
-
-        // Adjust hours for AM/PM
-        if (ampm === 'PM' && hours !== 12) {
-            hours += 12;
-        } else if (ampm === 'AM' && hours === 12) {
-            hours = 0;
-        }
-
-        date.setUTCHours(hours, minutes); // Set UTC hours and minutes
-
-        // Convert the date to the user's timezone with AM/PM format
-        const userTime = date.toLocaleTimeString('en-US', {
-            timeZone: userTimeZone,
-            hour12: true,
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-
-        console.log(userTime);
-
-        latestScreenshot.time = userTime;
-
 
         return latestScreenshot || null; // Return the latest screenshot or null if none found
     } catch (error) {
