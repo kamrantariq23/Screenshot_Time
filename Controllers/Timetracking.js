@@ -150,9 +150,11 @@ const addNewTracking = async (req, res) => {
 
         if (timeTracking) {
             // Check if there's an active time entry without end time
-            const activeTimeEntry = timeTracking.timeEntries.find((entry) => !entry.endTime);
+            const activeTimeEntry = timeTracking.timeEntries.find((entry) => 
+            !entry.endTime);
             if (activeTimeEntry) {
-                return res.status(400).json({ success: false, message: 'Task is already in progress' });
+                console.log(activeTimeEntry._id);
+                return res.status(400).json({ success: false, timeEntryId:activeTimeEntry._id, message: 'Task is already in progress' });
             }
         }
         // Find the user associated with this time entry
