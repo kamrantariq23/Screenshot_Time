@@ -412,7 +412,7 @@ const calculateBillingAmount = async (user, period) => {
 
 async function retrieveScreenshotsForUser(userId) {
     try {
-        const user = await UserSchema.findById(userId);
+        const user = await User.findById(userId);
         // Find all time entries for the user
         const timeEntries = await TimeTracking.aggregate([
             { $match: { userId } },
