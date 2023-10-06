@@ -176,15 +176,28 @@ async function retrieveScreenshotsForUser(userId) {
             { $match: { userId } },
             { $unwind: '$timeEntries' },
             { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-            { $limit: 1 } // Only retrieve the most recent time entry
+            { $limit: 2 } // Retrieve the two most recent time entries
         ]);
-
+        
         if (!timeEntries || timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
-
+        
         const mostRecentTimeEntry = timeEntries[0].timeEntries;
-
+        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[1].timeEntries : null;
+        
+        if (
+            !mostRecentTimeEntry.screenshots ||
+            mostRecentTimeEntry.screenshots.length === 0
+        ) {
+            // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
+            if (secondToLastTimeEntry) {
+                mostRecentTimeEntry.screenshots = secondToLastTimeEntry.screenshots;
+            } else {
+                mostRecentTimeEntry.screenshots = []; // If there's no second-to-last timeEntry, initialize screenshots as an empty array
+            }
+        }
+        
         // Sort the screenshots within the most recent time entry by their capture time
         mostRecentTimeEntry.screenshots.sort((a, b) => {
             return new Date(b.createdAt) - new Date(a.createdAt);

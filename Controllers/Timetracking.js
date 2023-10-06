@@ -587,6 +587,107 @@ const getMinutesAgo = (time) => {
     return minutesAgo;
 };
 
+async function retrieveScreenshotsForUser(userId) {
+    try {
+        const user = await User.findById(userId);
+        // Find all time entries for the user
+        // const timeEntries = await TimeTracking.aggregate([
+        //     { $match: { userId } },
+        //     { $unwind: '$timeEntries' },
+        //     { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
+        //     { $limit: 2 } // Retrieve the two most recent time entries
+        // ]);
+        // const timeEntries = await TimeTracking.find({ userId })
+        //     .populate({
+        //         path: 'timeEntries',
+        //         populate: {
+        //             path: 'screenshots',
+        //             options: { sort: { 'timeEntries.startTime': -1 }, limit: 2 }
+        //         }
+        //     });
+        const timeEntries = await TimeTracking.find({ userId })
+            .populate({
+                path: 'timeEntries',
+                options: { sort: { startTime: -1 }, limit: 2 },
+                populate: {
+                    path: 'screenshots',
+                }
+            });
+            timeEntries[0].timeEntries.sort((a, b) => {
+                return new Date(b.startTime) - new Date(a.startTime);
+            });
+            // const timeEntries = await TimeTracking.aggregate([
+            //     { $match: { userId: userId } },
+            //     { $unwind: '$timeEntries' },
+            //     { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
+            //     { $limit: 2 } // Retrieve the two most recent time entries
+            // ]);
+        
+        if (!timeEntries || timeEntries.length === 0) {
+            return null; // No time entries found for the user
+        }
+        
+        const mostRecentTimeEntry = timeEntries[0].timeEntries[0];
+        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[0].timeEntries[1] : null;
+        
+        if (
+            !mostRecentTimeEntry.screenshots ||
+            mostRecentTimeEntry.screenshots.length === 0
+        ) {
+            // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
+            if (secondToLastTimeEntry) {
+                mostRecentTimeEntry.screenshots = secondToLastTimeEntry.screenshots;
+            } else {
+                mostRecentTimeEntry.screenshots = []; // If there's no second-to-last timeEntry, initialize screenshots as an empty array
+            }
+        }
+        
+        // Sort the screenshots within the most recent time entry by their capture time
+        mostRecentTimeEntry.screenshots.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        const latestScreenshot = mostRecentTimeEntry.screenshots[0];
+
+        const originalTime = latestScreenshot.time;
+        const userTimeZone = user.timezone; // Replace with the desired timezone
+
+        // Create a Date object with the original time (assuming today's date)
+        const date = new Date();
+        let [hours, minutes, ampm] = originalTime.match(/\d+|AM|PM/g).map((value) => {
+            if (isNaN(value)) {
+                return value; // Return "AM" or "PM" as is
+            }
+            return Number(value); // Parse numeric values as numbers
+        });
+
+        // Adjust hours for AM/PM
+        if (ampm === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (ampm === 'AM' && hours === 12) {
+            hours = 0;
+        }
+
+        date.setUTCHours(hours, minutes); // Set UTC hours and minutes
+
+        // Convert the date to the user's timezone with AM/PM format
+        const userTime = date.toLocaleTimeString('en-US', {
+            timeZone: userTimeZone,
+            hour12: true,
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+
+        console.log(userTime);
+
+        latestScreenshot.time = userTime;
+
+
+        return latestScreenshot || null; // Return the latest screenshot or null if none found
+    } catch (error) {
+        console.error(error);
+        return null; // Return null in case of any error
+    }
+}
 
 const getUserScreenshot = async (userId) => {
     try {
@@ -601,7 +702,7 @@ const getUserScreenshot = async (userId) => {
                 path: 'timeEntries',
                 populate: {
                     path: 'screenshots',
-                    options: { sort: { createdAt: -1 }, limit: 1 }
+                    options: { sort: { startTime: -1 }, limit: 2 }
                 }
             });
 
@@ -653,7 +754,8 @@ const getTotalHoursWorked = async (req, res) => {
         const lastActiveTime = user.lastActive;
         const minutesAgo = getTimeAgo(lastActiveTime);
         console.log('idpassed:', userId);
-        const lastScreenshot = await getUserScreenshot(userId);
+        const lastScreenshot = await retrieveScreenshotsForUser(userId);
+        // const lastScreenshot = await getUserScreenshot(userId);
         if (lastScreenshot) {
             console.log('Recent screenshot:', lastScreenshot);
         } else {
