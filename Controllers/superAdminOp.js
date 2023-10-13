@@ -1333,19 +1333,18 @@ const emailInvite = async (req, res) => {
             company,
         });
         try {
-            const savedUser = await newUser.save();
-
+            
             const inviteLink = `https://www.screenshottime.com/create-account/${gLink}/${email}`;
             const msg = {
                 to: email,
                 from: 'invites@screenshottime.com', // replace this with your own email
                 subject: 'You have been invited',
-                text: `You have been invited. Please click on the following link to join: ${inviteLink}`,
+                text: `You have been invited. Please click on the following link to join:`,
                 html: `<p>You have been invited. Please click on the following link to join: <a href="${inviteLink}">${inviteLink}</a></p>`
             };
 
-
             await sgMail.send(msg);
+            const savedUser = await newUser.save();
             res.status(200).json({ success: true, savedUser, msg, message: 'Email sent successfully' });
         } catch (error) {
             console.error('Error sending email:', error);
