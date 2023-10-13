@@ -1354,7 +1354,6 @@ const emailInvite = async (req, res) => {
     else {
         res.status(400).json({ success: false, message: 'Email already exist' });
     }
-
 };
 
 const emailInviteClient = async (req, res) => {
