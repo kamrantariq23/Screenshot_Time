@@ -676,7 +676,7 @@ async function retrieveScreenshotsForUser(userId) {
         }
         
         const mostRecentTimeEntry = timeEntries[0].timeEntries[0];
-        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[0].timeEntries[1] : null;
+        const secondToLastTimeEntry = timeEntries.length == 1 ? timeEntries[0].timeEntries[1] : null;
         
         if (
             !mostRecentTimeEntry.screenshots ||
