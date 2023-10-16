@@ -276,7 +276,7 @@ const updateAppUrl = async (req, res) => {
         }
     } catch (error) {
         console.error('Error updating app URL:', error);
-        res.status(500).json({ success: false, message: 'Failed to update app URL' });
+        res.status(500).json({ success: false, message: 'Failed to update app URL',error });
     }
 }
 

@@ -362,7 +362,7 @@ const calculateHoursWorked = async (user, period) => {
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            const endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : new Date();
+            const endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : convertTimezone(user.lastActive, user.timezone);
             const timeWorked = endTime - entry.timeEntries.startTime;
             return acc + timeWorked;
         }
@@ -2720,10 +2720,13 @@ const getWorkingHoursSummary = async (req, res) => {
 };
 
 
-const convertTimezone = (time, timezone, timezoneOffset) => {
-    const parsedTime = new Date(time);
-    const convertedTime = new Date(parsedTime.getTime() + (timezoneOffset * 60 * 1000));
-    return convertedTime.toString();
+const convertTimezone = (time, timezoneOffset) => {
+    const originalTime = DateTime.fromJSDate(time);
+    const convertedTime = originalTime.setZone(timezoneOffset);
+    //  // Log the original and converted times
+    // console.log('Original Time:', originalTime.toString());
+    // console.log('Converted Time:', convertedTime.toString());
+    return convertedTime;
 };
 
 const getAllemployeesr = (req, res) => {
@@ -2739,9 +2742,9 @@ const getAllemployeesr = (req, res) => {
         .then((employees) => {
             if (employees) {
                 const convertedEmployees = employees.map((employee) => {
-                    const convertedCreatedAt = convertTimezone(employee.createdAt, employee.timezone, employee.timezoneOffset);
-                    const convertedLastActive = convertTimezone(employee.lastActive, employee.timezone, employee.timezoneOffset);
-                    const convertedUpdatedAt = convertTimezone(employee.updatedAt, employee.timezone, employee.timezoneOffset);
+                    const convertedCreatedAt = convertTimezone(employee.createdAt, employee.timezone);
+                    const convertedLastActive = convertTimezone(employee.lastActive, employee.timezone);
+                    const convertedUpdatedAt = convertTimezone(employee.updatedAt, employee.timezone);
 
                     // Create a new object with the updated properties
                     const convertedEmployee = {
