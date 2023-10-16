@@ -37,4 +37,38 @@ const UploadToAws = file => {
     });
 };
 
-export default { UploadToAws };
+const UploadUpdationToAws = file => {
+    // console.log(config);
+    const s3bucket = new AWS.S3({
+        accessKeyId: config.AWS_ACCESS_KEY2,
+        secretAccessKey: config.MY_AWS_SECRET_ACCESS_KEY2,
+        Bucket: config.AWS_BUCKET2,
+        region: config.MY_AWS_REGION2
+    });
+
+    return new Promise(function(resolve, reject) {
+        s3bucket.createBucket(function() {
+            const params = {
+                Bucket: config.AWS_BUCKET2,
+                Key: file.originalname,
+                Body: file.buffer,
+                accessKeyId: config.AWS_ACCESS_KEY2,
+                secretAccessKey: config.MY_AWS_SECRET_ACCESS_KEY2,
+                region: config.MY_AWS_REGION2,
+                ACL: 'public-read',
+            };
+            // console.log(params);
+            s3bucket.upload(params, function(err, data) {
+                if (err) {
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    reject(`Could'nt upload Files!!!!! ${err}`);
+                    console.log(err);
+                } else {
+                    resolve(data.Location);
+                }
+            });
+        });
+    });
+};
+
+export default { UploadToAws, UploadUpdationToAws };

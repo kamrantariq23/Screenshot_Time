@@ -12,6 +12,7 @@ import ProjectSchema from '../Models/projectSchema';
 import User from '../Models/userSchema';
 import ScreenshotHistory from '../Models/screenshotHistorySchema';
 import aws from './aws';
+import updationSchema from '../Models/updationSchema';
 
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
@@ -216,7 +217,6 @@ const addNewTracking = async (req, res) => {
 };
 
 
-
 // const deleteEvent = (req, res) => {
 //     const { id } = req.params;
 //     EventSchema.findByIdAndRemove(id, (err, result) => {
@@ -232,7 +232,55 @@ const addNewTracking = async (req, res) => {
 //         }
 //     });
 // };
+const updatedFile = async (req, res) => {
+    try {
+        // Find the most recent record in the 'updationSchema' collection
+        const mostRecentRecord = await updationSchema.findOne().sort({ createdAt: -1 });
 
+        if (!mostRecentRecord) {
+            // Handle the case where no records are found
+            res.status(404).json({ success: false, message: 'No records found' });
+        } else {
+            // Do something with the most recent record
+            res.status(200).json({ success: true, data: mostRecentRecord });
+        }
+    } catch (error) {
+        console.error('Error finding the most recent record:', error);
+        res.status(500).json({ success: false, message: 'Failed to find the most recent record' });
+    }
+}
+
+const updateAppUrl = async (req, res) => {
+    const version = req.body.version;
+    const file = req.file;
+
+    try {
+        // Use the findOne method to find a document with the given version
+        const existVersion = await updationSchema.findOne({ version });
+
+        if (existVersion) {
+            res.status(400).json({ success: false, message: 'Version already exists' });
+        } else {
+            // const url = await aws.UploadUpdationToAws(file);
+            const url = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/screenshot_12-22-57-PM_10-16-2023_651a7277c83e99001cf2637e.png"
+
+            // Save the new version and URL in the database
+            const newVersion = new updationSchema({
+                version,
+                url,
+            });
+
+            await newVersion.save();
+
+            res.status(200).json({ success: true, data: newVersion });
+        }
+    } catch (error) {
+        console.error('Error updating app URL:', error);
+        res.status(500).json({ success: false, message: 'Failed to update app URL' });
+    }
+}
+
+   
 
 const addScreenshot = async (req, res) => {
     const io = req.io;
@@ -2125,4 +2173,4 @@ const visitedurlSave = async (req, res) => {
 
 
 
-export default { getDailyTimetracking, getCustomDateRangeRecords, getTotalHoursWithOfflineAndScreenshotse, visitedurlSave, getWeeklyRecords, getMonthlyRecords, getTotalWorkingHoursForYear, addNewTracking, deleteActivity, updateActivityData, getTotalHoursWithOfflineAndScreenshots, deleteScreenshotAndDeductTime, getActivityData, stopTracking, addScreenshot, splitActivity, getTotalHoursWorked, getUserOnlineStatus, sortedScreenshots, getMonthlyScreenshots };
+export default { getDailyTimetracking, getCustomDateRangeRecords, getTotalHoursWithOfflineAndScreenshotse, visitedurlSave, getWeeklyRecords, getMonthlyRecords, getTotalWorkingHoursForYear, addNewTracking, deleteActivity, updateActivityData, getTotalHoursWithOfflineAndScreenshots, deleteScreenshotAndDeductTime, getActivityData, stopTracking, updatedFile, updateAppUrl, addScreenshot, splitActivity, getTotalHoursWorked, getUserOnlineStatus, sortedScreenshots, getMonthlyScreenshots };

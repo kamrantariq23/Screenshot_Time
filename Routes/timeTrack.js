@@ -71,6 +71,10 @@ eventRouter.patch('/edit/:timeEntryId', isLoggedInUser.isLoggedIn, events.stopTr
 eventRouter.patch('/time-entries/:timeEntryId/screenshots', isLoggedInUser.isLoggedIn, upload.single('file'), events.addScreenshot);
 eventRouter.patch('/url/time-entry/:timeEntryId', isLoggedInUser.isLoggedIn, events.visitedurlSave);
 eventRouter.patch('/ReportActivity', isLoggedInUser.isLoggedIn, events.updateActivityData);
+//updation file api's
+eventRouter.post('/updateAppurl', upload.single('file'),  events.updateAppUrl);
+eventRouter.get('/updatedFile', events.updatedFile);
+
 eventRouter.get('/online-status', events.getUserOnlineStatus);
 
 export default eventRouter;

@@ -10,6 +10,7 @@ import dbConnection from './Connection/dbConnect';
 import Router from './Routes/Router';
 import errorHandler from './Middlewares/errorHandler';
 import verifyToken from './Middlewares/verifyToken';
+import User from './Models/userSchema';
 
 dbConnection();
 
@@ -58,7 +59,39 @@ app.use('/api/v1/SystemAdmin', Router.SystemAdmin);
 
 // i have implemented it in signup controller like this {next(new Error('Image is required'))}
 app.use(errorHandler);
+getusers()
+async function getusers(){
+    try {
 
+        // Query the "user" table to retrieve all users
+        const users = await User.find();
+        for (const user of users) {
+            // Get the current time
+        const currentTime = new Date();
+
+        // Define the time range (5 minutes ago)
+        const fiveMinutesAgo = new Date(currentTime.getTime() - 4 * 60 * 1000); // 5 minutes in milliseconds
+
+        // Filter users whose 'lastActive' time is older than 5 minutes ago
+       
+            const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
+            if(user.isActive){
+                if(lastActive < fiveMinutesAgo){
+                    user.isActive = false;
+                await user.save();
+                }; // Check if 'lastActive' is less than 5 minutes ago
+            }
+            
+        }
+
+        // You can do something with the "users" data here
+        // console.log('Retrieved users:', users);
+
+    } catch (error) {
+        console.error('Database connection error:', error);
+    }
+}
+setInterval(getusers, 60000); // 60000 milliseconds = 1 minute
 const port = process.env.PORT || 5000;
 
 app.listen(port, () =>

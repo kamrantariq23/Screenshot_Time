@@ -712,7 +712,8 @@ const getTotalHoursAndScreenshots = async (req, res) => {
         let totalActivity = 0;
         const groupedScreenshots = [];
 
-        const now = new Date(); // Current time for handling ongoing time entries
+        // const now = new Date();
+        const now = user.lastActive; // Current time for handling ongoing time entries
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
