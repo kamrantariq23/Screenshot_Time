@@ -261,8 +261,8 @@ const updateAppUrl = async (req, res) => {
         if (existVersion) {
             res.status(400).json({ success: false, message: 'Version already exists' });
         } else {
-            // const url = await aws.UploadUpdationToAws(file);
-            const url = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/screenshot_12-22-57-PM_10-16-2023_651a7277c83e99001cf2637e.png"
+            const url = await aws.UploadUpdationToAws(file);
+            // const url = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/screenshot_12-22-57-PM_10-16-2023_651a7277c83e99001cf2637e.png"
 
             // Save the new version and URL in the database
             const newVersion = new updationSchema({
@@ -283,7 +283,7 @@ const updateAppUrl = async (req, res) => {
    
 
 const addScreenshot = async (req, res) => {
-    const io = req.io;
+    const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
     const file = req.file;
@@ -365,7 +365,12 @@ const addScreenshot = async (req, res) => {
         await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
         const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
         // Return the success response with the screenshot URL and time
-        // io.emit('new_screenshot', addedScreenshot);
+        // applying real time
+        pusher.trigger("ss-track", "new-ss", {
+            message: "new screenshots",
+            data:newTimeEntry,
+          });
+
         return res.status(200).json({
             success: true,
             id: addedScreenshotId,
