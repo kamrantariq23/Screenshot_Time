@@ -827,6 +827,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                                     time: screenshotTimeRange,
                                     screenshots: screenshotDetails,
                                     totalactivity: totalActivityAsPercentage,
+                                    timeentryId:timeEntry._id,
                                 }
                             );
                         }

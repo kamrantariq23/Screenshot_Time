@@ -1381,6 +1381,7 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
 
                             groupedScreenshots.push({
                                 time: screenshotTimeRange,
+                                timeentryId:timeEntry._id,
                                 screenshots: screenshotsToday.map((screenshot) => ({
                                     _id: screenshot._id,
                                     key: screenshot.key,
@@ -2064,6 +2065,7 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                                     time: screenshotTimeRange,
                                     screenshots: screenshotDetails,
                                     totalactivity: totalActivityAsPercentage,
+                                    timeentryId:timeEntry._id,
                                 }
                             );
                         }
