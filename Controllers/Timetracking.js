@@ -557,7 +557,7 @@ const stopTracking = async (req, res) => {
             }
             else {
                 // Set the endTime to the current time (server-side)
-                activeTimeEntry.endTime = new Date();
+                activeTimeEntry.endTime = user.lastActive;
             }
 
             if (activeTimeEntry.activities.length > 0) {

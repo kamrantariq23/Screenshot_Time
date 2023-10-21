@@ -144,7 +144,7 @@ const updateLastActiveTime = async (req, res) => {
     }
 };
 
-const updateSetting = async (req, res) => {
+const updateSetting = async (req, res, next) => {
     const userId = req.user._id;
     const updateFields = req.body;
 
@@ -178,9 +178,8 @@ const updateSetting = async (req, res) => {
 
         // Save the updated user
         const updatedUser = await user.save();
+        createToken(updatedUser, res, next);
 
-
-        res.status(200).json({ success: true, data: updatedUser });
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({ success: false, message: 'Failed to update user' });

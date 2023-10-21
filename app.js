@@ -21,14 +21,14 @@ const pusher = new Pusher({
     secret: "4f194ad6603392f77f20",
     cluster: "ap2",
     useTLS: true
-  });
+});
 
 const app = express();
 app.use((req, res, next) => {
     // Make the 'pusher' instance available to all routes via the 'res.locals' object
     res.locals.pusher = pusher;
     next();
-  });
+});
 // initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -79,38 +79,34 @@ app.use('/api/v1/SystemAdmin', Router.SystemAdmin);
 
 
 pusher.trigger("ss-track", "my-event", {
-  message: "hello world"
+    message: "hello world"
 });
 // i have implemented it in signup controller like this {next(new Error('Image is required'))}
 app.use(errorHandler);
 getusers()
-async function getusers(){
+async function getusers() {
     try {
 
         // Query the "user" table to retrieve all users
         const users = await User.find();
         for (const user of users) {
             // Get the current time
-        const currentTime = new Date();
+            const currentTime = new Date();
 
-        // Define the time range (5 minutes ago)
-        const fiveMinutesAgo = new Date(currentTime.getTime() - 4 * 60 * 1000); // 5 minutes in milliseconds
+            // Define the time range (5 minutes ago)
+            const fourMinutesAgo = new Date(currentTime.getTime() - 4 * 60 * 1000); // 5 minutes in milliseconds
 
-        // Filter users whose 'lastActive' time is older than 5 minutes ago
-       
+            // Filter users whose 'lastActive' time is older than 5 minutes ago
+
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
-            if(user.isActive){
-                pusher.trigger("ss-track", "my-user", {
-                    message: "hello world",
-                    data:user,
-                  });
-                if(lastActive < fiveMinutesAgo){
-                    
+            if (user.isActive) {
+                if (lastActive < fourMinutesAgo) {
+
                     user.isActive = false;
-                await user.save();
+                    await user.save();
                 }; // Check if 'lastActive' is less than 5 minutes ago
             }
-            
+
         }
 
         // You can do something with the "users" data here
