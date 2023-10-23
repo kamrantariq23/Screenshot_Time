@@ -182,7 +182,7 @@ const updateSetting = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error updating user:', error);
-        res.status(500).json({ success: false, message: 'Failed to update user' });
+        res.status(500).json({ success: false, error, message: 'Failed to update user' });
     }
 };
 
