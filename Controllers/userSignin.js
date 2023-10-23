@@ -32,7 +32,7 @@ const createToken = (user, res, next) => {
             } else {
                 // Token Created
                 res.json({
-                    token,
+                    token, user
                 });
             }
         }
@@ -177,7 +177,9 @@ const updateSetting = async (req, res, next) => {
         });
 
         // Save the updated user
+        
         const updatedUser = await user.save();
+        console.log(updatedUser);
         createToken(updatedUser, res, next);
 
     } catch (error) {
