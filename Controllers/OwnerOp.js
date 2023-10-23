@@ -717,9 +717,9 @@ const getTotalHoursAndScreenshots = async (req, res) => {
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
-                let startTime = converttimezone(timeEntry.startTime, user.timezone);
+                let startTime = converttimezone(timeEntry.startTime, req.user.timezone);
                 
-                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, user.timezone) : converttimezone(now, user.timezone);
+                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, req.user.timezone) : converttimezone(now, req.user.timezone);
                 // let startTime = new Date(startconv);
                 // let endTime = endtimeconv ? new Date(endtimeconv) : now;
                 // let startTime = new Date(timeEntry.startTime);
@@ -791,7 +791,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                             // Map screenshots to screenshotDetails
                             const screenshotDetails = screenshotsToday.map((screenshot) => {
                                 // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                                const convertedCreatedAt = converttimezone(screenshot.createdAt, user.timezone);
+                                const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
 
                                 // Calculate the total activity for this screenshot
                                 if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
@@ -935,7 +935,7 @@ const getTotalHoursAndScreenshotstest = async (req, res) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
                 let startTime = converttimezone(timeEntry.startTime, req.user.timezone);
-                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, user.timezone) : converttimezone(now, user.timezone);
+                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, req.user.timezone) : converttimezone(now, req.user.timezone);
                 // Check if endTime is earlier than startTime, and if so, swap them
                 if (endTime < startTime) {
                     [startTime, endTime] = [endTime, startTime];
@@ -994,7 +994,7 @@ const getTotalHoursAndScreenshotstest = async (req, res) => {
 
 
                                 const screenshotDetails = screenshotsToday.map((screenshot) => {
-                                    const convertedCreatedAt = converttimezone(screenshot.createdAt, user.timezone);
+                                    const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
                                     return {
                                         _id: screenshot._id,
                                         key: screenshot.key,
