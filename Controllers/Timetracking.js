@@ -852,7 +852,7 @@ const getTotalHoursWorked = async (req, res) => {
                 const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
-                if (startTime >= startOfToday && startTime < startOfToday) {
+                if (startTime >= startOfToday && startTime < endOfToday) {
                     totalHoursWorked.daily += hoursWorked;
                 }
 
