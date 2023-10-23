@@ -57,7 +57,7 @@ const getEvents = async (req, res) => {
                 for (const timeEntry of timeTracking.timeEntries) {
                     const startTime = new Date(timeEntry.startTime);
 
-                    if (startTime >= startOfThisMonth) {
+                    if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                         monthlyWorkingHours += (timeEntry.endTime - startTime) / (1000 * 60 * 60);
                     }
                 }
@@ -125,7 +125,7 @@ const getDisabledEvents = async (req, res) => {
                 for (const timeEntry of timeTracking.timeEntries) {
                     const startTime = new Date(timeEntry.startTime);
 
-                    if (startTime >= startOfThisMonth) {
+                    if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                         monthlyWorkingHours += (timeEntry.endTime - startTime) / (1000 * 60 * 60);
                     }
                 }

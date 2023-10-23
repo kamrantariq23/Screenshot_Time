@@ -796,7 +796,13 @@ const getTotalHoursWorked = async (req, res) => {
         startOfYesterday.setDate(startOfYesterday.getDate() - 1);
         const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
 
-        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfThisWeek = new Date(startOfThisWeek);
+        endOfThisWeek.setDate(startOfThisWeek.getDate() + 6); // 6 days added to the start of the week
+
+        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const endOfThisMonth = new Date(startOfThisMonth);
+        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        endOfThisMonth.setDate(0); // 0 day of the next month, which gives the last day of the current month
 
         // Get the timeTrackings
         const timeTrackings = await TimeTracking.find({ userId });
@@ -848,11 +854,11 @@ const getTotalHoursWorked = async (req, res) => {
                     totalHoursWorked.daily += hoursWorked;
                 }
 
-                if (startTime >= startOfThisWeek) {
+                if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
                 }
 
-                if (startTime >= startOfThisMonth) {
+                if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
                 }
 
@@ -918,7 +924,13 @@ const getActivityData = async (req, res) => {
         const startOfYesterday = new Date(startOfToday);
         startOfYesterday.setDate(startOfYesterday.getDate() - 1);
         const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
-        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfThisWeek = new Date(startOfThisWeek);
+        endOfThisWeek.setDate(startOfThisWeek.getDate() + 6); // 6 days added to the start of the week
+
+        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const endOfThisMonth = new Date(startOfThisMonth);
+        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        endOfThisMonth.setDate(0); // 0 day of the next month, which gives the last day of the current month
 
         // Get the timeTrackings
         const timeTrackings = await TimeTracking.find({ userId }).populate('timeEntries.screenshots timeEntries.visitedUrls');
@@ -939,12 +951,12 @@ const getActivityData = async (req, res) => {
                     activityData.daily.visitedUrls.push(...timeEntry.visitedUrls);
                 }
 
-                if (startTime >= startOfThisWeek) {
+                if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     // activityData.weekly.screenshots.push(...timeEntry.screenshots);
                     activityData.weekly.visitedUrls.push(...timeEntry.visitedUrls);
                 }
 
-                if (startTime >= startOfThisMonth) {
+                if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     // activityData.monthly.screenshots.push(...timeEntry.screenshots);
                     activityData.monthly.visitedUrls.push(...timeEntry.visitedUrls);
                 }
@@ -1304,7 +1316,13 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
         const endOfToday = new Date(startOfToday);
         endOfToday.setDate(startOfToday.getDate() + 1);
         const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+        const endOfThisWeek = new Date(startOfThisWeek);
+        endOfThisWeek.setDate(startOfThisWeek.getDate() + 6); // 6 days added to the start of the week
+
         const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const endOfThisMonth = new Date(startOfThisMonth);
+        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        endOfThisMonth.setDate(0); // 0 day of the next month, which gives the last day of the current month
 
         const timeTrackings = await TimeTracking.find({ userId });
 
@@ -1398,11 +1416,11 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
 
                 }
 
-                if (startTime >= startOfThisWeek) {
+                if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
                 }
 
-                if (startTime >= startOfThisMonth) {
+                if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
                 }
             }
@@ -1938,7 +1956,13 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
         const endOfToday = new Date(startOfToday);
         endOfToday.setDate(startOfToday.getDate() + 1);
         const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+        const endOfThisWeek = new Date(startOfThisWeek);
+        endOfThisWeek.setDate(startOfThisWeek.getDate() + 6); // 6 days added to the start of the week
+
         const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const endOfThisMonth = new Date(startOfThisMonth);
+        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        endOfThisMonth.setDate(0); // 0 day of the next month, which gives the last day of the current month
 
         const timeTrackings = await TimeTracking.find({ userId });
 
@@ -2072,11 +2096,11 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                     }
                 }
 
-                if (startTime >= startOfThisWeek) {
+                if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
                 }
 
-                if (startTime >= startOfThisMonth) {
+                if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
                 }
 
