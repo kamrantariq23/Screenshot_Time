@@ -794,8 +794,12 @@ const getTotalHoursWorked = async (req, res) => {
         // Get the start and end times for the current day, week, and month
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfToday = new Date(startOfToday);
+        endOfToday.setDate(startOfToday.getDate() + 1);
+
         const startOfYesterday = new Date(startOfToday);
         startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+        
         const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
 
         const endOfThisWeek = new Date(startOfThisWeek);
