@@ -799,7 +799,7 @@ const getTotalHoursWorked = async (req, res) => {
         const endOfThisWeek = new Date(startOfThisWeek);
         endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
 
-        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfThisMonth = new Date(startOfThisMonth);
         endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
          // 0 day of the next month, which gives the last day of the current month
