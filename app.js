@@ -99,8 +99,9 @@ async function getusers() {
             // Filter users whose 'lastActive' time is older than 5 minutes ago
 
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
-            if (user.isActive) {
+            
                 if (lastActive < fourMinutesAgo) {
+                    if (user.isActive) {
 
                     user.isActive = false;
                     await user.save();

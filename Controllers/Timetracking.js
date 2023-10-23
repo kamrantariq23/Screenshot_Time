@@ -362,7 +362,9 @@ const addScreenshot = async (req, res) => {
 
 
         // Update the user's lastActive field to the current time
-        await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
+        await User.findByIdAndUpdate(
+            req.user._id, {lastActive: new Date(),
+              isActive: true,},{ new: true });
         const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
         // Return the success response with the screenshot URL and time
         // applying real time
@@ -850,7 +852,7 @@ const getTotalHoursWorked = async (req, res) => {
                 const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
-                if (startTime >= startOfToday) {
+                if (startTime >= startOfToday && startTime < startOfToday) {
                     totalHoursWorked.daily += hoursWorked;
                 }
 

@@ -541,7 +541,7 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
                     },
                 };
 
-                if (totalHoursWorkedDaily.hours > 0 || totalHoursWorkedDaily.minutes > 0) {
+                if (user.isActive) {
                     totalUsersWorkingToday++;
                     return userInfo;
                 }
