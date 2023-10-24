@@ -2877,8 +2877,6 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
                     const newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = new Date(startTime);
-                    // newTimeEntry.startTime.setDate(newTimeEntry.startTime.getDate() + 1); // Move to the next day
-                    // newTimeEntry.startTime.setHours(0, 0, 0, 0);
                     newTimeEntry.endTime = new Date(startTime);
                     newTimeEntry.endTime.setHours(23, 59, 59, 999);
 
@@ -2952,9 +2950,6 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         const screenshotTime = new Date(screenshot.createdAt);
                         return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
-
-                    // console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
-                    // console.log('visitedUrl', timeEntry.visitedUrls);
 
                     if (screenshotsToday.length > 0) {
                         console.log('Length of screenshotsToday:', screenshotsToday.length);
