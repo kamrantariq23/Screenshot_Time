@@ -2841,6 +2841,8 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         let totalActivity = 0;
         const groupedScreenshots = [];
         let hoursWorked = 0;
+        let newTimeEntry =[];
+        let newHoursWorked = 0;
         // const now = new Date();
         const now = user.lastActive;
         // Current time for handling ongoing time entries
@@ -2852,7 +2854,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
-                    const newTimeEntry = { ...timeEntry };
+                    newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = new Date(startTime);
                     newTimeEntry.startTime.setDate(newTimeEntry.startTime.getDate() + 1); // Move to the next day
                     newTimeEntry.startTime.setHours(0, 0, 0, 0);
@@ -2865,7 +2867,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                     // Calculate the hours worked for both time entries
                     hoursWorked = (timeEntry.endTime - timeEntry.startTime) / (1000 * 60 * 60);
-                    const newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (timeEntry.startTime >= startOfToday && timeEntry.startTime < endOfToday) {
@@ -2875,7 +2877,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         totalHoursWorked.daily += newHoursWorked;
                     }
                 } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
-                    const newTimeEntry = { ...timeEntry };
+                    newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = new Date(startTime);
                     newTimeEntry.endTime = new Date(startTime);
                     newTimeEntry.endTime.setHours(23, 59, 59, 999);
@@ -2891,7 +2893,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     hoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
                     //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
 
-                    const newHoursWorked = (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (endTime - timeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (timeEntry.startTime >= startOfToday && timeEntry.startTime < endOfToday) {
@@ -3009,9 +3011,15 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
                 }
+                if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
+                    totalHoursWorked.weekly += newHoursWorked;
+                }
 
                 if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
+                    totalHoursWorked.monthly += newHoursWorked;
                 }
 
 
