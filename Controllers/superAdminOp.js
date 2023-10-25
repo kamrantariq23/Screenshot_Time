@@ -2790,20 +2790,29 @@ const getAllemployeesr = (req, res) => {
         });
 };
 
+const setHoursDifference = (startToday, timezoneOffset, timezone)=>{
+    var currentOffset = startToday.getTimezoneOffset();
+        var targetTimezoneOffset = timezoneOffset * 60;
+        var timezoneDifference = targetTimezoneOffset + currentOffset;
+        startToday.setMinutes(startToday.getMinutes() - timezoneDifference);
+        const originalTime = DateTime.fromJSDate(startToday);
+        const convertedTime = originalTime.setZone(timezone);
+        //  // Log the original and converted times
+        return convertedTime;
+}
 const getTotalHoursAndScreenshote = async (req, res) => {
     const { userId } = req.params;
     const date = req.query.date ? new Date(req.query.date) : new Date();
 
     console.log(req.user.timezone);
     console.log(req.user);
+console.log(DateTime.now);
 
     const converttimezone = (time, timezone) => {
 
         const originalTime = DateTime.fromJSDate(time);
         const convertedTime = originalTime.setZone(timezone);
         //  // Log the original and converted times
-        // console.log('Original Time:', originalTime.toString());
-        // console.log('Converted Time:', convertedTime.toString());
         return convertedTime;
         // hello sania 
     };
@@ -2817,17 +2826,27 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
 
-        const startOfToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const endOfToday = new Date(startOfToday);
-        endOfToday.setDate(startOfToday.getDate() + 1);
-        const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
-        const endOfThisWeek = new Date(startOfThisWeek);
-        endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
+        const startToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        var startOfToday = setHoursDifference(startToday, req.user.timezoneOffset, req.user.timezone);
 
-        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        const endOfThisMonth = new Date(startOfThisMonth);
-        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
-        // 0 day of the next month, which gives the last day of the current month
+        const endToday = new Date(startToday);
+        endToday.setDate(startToday.getDate() + 1);
+        var endOfToday = setHoursDifference(endToday, req.user.timezoneOffset, req.user.timezone);
+        
+        const startThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+        var startOfThisWeek = setHoursDifference(startThisWeek, req.user.timezoneOffset, req.user.timezone)
+
+        const endThisWeek = new Date(startThisWeek);
+        endThisWeek.setDate(startThisWeek.getDate() + 7); // 6 days added to the start of the week
+        var endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone);
+    
+        const startThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        var startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone);
+    
+        const endThisMonth = new Date(startThisMonth);
+        endThisMonth.setMonth(startThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        var endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone);
+        
 
         const timeTrackings = await TimeTracking.find({ userId });
 
@@ -2858,7 +2877,9 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     newTimeEntry.startTime = new Date(startTime);
                     newTimeEntry.startTime.setDate(newTimeEntry.startTime.getDate() + 1); // Move to the next day
                     newTimeEntry.startTime.setHours(0, 0, 0, 0);
+                    newTimeEntry.startTime = converttimezone(newTimeEntry.startTime, req.user.timezone);
                     newTimeEntry.endTime = new Date(endTime);
+                    newTimeEntry.endTime = converttimezone(newTimeEntry.endTime, req.user.timezone);
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
                     timeEntry.endTime = new Date(startTime);
@@ -2870,7 +2891,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (timeEntry.startTime >= startOfToday && timeEntry.startTime < endOfToday) {
+                    if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
                     }
                     if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
@@ -2907,7 +2928,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 } else {
                     // Calculate the hours worked using the corrected start and end times
                     hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-
+                    newHoursWorked = 0 ;
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
@@ -3034,7 +3055,14 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         const formatTime = (time) => {
             const hours = Math.floor(time);
             const minutes = Math.round((time - hours) * 60);
-            return `${hours}h ${minutes}m`;
+        
+            // Ensure minutes are displayed correctly
+            if (minutes === 60) {
+                // If minutes are 60, increment the hour and set minutes to 0
+                return `${hours + 1}h 0m`;
+            } else {
+                return `${hours}h ${minutes}m`;
+            }
         };
 
         const formattedTotalHoursWorked = {
