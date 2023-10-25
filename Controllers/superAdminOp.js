@@ -2868,8 +2868,8 @@ console.log(DateTime.now);
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
-                let startTime = converttimezone(timeEntry.startTime, req.user.timezone);
-                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, req.user.timezone) : converttimezone(now, req.user.timezone);
+                let startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
+                let endTime = timeEntry.endTime ? setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone) : setHoursDifference(now, req.user.timezoneOffset, req.user.timezone);
 
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
@@ -2877,14 +2877,14 @@ console.log(DateTime.now);
                     newTimeEntry.startTime = new Date(startTime);
                     newTimeEntry.startTime.setDate(newTimeEntry.startTime.getDate() + 1); // Move to the next day
                     newTimeEntry.startTime.setHours(0, 0, 0, 0);
-                    newTimeEntry.startTime = converttimezone(newTimeEntry.startTime, req.user.timezone);
+                    newTimeEntry.startTime = setHoursDifference(newTimeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
                     newTimeEntry.endTime = new Date(endTime);
-                    newTimeEntry.endTime = converttimezone(newTimeEntry.endTime, req.user.timezone);
+                    newTimeEntry.endTime = setHoursDifference(newTimeEntry.endTime, req.user.timezoneOffset, req.user.timezone);
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
                     timeEntry.endTime = new Date(startTime);
                     timeEntry.endTime.setHours(23, 59, 59, 999);
-                    endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, req.user.timezone) : converttimezone(now, req.user.timezone);
+                    endTime = timeEntry.endTime ? setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone) : setHoursDifference(now, req.user.timezoneOffset, req.user.timezone);
 
                     // Calculate the hours worked for both time entries
                     hoursWorked = (timeEntry.endTime - timeEntry.startTime) / (1000 * 60 * 60);
@@ -2908,8 +2908,8 @@ console.log(DateTime.now);
                     timeEntry.startTime = new Date(startTime);
                     timeEntry.startTime.setDate(timeEntry.startTime.getDate() + 1); // Move to the next day
                     timeEntry.startTime.setHours(0, 0, 0, 0);
-                    // startTime = converttimezone(timeEntry.startTime, req.user.timezone);
-                    startTime = converttimezone(timeEntry.startTime, req.user.timezone);
+                    // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
+                    startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
                     // Calculate the hours worked for both time entries
                     hoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
                     //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
@@ -2958,7 +2958,7 @@ console.log(DateTime.now);
                             const activityStartTime = new Date(activity.startTime);
                             const activityEndTime = new Date(activity.endTime);
                             const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
-                            // const timerangeconv = converttimezone(timeRange, usertimezone)
+                            // const timerangeconv = setHoursDifference(timeRange, usertimezone)
 
                             groupedScreenshots.push({ time: timeRange });
                         }
@@ -2986,7 +2986,7 @@ console.log(DateTime.now);
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                            const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
+                            const convertedCreatedAt = setHoursDifference(screenshot.createdAt, req.user.timezoneOffset, req.user.timezone);
 
                             // Calculate the total activity for this screenshot
                             if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
