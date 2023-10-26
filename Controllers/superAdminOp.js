@@ -2868,8 +2868,8 @@ console.log(DateTime.now);
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
-                let startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
-                let endTime = timeEntry.endTime ? setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone) : setHoursDifference(now, req.user.timezoneOffset, req.user.timezone);
+                let startTime = converttimezone(timeEntry.startTime, req.user.timezone);
+                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, req.user.timezone) : converttimezone(now, req.user.timezone);
 
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
@@ -2879,15 +2879,17 @@ console.log(DateTime.now);
                     newTimeEntry.startTime.setHours(0, 0, 0, 0);
                     newTimeEntry.startTime = setHoursDifference(newTimeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
                     newTimeEntry.endTime = new Date(endTime);
-                    newTimeEntry.endTime = setHoursDifference(newTimeEntry.endTime, req.user.timezoneOffset, req.user.timezone);
+                    newTimeEntry.endTime = converttimezone(newTimeEntry.endTime, req.user.timezone);
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                    timeEntry.startTime = new Date(startTime);
+                    startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone)
                     timeEntry.endTime = new Date(startTime);
                     timeEntry.endTime.setHours(23, 59, 59, 999);
                     endTime = timeEntry.endTime ? setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone) : setHoursDifference(now, req.user.timezoneOffset, req.user.timezone);
 
                     // Calculate the hours worked for both time entries
-                    hoursWorked = (timeEntry.endTime - timeEntry.startTime) / (1000 * 60 * 60);
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
                     newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
@@ -2908,13 +2910,15 @@ console.log(DateTime.now);
                     timeEntry.startTime = new Date(startTime);
                     timeEntry.startTime.setDate(timeEntry.startTime.getDate() + 1); // Move to the next day
                     timeEntry.startTime.setHours(0, 0, 0, 0);
+                    timeEntry.endTime = new Date(endTime)
+                    endTime = setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone)
                     // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
                     startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
                     // Calculate the hours worked for both time entries
                     hoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
                     //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
 
-                    newHoursWorked = (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (timeEntry.startTime >= startOfToday && timeEntry.startTime < endOfToday) {
