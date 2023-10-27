@@ -3125,26 +3125,26 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
 
-        const startToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        var startOfToday = setHoursDifference(startToday, req.user.timezoneOffset, req.user.timezone);
+        const startOfToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        // var startOfToday = setHoursDifference(startOfToday, req.user.timezoneOffset, req.user.timezone);
 
-        const endToday = new Date(startToday);
-        endToday.setDate(startToday.getDate() + 1);
-        var endOfToday = setHoursDifference(endToday, req.user.timezoneOffset, req.user.timezone);
+        const endOfToday = new Date(startOfToday);
+        endOfToday.setDate(startOfToday.getDate() + 1);
+        // var endOfToday = setHoursDifference(endOfToday, req.user.timezoneOffset, req.user.timezone);
 
-        const startThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
-        var startOfThisWeek = setHoursDifference(startThisWeek, req.user.timezoneOffset, req.user.timezone)
+        const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+        // var startOfThisWeek = setHoursDifference(startOfThisWeek, req.user.timezoneOffset, req.user.timezone)
 
-        const endThisWeek = new Date(startThisWeek);
-        endThisWeek.setDate(startThisWeek.getDate() + 7); // 6 days added to the start of the week
-        var endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone);
+        const endOfThisWeek = new Date(startOfThisWeek);
+        endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
+        // var endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone);
 
-        const startThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        var startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone);
+        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        // var startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone);
 
-        const endThisMonth = new Date(startThisMonth);
-        endThisMonth.setMonth(startThisMonth.getMonth() + 1); // 1 month added to the start of the month
-        var endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone);
+        const endOfThisMonth = new Date(startOfThisMonth);
+        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        // var endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone);
 
         const timeTrackings = await TimeTracking.find({ userId });
         const activityData = {
@@ -3223,6 +3223,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     console.log('Screenshots are available for processing.');
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
                         const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
+
                             return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
 
