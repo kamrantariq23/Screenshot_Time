@@ -2847,16 +2847,7 @@ const getAllemployeesr = (req, res) => {
         });
 };
 
-const setHoursDifference = (startToday, timezoneOffset, timezone) => {
-    var currentOffset = startToday.getTimezoneOffset();
-    var targetTimezoneOffset = timezoneOffset * 60;
-    var timezoneDifference = targetTimezoneOffset + currentOffset;
-    startToday.setMinutes(startToday.getMinutes() - timezoneDifference);
-    const originalTime = DateTime.fromJSDate(startToday);
-    const convertedTime = originalTime.setZone(timezone);
-    //  // Log the original and converted times
-    return convertedTime;
-}
+
 // const getTotalHoursAndScreenshote = async (req, res) => {
 //     const { userId } = req.params;
 //     const date = req.query.date ? new Date(req.query.date) : new Date();
@@ -3158,6 +3149,19 @@ const setHoursDifference = (startToday, timezoneOffset, timezone) => {
 //         return res.status(500).json({ success: false, message: 'Internal server error' });
 //     }
 // };
+
+const setHoursDifference = (starttToday, timezoneOffset, timezone) => {
+    // var startOToday = '2023-10-20T00:00:00.000Z'
+    var currentOffset = starttToday.getTimezoneOffset();
+    var targetTimezoneOffset = timezoneOffset * 60;
+    var timezoneDifference = targetTimezoneOffset + currentOffset;
+    starttToday.setMinutes(starttToday.getMinutes() - timezoneDifference);
+    const originalTime = DateTime.fromJSDate(starttToday);
+    const convertedTime = originalTime.setZone(timezone);
+    //  // Log the original and converted times
+    return convertedTime;
+}
+
 const getTotalHoursAndScreenshote = async (req, res) => {
     const { userId } = req.params;
     const date = req.query.date ? new Date(req.query.date) : new Date();
@@ -3182,26 +3186,30 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
 
-        const startOfToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        // var startOfToday = setHoursDifference(startOfToday, req.user.timezoneOffset, req.user.timezone);
+        const startToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const startOfToday = setHoursDifference(startToday, req.user.timezoneOffset, req.user.timezone)
+        const endToday = new Date(startToday);
+        endToday.setDate(startToday.getDate() + 1);
+        endToday.setHours(23, 59, 50, 0);
+        const endOfToday = setHoursDifference(endToday, req.user.timezoneOffset, req.user.timezone)
 
-        const endOfToday = new Date(startOfToday);
-        endOfToday.setDate(startOfToday.getDate() + 1);
-        // var endOfToday = setHoursDifference(endOfToday, req.user.timezoneOffset, req.user.timezone);
+        // Calculate endOfThisWeek
+        const startThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - (date.getDay() + 6) % 7);
+        const startOfThisWeek = setHoursDifference(startThisWeek, req.user.timezoneOffset, req.user.timezone)
+        const endThisWeek = new Date(startOfThisWeek);
+        endThisWeek.setDate(endThisWeek.getDate() + 7);
+        endThisWeek.setHours(23, 59, 50, 0);
+        const endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone)
 
-        const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
-        // var startOfThisWeek = setHoursDifference(startOfThisWeek, req.user.timezoneOffset, req.user.timezone)
+        // Calculate endOfThisMonth
+        
+        const startThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone)
+        const endThisMonth = new Date(startOfThisMonth);
+        endThisMonth.setMonth(endThisMonth.getMonth() + 1); // Set to last day of the current month
+        endThisMonth.setHours(23, 59, 50, 0);
+        const endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone)
 
-        const endOfThisWeek = new Date(startOfThisWeek);
-        endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
-        // var endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone);
-
-        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        // var startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone);
-
-        const endOfThisMonth = new Date(startOfThisMonth);
-        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
-        // var endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone);
 
         const timeTrackings = await TimeTracking.find({ userId });
         const activityData = {
