@@ -1082,7 +1082,7 @@ const deleteEmployee = (req, res) => {
     });
 };
 
-const updateEmployeeSettings = async (req, res) => {
+const updateEmployeeSettingsold = async (req, res) => {
     const { userId } = req.params;
 
     try {
@@ -1127,6 +1127,63 @@ const updateEmployeeSettings = async (req, res) => {
         console.log(error);
     }
 };
+
+const updateEmployeeSettings = async (req, res) => {
+    const userIds = req.body.userId; // Assuming userId is an array or contains multiple values
+
+    try {
+        const updatedSettings = [];
+
+        for (const userId of userIds) {
+            const user = await User.findById(userId);
+            if (!user) {
+                // Handle the case where a user is not found
+                continue; // Move to the next userId
+            }
+
+            let settings;
+
+            if (!user.employeeSettings) {
+                // Create a new employee settings record if it doesn't exist
+                const settingsData = {
+                    userId: user._id,
+                    ...req.body, // You might want to process req.body accordingly
+                };
+
+                settings = new EmployeeSettings(settingsData);
+                await settings.save();
+                user.employeeSettings = settings._id;
+                await user.save();
+            } else {
+                // Update the existing employee settings record
+                settings = await EmployeeSettings.findByIdAndUpdate(
+                    user.employeeSettings,
+                    req.body,
+                    { new: true, runValidators: true }
+                );
+            }
+
+            if (!settings) {
+                // Handle the case where settings are not found
+                continue; // Move to the next userId
+            }
+
+            updatedSettings.push(settings);
+        }
+
+        if (updatedSettings.length === 0) {
+            // Handle the case where no settings were updated
+            return res.status(404).json({ success: false, message: 'No employee settings were updated' });
+        }
+
+        res.status(200).json({ success: true, message: 'Employee settings updated', data: updatedSettings });
+    } catch (error) {
+        console.error('Error updating employee settings:', error);
+        res.status(500).json({ success: false, message: 'Failed to update employee settings' });
+        console.log(error);
+    }
+};
+
 
 const updateUserArchiveStatus = async (req, res) => {
     const userId = req.params.userId;

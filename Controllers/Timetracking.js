@@ -288,6 +288,7 @@ const addScreenshot = async (req, res) => {
     const { description } = req.body;
     const file = req.file;
     const { activityPercentage } = req.body;
+    const endTime = 0;
     let visitedUrls = [];
     try {
         // Find the time tracking document with the given time entry
@@ -378,7 +379,7 @@ const addScreenshot = async (req, res) => {
             id: addedScreenshotId,
             screenshot: url,
             time: currentTime,
-            data: timeTrack,
+            data: timeEntry,
             message: 'Screenshot added successfully',
         });
     } catch (error) {
