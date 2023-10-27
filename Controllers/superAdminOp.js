@@ -3129,7 +3129,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         // var startOfToday = setHoursDifference(startOfToday, req.user.timezoneOffset, req.user.timezone);
 
         const endOfToday = new Date(startOfToday);
-        endOfToday.setDate(startToday.getDate() + 1);
+        endOfToday.setDate(startOfToday.getDate() + 1);
         // var endOfToday = setHoursDifference(endOfToday, req.user.timezoneOffset, req.user.timezone);
 
         const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
