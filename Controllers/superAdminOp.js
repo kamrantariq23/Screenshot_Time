@@ -3223,7 +3223,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     console.log('Screenshots are available for processing.');
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
                         const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
-                        return screenshotTime >= startOfToday && screenshotTime < endOfToday;
+                            return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
 
                     console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
@@ -3331,6 +3331,9 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 usertype: user.userType,
+                startOfToday:startOfToday,
+                endOfToday: endOfToday,
+                startOfThisWeek: startOfThisWeek,
             },
         });
     } catch (error) {
