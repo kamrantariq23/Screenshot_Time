@@ -3186,7 +3186,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         const { DateTime } = require('luxon');
 
         // Convert user input to the application's standard time zone
-        const userDateTime = DateTime.fromJSDate(date, { zone: req.user.timezone });
+        const userDateTime = setHoursDifference(date, req.user.timezoneOffset, req.user.timezone)
 
         // Perform calculations in the standard time zone
         const startOfToday = userDateTime.startOf('day');
@@ -3326,7 +3326,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                     console.log('Screenshots are available for processing.');
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
-                        const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
+                        const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
 
                         return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
@@ -3346,7 +3346,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                            const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
+                            const convertedCreatedAt = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
 
                             // Calculate the total activity for this screenshot
                             if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
