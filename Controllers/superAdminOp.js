@@ -409,10 +409,10 @@ const calculateBillingAmount = async (user, period) => {
     const totalBillingAmount = (totalHoursWorked.hours + totalHoursWorked.minutes / 60) * ratePerHour;
     return Math.round(totalBillingAmount);
 };
-
 async function retrieveScreenshotsForUser(userId) {
     try {
         const user = await User.findById(userId);
+
         // Find all time entries for the user
         const timeEntries = await TimeTracking.aggregate([
             { $match: { userId } },
@@ -425,26 +425,18 @@ async function retrieveScreenshotsForUser(userId) {
             return null; // No time entries found for the user
         }
 
-        const mostRecentTimeEntry = (timeEntries[0].timeEntries.screenshots.length > 0 ? timeEntries[0].timeEntries : null) ||
-                         (timeEntries[1].timeEntries.screenshots.length > 0 ? timeEntries[1].timeEntries : null);
+        let mostRecentTimeEntry = timeEntries[0].timeEntries;
+        if (mostRecentTimeEntry.screenshots.length === 0) {
+            // If there are no screenshots in the most recent timeEntry, delete it and start the function again
+            await TimeTracking.updateOne(
+                { userId },
+                { $pull: { timeEntries: mostRecentTimeEntry } }
+            );
 
-const secondToLastTimeEntry = (timeEntries[2] && timeEntries[2].timeEntries.screenshots.length > 0 ? timeEntries[2].timeEntries : null) ||
-                            (timeEntries[3] && timeEntries[3].timeEntries.screenshots.length > 0 ? timeEntries[3].timeEntries : null);
-
-
-        if (
-            !mostRecentTimeEntry ||
-            mostRecentTimeEntry.screenshots.length === 0
-        ) {
-            // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
-            if (secondToLastTimeEntry) {
-                mostRecentTimeEntry.screenshots = secondToLastTimeEntry.screenshots;
-            } else {
-                mostRecentTimeEntry.screenshots = []; // If there's no second-to-last timeEntry, initialize screenshots as an empty array
-            }
+            return retrieveScreenshotsForUser(userId);
         }
 
-        // Sort the screenshots within the most recent time entry by their capture time
+        // Continue with sorting and returning the latest screenshot
         mostRecentTimeEntry.screenshots.sort((a, b) => {
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
@@ -456,6 +448,7 @@ const secondToLastTimeEntry = (timeEntries[2] && timeEntries[2].timeEntries.scre
         return null; // Return null in case of any error
     }
 }
+
 
 const getTotalHoursWorkedAllEmployees = async (req, res) => {
     try {
@@ -3196,13 +3189,13 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         // Convert user input to the application's standard time zone
         const userDateTime = DateTime.fromJSDate(date, { zone: req.user.timezone });
-        
+
         // Perform calculations in the standard time zone
         const startOfToday = userDateTime.startOf('day');
         const endOfToday = userDateTime.endOf('day');
         const startOfThisWeek = userDateTime.startOf('week');
         const startOfThisMonth = userDateTime.startOf('month');
-        
+
         // Format and display the results in the user's preferred time zone
         const startOfTodayFormatted = startOfToday.setZone(req.user.timezone).toLocaleString();
         const endOfTodayFormatted = endOfToday.setZone(req.user.timezone).toLocaleString();
@@ -3212,7 +3205,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         // Calculate endOfThisMonth
         const endOfThisMonth = userDateTime.endOf('month');
         // ...and so on for other calculations
-        
+
         // const startToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         // const startOfToday = setHoursDifference(startToday, req.user.timezoneOffset, req.user.timezone)
         // const endToday = new Date(startToday);
@@ -3229,7 +3222,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         // const endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone)
 
         // // Calculate endOfThisMonth
-        
+
         // const startThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         // const startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone)
         // const endThisMonth = new Date(startOfThisMonth);
@@ -3270,7 +3263,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     // Create a new time entry for the next day starting at 12:00 AM
                     newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = endTime.startOf('day');
-                    
+
                     newTimeEntry.endTime = new Date(endTime);
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
@@ -3298,7 +3291,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
 
                     timeEntry.startTime = endTime.startOf('day');
-                    startTime = DateTime.fromJSDate(timeEntry.startTime, {zone: req.user.timezone});
+                    startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
                     // Calculate the hours worked for both time entries
                     hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
                     //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
@@ -3317,7 +3310,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 } else {
                     // Calculate the hours worked using the corrected start and end times
                     hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-                    newHoursWorked = 0 ;
+                    newHoursWorked = 0;
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
@@ -3360,7 +3353,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
                         const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
 
-                            return screenshotTime >= startOfToday && screenshotTime < endOfToday;
+                        return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
 
                     console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
@@ -3485,7 +3478,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 usertype: user.userType,
-                startOfToday:startOfToday,
+                startOfToday: startOfToday,
                 endOfToday: endOfToday,
                 startOfThisWeek: startOfThisWeek,
             },
