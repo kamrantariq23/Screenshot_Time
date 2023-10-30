@@ -697,7 +697,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
         const { DateTime } = require('luxon');
 
         // Convert user input to the application's standard time zone
-        const userDateTime = DateTime.fromJSDate(date, { zone: req.user.timezone });
+        const userDateTime = setHoursDifference(date, req.user.timezoneOffset, req.user.timezone)
 
         // Perform calculations in the standard time zone
         const startOfToday = userDateTime.startOf('day');
