@@ -1183,7 +1183,7 @@ const updateEmployeeSettings = async (req, res) => {
         res.status(200).json({ success: true, message: 'Employee settings updated', data: updatedSettings });
     } catch (error) {
         console.error('Error updating employee settings:', error);
-        res.status(500).json({ success: false, message: 'Failed to update employee settings' ,error});
+        res.status(500).json({ success: false, message: 'Failed to update employee settings' ,error : error});
         console.log(error);
     }
 };
