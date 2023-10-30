@@ -3176,8 +3176,6 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         return convertedTime;
     };
 
-
-
     try {
         const user = await User.findById(userId);
         if (!user) {
@@ -3205,31 +3203,6 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         // Calculate endOfThisMonth
         const endOfThisMonth = userDateTime.endOf('month');
         // ...and so on for other calculations
-
-        // const startToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        // const startOfToday = setHoursDifference(startToday, req.user.timezoneOffset, req.user.timezone)
-        // const endToday = new Date(startToday);
-        // endToday.setDate(startToday.getDate() + 1);
-        // endToday.setHours(23, 59, 50, 0);
-        // const endOfToday = setHoursDifference(endToday, req.user.timezoneOffset, req.user.timezone)
-
-        // // Calculate endOfThisWeek
-        // const startThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - (date.getDay() + 6) % 7);
-        // const startOfThisWeek = setHoursDifference(startThisWeek, req.user.timezoneOffset, req.user.timezone)
-        // const endThisWeek = new Date(startOfThisWeek);
-        // endThisWeek.setDate(endThisWeek.getDate() + 7);
-        // endThisWeek.setHours(23, 59, 50, 0);
-        // const endOfThisWeek = setHoursDifference(endThisWeek, req.user.timezoneOffset, req.user.timezone)
-
-        // // Calculate endOfThisMonth
-
-        // const startThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        // const startOfThisMonth = setHoursDifference(startThisMonth, req.user.timezoneOffset, req.user.timezone)
-        // const endThisMonth = new Date(startOfThisMonth);
-        // endThisMonth.setMonth(endThisMonth.getMonth() + 1); // Set to last day of the current month
-        // endThisMonth.setHours(23, 59, 50, 0);
-        // const endOfThisMonth = setHoursDifference(endThisMonth, req.user.timezoneOffset, req.user.timezone)
-
 
         const timeTrackings = await TimeTracking.find({ userId });
         const activityData = {
