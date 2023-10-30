@@ -3246,6 +3246,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         let activityCount = 0;
         let totalActivity = 0;
         let newHoursWorked = 0;
+        let TimeTrackingId  =0;
         let hoursWorked = 0;
         const groupedScreenshots = [];
         var newTimeEntry = [];
@@ -3255,6 +3256,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
+                TimeTrackingId = timeTracking._id;
                 let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
 
                 let endTime = timeEntry.endTime ? DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone }) : DateTime.fromJSDate(now, { zone: req.user.timezone });
@@ -3384,7 +3386,6 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                                 key: screenshot.key,
                                 description: screenshot.description,
                                 time: convertedCreatedAt.toFormat('h:mm a'),
-                                trackingId: timeTracking._id,
                                 visitedUrls: screenshot.visitedUrls,
                             };
                         });
@@ -3481,6 +3482,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 startOfToday: startOfToday,
                 endOfToday: endOfToday,
                 startOfThisWeek: startOfThisWeek,
+                TimeTrackingId : TimeTrackingId,
             },
         });
     } catch (error) {
