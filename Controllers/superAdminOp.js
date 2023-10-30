@@ -3445,7 +3445,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
         const formatTime = (time) => {
             const hours = Math.floor(time);
-            const minutes = Math.round((time - hours) * 60);
+            const minutes = Math.floor((time - hours) * 60);
             if (minutes === 60) {
                 // If minutes are 60, increment the hour and set minutes to 0
                 return `${hours + 1}h 0m`;
