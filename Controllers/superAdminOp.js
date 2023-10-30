@@ -433,7 +433,7 @@ const secondToLastTimeEntry = (timeEntries[2] && timeEntries[2].timeEntries.scre
 
 
         if (
-            !mostRecentTimeEntry.screenshots ||
+            !mostRecentTimeEntry ||
             mostRecentTimeEntry.screenshots.length === 0
         ) {
             // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
@@ -1133,28 +1133,31 @@ const updateEmployeeSettingsold = async (req, res) => {
 };
 
 const updateEmployeeSettings = async (req, res) => {
-    const userIds = req.body.userId; // Assuming userId is an array or contains multiple values
+    const userData = req.body; // Assuming userData is an array of objects, each containing user ID and settings data
 
     try {
         const updatedSettings = [];
 
-        for (const userId of userIds) {
+        for (const userDataEntry of userData) {
+            const userId = userDataEntry.userId;
+            const settingsData = userDataEntry.settings;
+
             const user = await User.findById(userId);
             if (!user) {
                 // Handle the case where a user is not found
-                continue; // Move to the next userId
+                continue; // Move to the next user
             }
 
             let settings;
 
             if (!user.employeeSettings) {
                 // Create a new employee settings record if it doesn't exist
-                const settingsData = {
+                const settingsDataWithUserId = {
                     userId: user._id,
-                    ...req.body, // You might want to process req.body accordingly
+                    ...settingsData, // You might want to process settingsData accordingly
                 };
 
-                settings = new EmployeeSettings(settingsData);
+                settings = new EmployeeSettings(settingsDataWithUserId);
                 await settings.save();
                 user.employeeSettings = settings._id;
                 await user.save();
@@ -1162,14 +1165,14 @@ const updateEmployeeSettings = async (req, res) => {
                 // Update the existing employee settings record
                 settings = await EmployeeSettings.findByIdAndUpdate(
                     user.employeeSettings,
-                    req.body,
+                    settingsData,
                     { new: true, runValidators: true }
                 );
             }
 
             if (!settings) {
                 // Handle the case where settings are not found
-                continue; // Move to the next userId
+                continue; // Move to the next user
             }
 
             updatedSettings.push(settings);
@@ -1183,10 +1186,10 @@ const updateEmployeeSettings = async (req, res) => {
         res.status(200).json({ success: true, message: 'Employee settings updated', data: updatedSettings });
     } catch (error) {
         console.error('Error updating employee settings:', error);
-        res.status(500).json({ success: false, message: 'Failed to update employee settings' ,error : error});
-        console.log(error);
+        res.status(500).json({ success: false, message: 'Failed to update employee settings', error: error });
     }
 };
+
 
 
 const updateUserArchiveStatus = async (req, res) => {
