@@ -418,15 +418,19 @@ async function retrieveScreenshotsForUser(userId) {
             { $match: { userId } },
             { $unwind: '$timeEntries' },
             { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-            { $limit: 2 } // Retrieve the two most recent time entries
+            { $limit: 4 } // Retrieve the two most recent time entries
         ]);
 
         if (!timeEntries || timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
 
-        const mostRecentTimeEntry = timeEntries[0].timeEntries;
-        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[1].timeEntries : null;
+        const mostRecentTimeEntry = (timeEntries[0].timeEntries.screenshots.length > 0 ? timeEntries[0].timeEntries : null) ||
+                         (timeEntries[1].timeEntries.screenshots.length > 0 ? timeEntries[1].timeEntries : null);
+
+const secondToLastTimeEntry = (timeEntries[2] && timeEntries[2].timeEntries.screenshots.length > 0 ? timeEntries[2].timeEntries : null) ||
+                            (timeEntries[3] && timeEntries[3].timeEntries.screenshots.length > 0 ? timeEntries[3].timeEntries : null);
+
 
         if (
             !mostRecentTimeEntry.screenshots ||
@@ -1179,7 +1183,7 @@ const updateEmployeeSettings = async (req, res) => {
         res.status(200).json({ success: true, message: 'Employee settings updated', data: updatedSettings });
     } catch (error) {
         console.error('Error updating employee settings:', error);
-        res.status(500).json({ success: false, message: 'Failed to update employee settings' });
+        res.status(500).json({ success: false, message: 'Failed to update employee settings' ,error});
         console.log(error);
     }
 };
