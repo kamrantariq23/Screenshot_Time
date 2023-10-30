@@ -142,7 +142,7 @@ eventRouter.patch('/UpdateBillingInfo/:userId', events.updateBillingInfo);
 
 eventRouter.patch('/archived/:userId', events.updateUserArchiveStatus);
 
-eventRouter.patch('/settingsE/:userId', isAdminMiddleware.isManagerOwner, events.updateEmployeeSettings);
+eventRouter.patch('/settingsE/', isAdminMiddleware.isManagerOwner, events.updateEmployeeSettings);
 
 eventRouter.patch('/editCompanyName/:id', isAdminMiddleware.isManagerOwner, events.editCompanyName);
 
