@@ -3262,12 +3262,9 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
                     newTimeEntry = { ...timeEntry };
-                    newTimeEntry.startTime = new Date(startTime);
-                    newTimeEntry.startTime.setDate(newTimeEntry.startTime.getDate() + 1); // Move to the next day
-                    newTimeEntry.startTime.setHours(0, 0, 0, 0);
-                    newTimeEntry.startTime = setHoursDifference(newTimeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
-                    // newTimeEntry.endTime = new Date(endTime);
-                    // newTimeEntry.endTime = converttimezone(newTimeEntry.endTime, req.user.timezone);
+                    newTimeEntry.startTime = endTime.startOf('day');
+                    
+                    newTimeEntry.endTime = new Date(endTime);
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
                     // timeEntry.startTime = new Date(startTime);
@@ -3277,7 +3274,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                     // Calculate the hours worked for both time entries
                     hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-                    newHoursWorked = (endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (startTime >= startOfToday && startTime < endOfToday) {
@@ -3289,30 +3286,24 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
                     newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = new Date(startTime);
-                    newTimeEntry.endTime = new Date(startTime);
-                    newTimeEntry.endTime.setHours(23, 59, 59, 999);
+                    newTimeEntry.endTime = startTime.endOf('day');
 
                     // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
 
-                    timeEntry.startTime = new Date(startTime);
-                    timeEntry.startTime.setDate(timeEntry.startTime.getDate() + 1); // Move to the next day
-                    timeEntry.startTime.setHours(0, 0, 0, 0);
-                    timeEntry.endTime = new Date(endTime)
-                    endTime = setHoursDifference(timeEntry.endTime, req.user.timezoneOffset, req.user.timezone)
-                    // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
-                    startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone);
+                    timeEntry.startTime = endTime.startOf('day');
+                    startTime = DateTime.fromJSDate(timeEntry.startTime, {zone: req.user.timezone});
                     // Calculate the hours worked for both time entries
-                    hoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
                     //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
 
-                    newHoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (timeEntry.startTime >= startOfToday && timeEntry.startTime < endOfToday) {
+                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
                         totalHoursWorked.daily += newHoursWorked;
                     }
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                    if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
                     }
 
@@ -3422,13 +3413,25 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     }
                 }
 
+                // if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
+                //     totalHoursWorked.weekly += hoursWorked;
+                // }
 
+                // if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
+                //     totalHoursWorked.monthly += hoursWorked;
+                // }
                 if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
+                    totalHoursWorked.weekly += newHoursWorked;
                 }
 
                 if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
+                    totalHoursWorked.monthly += newHoursWorked;
                 }
 
 
@@ -3443,7 +3446,12 @@ const getTotalHoursAndScreenshote = async (req, res) => {
         const formatTime = (time) => {
             const hours = Math.floor(time);
             const minutes = Math.round((time - hours) * 60);
-            return `${hours}h ${minutes}m`;
+            if (minutes === 60) {
+                // If minutes are 60, increment the hour and set minutes to 0
+                return `${hours + 1}h 0m`;
+            } else {
+                return `${hours}h ${minutes}m`;
+            }
         };
 
         const formattedTotalHoursWorked = {
