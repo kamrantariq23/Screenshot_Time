@@ -1942,6 +1942,18 @@ const getTotalHoursForWeek = async (userId, weekStartDate, weekEndDate) => {
     return totalHours;
 };
 
+const setHoursDifference = (starttToday, timezoneOffset, timezone) => {
+    // var startOToday = '2023-10-20T00:00:00.000Z'
+    var currentOffset = starttToday.getTimezoneOffset();
+    var targetTimezoneOffset = timezoneOffset * 60;
+    var timezoneDifference = targetTimezoneOffset + currentOffset;
+    starttToday.setMinutes(starttToday.getMinutes() - timezoneDifference);
+    const originalTime = DateTime.fromJSDate(starttToday);
+    const convertedTime = originalTime.setZone(timezone);
+    //  // Log the original and converted times
+    return convertedTime;
+}
+
 const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
     const userId = req.user._id;
     const date = req.query.date ? new Date(req.query.date) : new Date();
