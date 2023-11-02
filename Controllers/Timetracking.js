@@ -312,7 +312,7 @@ const addScreenshot = async (req, res) => {
         const url = await aws.UploadToAws(file);
 
         // Get the current date and time in the user's local time zone
-        const userLocalNow = new Date();
+        const userLocalNow = new Date(req.body.createdAt);
 
         // Get the current time as a string in 'hour:minute' format
         const currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });

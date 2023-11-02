@@ -452,7 +452,7 @@ async function retrieveScreenshotsForUser(userId) {
 
 const getTotalHoursWorkedAllEmployees = async (req, res) => {
     try {
-        const users = await User.find({ company: req.user.company });
+        const users = await User.find({ company: req.user.company, userType: { $in: ['user', 'admin'] } });
         const totalHoursAll = {
             daily: { hours: 0, minutes: 0 },
             yesterday: { hours: 0, minutes: 0 },
