@@ -183,8 +183,8 @@ async function retrieveScreenshotsForUser(userId) {
             return null; // No time entries found for the user
         }
 
-        const mostRecentTimeEntry = timeEntries[0].timeEntries;
-        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[1].timeEntries : null;
+        const mostRecentTimeEntry = timeEntries[0].timeEntries ? timeEntries[0].timeEntries : timeEntries[1].timeEntries;
+        const secondToLastTimeEntry = timeEntries[2] ? timeEntries[2].timeEntries : timeEntries[3].timeEntries;
 
         if (
             !mostRecentTimeEntry.screenshots ||
