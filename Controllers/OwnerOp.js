@@ -844,67 +844,69 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                 }
 
                 // Check if the time entry has screenshots taken today
-                if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
-                    console.log('Screenshots are available for processing.');
-                    const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
-                        const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
+                if (startTime >= startOfToday && startTime < endOfToday) {
+                    if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+                        console.log('Screenshots are available for processing.');
+                        const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
+                            const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
 
-                        return screenshotTime >= startOfToday && screenshotTime < endOfToday;
-                    });
-
-                    console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
-                    console.log('visitedUrl', timeEntry.visitedUrls);
-
-                    if (screenshotsToday.length > 0) {
-                        console.log('Length of screenshotsToday:', screenshotsToday.length);
-
-                        const screenshotStartTime = startTime.toFormat('h:mm a');
-                        const screenshotEndTime = endTime.toFormat('h:mm a');
-
-                        const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
-                        console.log('Range', screenshotTimeRange);
-
-                        // Map screenshots to screenshotDetails
-                        const screenshotDetails = screenshotsToday.map((screenshot) => {
-                            // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                            const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
-
-                            // Calculate the total activity for this screenshot
-                            if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
-                                totalActivity += screenshot.visitedUrls[0].activityPercentage || 0;
-                                activityCount += 1;
-                            }
-
-                            return {
-                                _id: screenshot._id,
-                                key: screenshot.key,
-                                description: screenshot.description,
-                                time: convertedCreatedAt.toFormat('h:mm a'),
-                                visitedUrls: screenshot.visitedUrls,
-                            };
+                            return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                         });
-                        let totalcount = 0;
-                        const totalActivityForScreenshots = screenshotDetails.reduce((total, screenshot) => {
-                            // Check if visitedUrls and activityPercentage are defined
-                            if (screenshot.visitedUrls && screenshot.visitedUrls[0] && screenshot.visitedUrls[0].activityPercentage !== undefined) {
-                                return total + screenshot.visitedUrls[0].activityPercentage;
-                            }
-                            return total;
-                        }, 0);
 
-                        const maxPossibleActivity = 100 * screenshotDetails.length; // Assuming each screenshot can have a maximum activity of 100%
+                        console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
+                        console.log('visitedUrl', timeEntry.visitedUrls);
 
-                        const totalActivityAsPercentage = totalActivityForScreenshots / screenshotDetails.length;
+                        if (screenshotsToday.length > 0) {
+                            console.log('Length of screenshotsToday:', screenshotsToday.length);
 
-                        // Push screenshot data to groupedScreenshots along with totalactivity as a percentage
-                        groupedScreenshots.push(
-                            {
-                                time: screenshotTimeRange,
-                                screenshots: screenshotDetails,
-                                totalactivity: totalActivityAsPercentage,
-                                timeentryId: timeEntry._id,
-                            }
-                        );
+                            const screenshotStartTime = startTime.toFormat('h:mm a');
+                            const screenshotEndTime = endTime.toFormat('h:mm a');
+
+                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                            console.log('Range', screenshotTimeRange);
+
+                            // Map screenshots to screenshotDetails
+                            const screenshotDetails = screenshotsToday.map((screenshot) => {
+                                // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
+                                const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
+
+                                // Calculate the total activity for this screenshot
+                                if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
+                                    totalActivity += screenshot.visitedUrls[0].activityPercentage || 0;
+                                    activityCount += 1;
+                                }
+
+                                return {
+                                    _id: screenshot._id,
+                                    key: screenshot.key,
+                                    description: screenshot.description,
+                                    time: convertedCreatedAt.toFormat('h:mm a'),
+                                    visitedUrls: screenshot.visitedUrls,
+                                };
+                            });
+                            let totalcount = 0;
+                            const totalActivityForScreenshots = screenshotDetails.reduce((total, screenshot) => {
+                                // Check if visitedUrls and activityPercentage are defined
+                                if (screenshot.visitedUrls && screenshot.visitedUrls[0] && screenshot.visitedUrls[0].activityPercentage !== undefined) {
+                                    return total + screenshot.visitedUrls[0].activityPercentage;
+                                }
+                                return total;
+                            }, 0);
+
+                            const maxPossibleActivity = 100 * screenshotDetails.length; // Assuming each screenshot can have a maximum activity of 100%
+
+                            const totalActivityAsPercentage = totalActivityForScreenshots / screenshotDetails.length;
+
+                            // Push screenshot data to groupedScreenshots along with totalactivity as a percentage
+                            groupedScreenshots.push(
+                                {
+                                    time: screenshotTimeRange,
+                                    screenshots: screenshotDetails,
+                                    totalactivity: totalActivityAsPercentage,
+                                    timeentryId: timeEntry._id,
+                                }
+                            );
+                        }
                     }
                 }
 
