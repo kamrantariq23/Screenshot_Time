@@ -3323,8 +3323,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 }
 
                 // Check if the time entry has screenshots taken today
-                if (startTime >= startOfToday && startTime < endOfToday) {
-
+              
                     if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                         console.log('Screenshots are available for processing.');
                         const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
@@ -3388,7 +3387,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                             );
                         }
                     }
-                }
+       
 
                 // if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                 //     totalHoursWorked.weekly += hoursWorked;
