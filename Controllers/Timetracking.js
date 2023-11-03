@@ -281,7 +281,7 @@ const updateAppUrl = async (req, res) => {
 }
 
 
-const addScreenshot = async (req, res) => {
+const addScreenshott = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
@@ -384,7 +384,7 @@ const addScreenshot = async (req, res) => {
     }
 };
 
-const addScreenshotmy = async (req, res) => {
+const addScreenshot = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
