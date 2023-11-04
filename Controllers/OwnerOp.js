@@ -171,7 +171,7 @@ const getTimeAgo = (lastActiveTime) => {
 async function retrieveScreenshotsForUser(userId) {
     try {
         const user = await UserSchema.findById(userId);
-        let latestScreenshot = [];
+        let latestScreenshot = null;
         // Find all time entries for the user
         const timeEntries = await TimeTracking.aggregate([
             { $match: { userId } },
@@ -188,7 +188,7 @@ async function retrieveScreenshotsForUser(userId) {
             if (timeEntry.timeEntries.screenshots && timeEntry.timeEntries.screenshots.length > 0) {
                 // Get the last screenshot from the time entry
                 const lastScreenshot = timeEntry.timeEntries.screenshots[timeEntry.timeEntries.screenshots.length - 1];
-                latestScreenshot.push(lastScreenshot);
+                latestScreenshot = lastScreenshot;
     
                 // If the last screenshots are found, return and exit the loop
                 return latestScreenshot;

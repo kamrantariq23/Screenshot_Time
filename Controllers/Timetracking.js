@@ -749,7 +749,7 @@ const getMinutesAgo = (time) => {
 
 async function retrieveScreenshotsForUser(userId) {
     try {
-        let latestScreenshot = []
+        let latestScreenshot = null
         const user = await User.findById(userId);
 
         const timeEntries = await TimeTracking.find({ userId })
@@ -772,7 +772,7 @@ async function retrieveScreenshotsForUser(userId) {
             if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                 // Get the last screenshot from the time entry
                 const lastScreenshot = timeEntry.screenshots[timeEntry.screenshots.length - 1];
-                latestScreenshot.push(lastScreenshot);
+                latestScreenshot= lastScreenshot;
     
                 // If the last screenshots are found, return and exit the loop
                 return latestScreenshot;
