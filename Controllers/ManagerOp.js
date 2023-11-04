@@ -5,14 +5,14 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-await-in-loop */
 // import status from 'http-status';
-import {DateTime} from 'luxon';
+import { DateTime } from 'luxon';
 import UserSchema from '../Models/userSchema';
 import TimeTracking from '../Models/timeSchema';
 import ScreenshotHistory from '../Models/screenshotHistorySchema';
 import ProjectSchema from '../Models/projectSchema';
 
 
-const getAllUserActiveStatus = async(req, res) => {
+const getAllUserActiveStatus = async (req, res) => {
 
     try {
         // Check if the user exists
@@ -34,7 +34,7 @@ const getAllUserActiveStatus = async(req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to get user active status' });
     }
 };
-const getManagedUsers = async(req, res) => {
+const getManagedUsers = async (req, res) => {
     try {
         const { managerId } = req.params;
 
@@ -123,20 +123,20 @@ function groupScreenshotsByTimeSlots(screenshots, timeSlotDurationInMinutes) {
 
     return groupedScreenshots;
 }
-const getManagerHoursWorked = async(req, res) => {
+const getManagerHoursWorked = async (req, res) => {
     const { userId } = req.params;
     const managerId = req.user._id;
     console.log(req.user._id);
     const date = req.query.date ? new Date(req.query.date) : new Date();
-    const converttimezone = (time, timezone) =>{
-        
+    const converttimezone = (time, timezone) => {
+
         const originalTime = DateTime.fromJSDate(time);
         const convertedTime = originalTime.setZone(timezone);
         //  // Log the original and converted times
         // console.log('Original Time:', originalTime.toString());
         // console.log('Converted Time:', convertedTime.toString());
         return convertedTime;
-      };
+    };
 
 
 
@@ -158,7 +158,7 @@ const getManagerHoursWorked = async(req, res) => {
         const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const endOfThisMonth = new Date(startOfThisMonth);
         endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
-         // 0 day of the next month, which gives the last day of the current month
+        // 0 day of the next month, which gives the last day of the current month
 
         const timeTrackings = await TimeTracking.find({ userId });
         const activityData = {
@@ -225,7 +225,7 @@ const getManagerHoursWorked = async(req, res) => {
 
                                 groupedScreenshots.push({ time: timeRange });
                             }
-                            
+
 
 
                         }
@@ -238,39 +238,39 @@ const getManagerHoursWorked = async(req, res) => {
                             const screenshotTime = new Date(screenshot.createdAt);
                             return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                         });
-                    
+
                         console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
                         console.log('visitedUrl', timeEntry.visitedUrls);
-                    
+
                         if (screenshotsToday.length > 0) {
                             console.log('Length of screenshotsToday:', screenshotsToday.length);
-                    
-                                const screenshotStartTime = startTime.toFormat('h:mm a');
-                                const screenshotEndTime = endTime.toFormat('h:mm a');
-                    
-                                const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
-                                console.log('Range', screenshotTimeRange);
-                    
-                                // Map screenshots to screenshotDetails
-                                const screenshotDetails = screenshotsToday.map((screenshot) => {
-                                    console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                                    const convertedCreatedAt = converttimezone(screenshot.createdAt, user.timezone);
-                    
-                                    return {
-                                        _id: screenshot._id,
-                                        key: screenshot.key,
-                                        description: screenshot.description,
-                                        time: convertedCreatedAt.toFormat('h:mm a'),
-                                        trackingId: timeTracking._id,
-                                        visitedUrls:screenshot.visitedUrls
-                                    };
-                                });
-                    
-                                // Push screenshot data to groupedScreenshots
-                                console.log('Pushing screenshots:', screenshotDetails);
-                                groupedScreenshots.push({ time: screenshotTimeRange, screenshots: screenshotDetails });
-                    }
-                   
+
+                            const screenshotStartTime = startTime.toFormat('h:mm a');
+                            const screenshotEndTime = endTime.toFormat('h:mm a');
+
+                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                            console.log('Range', screenshotTimeRange);
+
+                            // Map screenshots to screenshotDetails
+                            const screenshotDetails = screenshotsToday.map((screenshot) => {
+                                console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
+                                const convertedCreatedAt = converttimezone(screenshot.createdAt, user.timezone);
+
+                                return {
+                                    _id: screenshot._id,
+                                    key: screenshot.key,
+                                    description: screenshot.description,
+                                    time: convertedCreatedAt.toFormat('h:mm a'),
+                                    trackingId: timeTracking._id,
+                                    visitedUrls: screenshot.visitedUrls
+                                };
+                            });
+
+                            // Push screenshot data to groupedScreenshots
+                            console.log('Pushing screenshots:', screenshotDetails);
+                            groupedScreenshots.push({ time: screenshotTimeRange, screenshots: screenshotDetails });
+                        }
+
                     }
                 }
 
@@ -329,7 +329,7 @@ const getManagerHoursWorked = async(req, res) => {
 
 
 
-const getActivityData = async(req, res) => {
+const getActivityData = async (req, res) => {
     const { eid } = req.params;
     const managerId = req.user._id; // Assuming req.user is the authenticated user from your middleware
 
@@ -352,7 +352,7 @@ const getActivityData = async(req, res) => {
         const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const endOfThisMonth = new Date(startOfThisMonth);
         endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
-         // 0 day of the next month, which gives the last day of the current month
+        // 0 day of the next month, which gives the last day of the current month
 
         // Get the timeTrackings
         const timeTrackings = await TimeTracking.find({ eid }).populate(' timeEntries.visitedUrls');
@@ -414,7 +414,7 @@ function formatHoursAndMinutes(time) {
 
     return `${hours}h ${minutes}m`;
 }
-const calculateHoursWorked = async(user, period) => {
+const calculateHoursWorked = async (user, period) => {
     const now = new Date();
     const periods = {
         daily: {
@@ -466,11 +466,11 @@ const getTimeAgo = (lastActiveTime) => {
         return minutesAgo > 1 ? `${minutesAgo} minutes ago` : `${minutesAgo} minute ago`;
     } if (hoursAgo < 24) {
         return hoursAgo > 1 ? `${hoursAgo} hours ago` : `${hoursAgo} hour ago`;
-    } 
-        return daysAgo > 1 ? `${daysAgo} days ago` : `${daysAgo} day ago`;
-    
+    }
+    return daysAgo > 1 ? `${daysAgo} days ago` : `${daysAgo} day ago`;
+
 };
-const calculateBillingAmount = async(user, period) => {
+const calculateBillingAmount = async (user, period) => {
     const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
     const totalHoursWorked = await calculateHoursWorked(user, period);
     const totalBillingAmount = (totalHoursWorked.hours + totalHoursWorked.minutes / 60) * ratePerHour;
@@ -481,49 +481,41 @@ const calculateBillingAmount = async(user, period) => {
 async function retrieveScreenshotsForUser(userId) {
     try {
         const user = await UserSchema.findById(userId);
+        let latestScreenshot = [];
         // Find all time entries for the user
         const timeEntries = await TimeTracking.aggregate([
             { $match: { userId } },
             { $unwind: '$timeEntries' },
             { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-            { $limit: 2 } // Retrieve the two most recent time entries
+            { $limit: 5 } // Retrieve the two most recent time entries
         ]);
-        
+
         if (!timeEntries || timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
-        
-        const mostRecentTimeEntry = timeEntries[0].timeEntries;
-        const secondToLastTimeEntry = timeEntries.length > 1 ? timeEntries[1].timeEntries : null;
-        
-        if (
-            !mostRecentTimeEntry.screenshots ||
-            mostRecentTimeEntry.screenshots.length === 0
-        ) {
-            // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
-            if (secondToLastTimeEntry) {
-                mostRecentTimeEntry.screenshots = secondToLastTimeEntry.screenshots;
-            } else {
-                mostRecentTimeEntry.screenshots = []; // If there's no second-to-last timeEntry, initialize screenshots as an empty array
+
+        for (const timeEntry of timeEntries) {
+            if (timeEntry.timeEntries.screenshots && timeEntry.timeEntries.screenshots.length > 0) {
+                // Get the last screenshot from the time entry
+                const lastScreenshot = timeEntry.timeEntries.screenshots[timeEntry.timeEntries.screenshots.length - 1];
+                latestScreenshot.push(lastScreenshot);
+
+                // If the last screenshots are found, return and exit the loop
+                return latestScreenshot;
             }
         }
-        
-        // Sort the screenshots within the most recent time entry by their capture time
-        mostRecentTimeEntry.screenshots.sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        const latestScreenshot = mostRecentTimeEntry.screenshots[0];
 
-        return latestScreenshot || null; // Return the latest screenshot or null if none found
+        // If no last screenshots are found, it will reach this point
+        return latestScreenshot;
     } catch (error) {
         console.error(error);
         return null; // Return null in case of any error
     }
 }
 
-const MangerDashboard = async(req, res) => {
+const MangerDashboard = async (req, res) => {
     try {
-        const users = await UserSchema.find({ company: req.user.company,managerId:req.user.id}); 
+        const users = await UserSchema.find({ company: req.user.company, managerId: req.user.id });
         const totalHoursAll = {
             daily: { hours: 0, minutes: 0 },
             yesterday: { hours: 0, minutes: 0 },
@@ -620,7 +612,7 @@ const MangerDashboard = async(req, res) => {
         const formatHoursAndMinutest = (hours, minutes) => {
             return `${hours < 10 ? '0' : ''}${hours}h ${minutes < 10 ? '0' : ''}${minutes}m`;
         };
-        
+
         const totalHoursFormatted = {
             daily: formatHoursAndMinutest(totalHoursAll.daily.hours, totalHoursAll.daily.minutes),
             yesterday: formatHoursAndMinutest(totalHoursAll.yesterday.hours, totalHoursAll.yesterday.minutes),
@@ -630,12 +622,12 @@ const MangerDashboard = async(req, res) => {
 
         return res.json({
             success: true,
-            totalUsers, 
+            totalUsers,
             onlineUsers: filteredUsers,
             totalActiveUsers: filteredUsers.length,
             totalUsersWorkingToday,
             offlineUsers,
-            offlineUsersTotal: offlineUsers.length,    
+            offlineUsersTotal: offlineUsers.length,
             totalHours: totalHoursFormatted,
             totalBillingAmounts: totalBillingAll,
         });
@@ -644,7 +636,7 @@ const MangerDashboard = async(req, res) => {
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-const getMonthlyScreenshots = async(req, res) => {
+const getMonthlyScreenshots = async (req, res) => {
     const managerId = req.user._id;
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -655,7 +647,7 @@ const getMonthlyScreenshots = async(req, res) => {
         const managedUsers = await UserSchema.find({ managerId });
 
         // Retrieve monthly screenshots for each managed user
-        const screenshotPromises = managedUsers.map(async(user) => {
+        const screenshotPromises = managedUsers.map(async (user) => {
             const historyItems = await ScreenshotHistory.find({
                 userId: user._id,
                 createdAt: {
@@ -676,7 +668,7 @@ const getMonthlyScreenshots = async(req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-const deleteScreenshotAndDeductTime = async(req, res) => {
+const deleteScreenshotAndDeductTime = async (req, res) => {
     try {
         const { screenshotId, timeTrackingId } = req.params;
         const managerId = req.user._id;
@@ -746,7 +738,7 @@ const deleteScreenshotAndDeductTime = async(req, res) => {
     }
 };
 
-const addEmployeeToProject = async(req, res) => {
+const addEmployeeToProject = async (req, res) => {
     const { pId } = req.params;
     const { userId } = req.body;
 
@@ -786,7 +778,7 @@ const addEmployeeToProject = async(req, res) => {
         res.status(500).send({ message: 'Internal server error.' });
     }
 };
-const removeEmployeeFromProject = async(req, res) => {
+const removeEmployeeFromProject = async (req, res) => {
     const { pId } = req.params;
     const { userId } = req.body;
 

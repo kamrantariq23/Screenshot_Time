@@ -412,37 +412,32 @@ const calculateBillingAmount = async (user, period) => {
 async function retrieveScreenshotsForUser(userId) {
     try {
         const user = await User.findById(userId);
-
+        let latestScreenshot = [];
         // Find all time entries for the user
         const timeEntries = await TimeTracking.aggregate([
             { $match: { userId } },
             { $unwind: '$timeEntries' },
             { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-            { $limit: 4 } // Retrieve the two most recent time entries
+            { $limit: 5 } // Retrieve the two most recent time entries
         ]);
 
         if (!timeEntries || timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
 
-        let mostRecentTimeEntry = timeEntries[0].timeEntries;
-        if (mostRecentTimeEntry.screenshots.length === 0) {
-            // If there are no screenshots in the most recent timeEntry, delete it and start the function again
-            await TimeTracking.updateOne(
-                { userId },
-                { $pull: { timeEntries: mostRecentTimeEntry } }
-            );
-
-            return retrieveScreenshotsForUser(userId);
+        for (const timeEntry of timeEntries) {
+            if (timeEntry.timeEntries.screenshots && timeEntry.timeEntries.screenshots.length > 0) {
+                // Get the last screenshot from the time entry
+                const lastScreenshot = timeEntry.timeEntries.screenshots[timeEntry.timeEntries.screenshots.length - 1];
+                latestScreenshot.push(lastScreenshot);
+    
+                // If the last screenshots are found, return and exit the loop
+                return latestScreenshot;
+            }
         }
-
-        // Continue with sorting and returning the latest screenshot
-        mostRecentTimeEntry.screenshots.sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        const latestScreenshot = mostRecentTimeEntry.screenshots[0];
-
-        return latestScreenshot || null; // Return the latest screenshot or null if none found
+    
+        // If no last screenshots are found, it will reach this point
+        return latestScreenshot;
     } catch (error) {
         console.error(error);
         return null; // Return null in case of any error

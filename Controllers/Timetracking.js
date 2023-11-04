@@ -749,26 +749,13 @@ const getMinutesAgo = (time) => {
 
 async function retrieveScreenshotsForUser(userId) {
     try {
+        let latestScreenshot = []
         const user = await User.findById(userId);
-        // Find all time entries for the user
-        // const timeEntries = await TimeTracking.aggregate([
-        //     { $match: { userId } },
-        //     { $unwind: '$timeEntries' },
-        //     { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-        //     { $limit: 2 } // Retrieve the two most recent time entries
-        // ]);
-        // const timeEntries = await TimeTracking.find({ userId })
-        //     .populate({
-        //         path: 'timeEntries',
-        //         populate: {
-        //             path: 'screenshots',
-        //             options: { sort: { 'timeEntries.startTime': -1 }, limit: 2 }
-        //         }
-        //     });
+
         const timeEntries = await TimeTracking.find({ userId })
             .populate({
                 path: 'timeEntries',
-                options: { sort: { startTime: -1 }, limit: 2 },
+                options: { sort: { startTime: -1 }, limit: 5 },
                 populate: {
                     path: 'screenshots',
                 }
@@ -776,40 +763,23 @@ async function retrieveScreenshotsForUser(userId) {
         timeEntries[0].timeEntries.sort((a, b) => {
             return new Date(b.startTime) - new Date(a.startTime);
         });
-        // const timeEntries = await TimeTracking.aggregate([
-        //     { $match: { userId: userId } },
-        //     { $unwind: '$timeEntries' },
-        //     { $sort: { 'timeEntries.startTime': -1 } }, // Sort by start time in descending order
-        //     { $limit: 2 } // Retrieve the two most recent time entries
-        // ]);
 
-        if (!timeEntries || timeEntries.length === 0) {
+        if (!timeEntries[0].timeEntries || timeEntries[0].timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
 
-        const mostRecentTimeEntry = timeEntries[0].timeEntries[0];
-        const secondToLastTimeEntry = timeEntries.length == 1 ? timeEntries[0].timeEntries[1] : null;
-
-        if (
-            !mostRecentTimeEntry.screenshots ||
-            mostRecentTimeEntry.screenshots.length === 0
-        ) {
-            // If there are no screenshots in the most recent timeEntry, use screenshots from the second-to-last timeEntry
-            if (secondToLastTimeEntry) {
-                mostRecentTimeEntry.screenshots = secondToLastTimeEntry.screenshots;
-            } else {
-                mostRecentTimeEntry.screenshots = []; // If there's no second-to-last timeEntry, initialize screenshots as an empty array
+        for (const timeEntry of timeEntries[0].timeEntries) {
+            if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+                // Get the last screenshot from the time entry
+                const lastScreenshot = timeEntry.screenshots[timeEntry.screenshots.length - 1];
+                latestScreenshot.push(lastScreenshot);
+    
+                // If the last screenshots are found, return and exit the loop
+                return latestScreenshot;
             }
         }
 
-        // Sort the screenshots within the most recent time entry by their capture time
-        mostRecentTimeEntry.screenshots.sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        const latestScreenshot = mostRecentTimeEntry.screenshots[0];
-
-
-        return latestScreenshot || null; // Return the latest screenshot or null if none found
+        return latestScreenshot ; // Return the latest screenshot or null if none found
     } catch (error) {
         console.error(error);
         return null; // Return null in case of any error
