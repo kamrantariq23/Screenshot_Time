@@ -8,6 +8,8 @@ const screenshotSchema = new mongoose.Schema({
     key: { type: String, },
     description: { type: String },
     time: { type: String },
+    startTime: { type: String },
+    endTime: { type: String },
     visitedUrls: [{
         url: String,
         visitCount: Number,

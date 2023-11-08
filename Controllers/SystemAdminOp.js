@@ -53,6 +53,8 @@ const getEvents = async (req, res) => {
 
                 // Calculate monthly working hours
                 const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfThisMonth = new Date(startOfThisMonth);
+                endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1);
 
                 for (const timeEntry of timeTracking.timeEntries) {
                     const startTime = new Date(timeEntry.startTime);
