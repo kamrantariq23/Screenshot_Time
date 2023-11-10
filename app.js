@@ -12,6 +12,7 @@ import errorHandler from './Middlewares/errorHandler';
 import verifyToken from './Middlewares/verifyToken';
 import User from './Models/userSchema';
 import Pusher from "pusher";
+import timeTracking from './Models/timeSchema';
 dbConnection();
 
 
@@ -94,17 +95,34 @@ async function getusers() {
             const currentTime = new Date();
 
             // Define the time range (5 minutes ago)
-            const fourMinutesAgo = new Date(currentTime.getTime() - 4 * 60 * 1000); // 5 minutes in milliseconds
+            const fiveMinutesAgo = new Date(currentTime.getTime() - 5 * 60 * 1000); // 5 minutes in milliseconds
 
             // Filter users whose 'lastActive' time is older than 5 minutes ago
 
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
-            
-                if (lastActive < fourMinutesAgo) {
-                    if (user.isActive) {
+           
+
+            if (lastActive < fiveMinutesAgo) {
+                if (user.isActive) {
 
                     user.isActive = false;
                     await user.save();
+                    // Query timeTrackings for entries related to the user
+                    const lastTimeEntry = await timeTracking.findOne({ userId: user._id })
+                        .sort({ 'timeEntries.startTime': -1 }) // Sort in descending order
+                        .limit(1) // Limit to the first result
+
+                    if (lastTimeEntry) {
+                        // You have the last time entry
+                        const lastTimeEntryDetails = lastTimeEntry.timeEntries.slice(-1)[0]; // Get the last time entry
+                        if (!lastTimeEntryDetails.endTime) {
+                            const lastScreenshot = lastTimeEntryDetails.screenshots.slice(-1)[0]; // Get the last time entry
+                            const endTime = new Date(lastScreenshot.createdAt)
+                            lastTimeEntryDetails.endTime = endTime;
+                            await lastTimeEntry.save();
+                        }
+                    }
+
                 }; // Check if 'lastActive' is less than 5 minutes ago
             }
 

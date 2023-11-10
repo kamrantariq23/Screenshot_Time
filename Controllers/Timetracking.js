@@ -149,15 +149,15 @@ const addNewTracking = async (req, res) => {
             projectId,
         });
 
-        if (timeTracking) {
-            // Check if there's an active time entry without end time
-            const activeTimeEntry = timeTracking.timeEntries.find((entry) =>
-                !entry.endTime);
-            if (activeTimeEntry) {
-                console.log(activeTimeEntry._id);
-                return res.status(400).json({ success: false, timeEntryId: activeTimeEntry._id, message: 'Task is already in progress' });
-            }
-        }
+        // if (timeTracking) {
+        //     // Check if there's an active time entry without end time
+        //     const activeTimeEntry = timeTracking.timeEntries.find((entry) =>
+        //         !entry.endTime);
+        //     if (activeTimeEntry) {
+        //         console.log(activeTimeEntry._id);
+        //         return res.status(400).json({ success: false, timeEntryId: activeTimeEntry._id, message: 'Task is already in progress' });
+        //     }
+        // }
         // Find the user associated with this time entry
         const user = await User.findById(req.user._id);
 
@@ -367,8 +367,8 @@ const addScreenshott = async (req, res) => {
         // applying real time
         pusher.trigger("ss-track", "new-ss", {
             message: "new screenshots",
-            data:newTimeEntry,
-          });
+            data: newTimeEntry,
+        });
 
         return res.status(200).json({
             success: true,
@@ -392,6 +392,7 @@ const addScreenshot = async (req, res) => {
     const { activityPercentage } = req.body;
     const endTime = 0;
     let visitedUrls = [];
+    const filename = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/" + file.originalname;
     try {
         // Find the time tracking document with the given time entry
         const timeTrack = await TimeTracking.findOne({ 'timeEntries._id': timeEntryId });
@@ -404,6 +405,13 @@ const addScreenshot = async (req, res) => {
         if (!timeEntry) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
+        else {
+            // Check if the filename already exists in any of the screenshots
+            if (timeEntry.screenshots.some(screenshot =>
+                screenshot.key == filename)) {
+                return res.status(200).json({ success: true, message: 'Filename already exists in one of the screenshots', data: timeEntry });
+            }
+        }
 
         // Check if a file (screenshot) is provided in the request
         if (!file) {
@@ -412,7 +420,7 @@ const addScreenshot = async (req, res) => {
 
         // Upload the screenshot to AWS and get the URL
         const url = await aws.UploadToAws(file);
-        const startTime = new Date(req.body.startTime)
+        // const startTime = new Date(req.body.startTime)
         // Get the current date and time in the user's local time zone
         const userLocalNow = new Date(req.body.createdAt);
 
@@ -428,8 +436,8 @@ const addScreenshot = async (req, res) => {
         visitedUrls.push(newVisitedUrl);
         // Create an object for the added screenshot
         const addedScreenshot = {
-            startTime: startTime,
-            endTime:userLocalNow,
+            // startTime: startTime,
+            endTime: userLocalNow,
             key: url,
             description,
             time: currentTime,
@@ -439,6 +447,9 @@ const addScreenshot = async (req, res) => {
         console.log(addedScreenshot);
         // Push the screenshot to the time entry's screenshots array
         timeEntry.screenshots.push(addedScreenshot);
+        if (timeEntry.endTime) {
+            timeEntry.endTime = userLocalNow;
+        }
 
         // Filter activities that overlap with the screenshot's createdAt time
         const splitActivities = timeEntry.activities.filter((activity) => {
@@ -469,7 +480,7 @@ const addScreenshot = async (req, res) => {
         // Update the user's lastActive field to the current time
         await User.findByIdAndUpdate(
             req.user._id, {
-                lastActive: new Date(),
+            lastActive: userLocalNow,
             isActive: true,
         }, { new: true });
         const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
@@ -656,23 +667,26 @@ const stopTracking = async (req, res) => {
         // Find and update the specified time entry
         const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
         if (!activeTimeEntry.endTime) {
-            const lastTimer = req.body.lastTimer;
-
-            // if user forgot to stop the timer end the time entry on user last active time
-            if (lastTimer == 'yes') {
-                // var endtimeEntry = converttimezone(user.lastActive, user.timezoneOffset)
-
-                activeTimeEntry.endTime = user.lastActive
+            const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
+            const endTime = new Date(lastScreenshot.createdAt)
+            if(endTime){
+                activeTimeEntry.endTime = new Date(user.lastActive) ? new Date(req.body.endTime) : endTime;
             }
-            else {
-                // Set the endTime to the current time (server-side)
-                activeTimeEntry.endTime = new Date();
+            else{
+                activeTimeEntry.endTime = new Date(user.lastActive);
             }
+            
 
             if (activeTimeEntry.activities.length > 0) {
                 const lastActivity = activeTimeEntry.activities[activeTimeEntry.activities.length - 1];
                 // Set the endTime of the last activity to the current time (server-side)
-                lastActivity.endTime = new Date();
+                if(endTime){
+                    lastActivity.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
+                }
+                else{
+                    lastActivity.endTime = new Date(user.lastActive);
+                }
+                
             }
 
             // Save the time tracking document
@@ -689,6 +703,8 @@ const stopTracking = async (req, res) => {
             }
             res.status(200).json({ success: true, data: timeTracking });
         } else {
+            activeTimeEntry.endTime = new Date(req.body.endTime)
+            await timeTracking.save();
             res.status(400).json({ success: false, message: 'Time entry already ended' });
         }
     } catch (error) {
@@ -774,14 +790,14 @@ async function retrieveScreenshotsForUser(userId) {
             if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                 // Get the last screenshot from the time entry
                 const lastScreenshot = timeEntry.screenshots[timeEntry.screenshots.length - 1];
-                latestScreenshot= lastScreenshot;
-    
+                latestScreenshot = lastScreenshot;
+
                 // If the last screenshots are found, return and exit the loop
                 return latestScreenshot;
             }
         }
 
-        return latestScreenshot ; // Return the latest screenshot or null if none found
+        return latestScreenshot; // Return the latest screenshot or null if none found
     } catch (error) {
         console.error(error);
         return null; // Return null in case of any error

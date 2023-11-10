@@ -189,12 +189,12 @@ async function retrieveScreenshotsForUser(userId) {
                 // Get the last screenshot from the time entry
                 const lastScreenshot = timeEntry.timeEntries.screenshots[timeEntry.timeEntries.screenshots.length - 1];
                 latestScreenshot = lastScreenshot;
-    
+
                 // If the last screenshots are found, return and exit the loop
                 return latestScreenshot;
             }
         }
-    
+
         // If no last screenshots are found, it will reach this point
         return latestScreenshot;
 
@@ -748,96 +748,96 @@ const getTotalHoursAndScreenshots = async (req, res) => {
 
                 let endTime = timeEntry.endTime ? DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone }) : DateTime.fromJSDate(now, { zone: req.user.timezone });
                 // let startTime = new Date(startconv);
-                if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
-                    // Create a new time entry for the next day starting at 12:00 AM
-                    newTimeEntry = { ...timeEntry };
-                    newTimeEntry.startTime = endTime.startOf('day');
+                // if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
+                    if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
+                        // Create a new time entry for the next day starting at 12:00 AM
+                        newTimeEntry = { ...timeEntry };
+                        newTimeEntry.startTime = endTime.startOf('day');
 
-                    newTimeEntry.endTime = new Date(endTime);
+                        newTimeEntry.endTime = new Date(endTime);
 
-                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
-                    // timeEntry.startTime = new Date(startTime);
-                    // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone)
-                    timeEntry.endTime = startTime.endOf('day');
-                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+                        // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                        // timeEntry.startTime = new Date(startTime);
+                        // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone)
+                        timeEntry.endTime = startTime.endOf('day');
+                        endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
 
-                    // Calculate the hours worked for both time entries
-                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+                        // Calculate the hours worked for both time entries
+                        hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                        newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
-                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= startOfToday && startTime < endOfToday) {
-                        totalHoursWorked.daily += hoursWorked;
-                    }
-                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
-                        totalHoursWorked.daily += newHoursWorked;
-                    }
-                } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
-                    newTimeEntry = { ...timeEntry };
-                    newTimeEntry.startTime = new Date(startTime);
-                    newTimeEntry.endTime = startTime.endOf('day');
+                        // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                        if (startTime >= startOfToday && startTime < endOfToday) {
+                            totalHoursWorked.daily += hoursWorked;
+                        }
+                        if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                            totalHoursWorked.daily += newHoursWorked;
+                        }
+                    } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
+                        newTimeEntry = { ...timeEntry };
+                        newTimeEntry.startTime = new Date(startTime);
+                        newTimeEntry.endTime = startTime.endOf('day');
 
-                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                        // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
 
-                    timeEntry.startTime = endTime.startOf('day');
-                    startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
-                    // Calculate the hours worked for both time entries
-                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-                    //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+                        timeEntry.startTime = endTime.startOf('day');
+                        startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+                        // Calculate the hours worked for both time entries
+                        hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                        //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
 
-                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+                        newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
-                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
-                        totalHoursWorked.daily += newHoursWorked;
-                    }
-                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= startOfToday && startTime < endOfToday) {
-                        totalHoursWorked.daily += hoursWorked;
-                    }
-
-                } else {
-                    // Calculate the hours worked using the corrected start and end times
-                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
-                    newHoursWorked = 0;
-                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= startOfToday && startTime < endOfToday) {
-                        totalHoursWorked.daily += hoursWorked;
-                    }
-                }
-                // Check if the time entry has offline activities
-                if (timeEntry.activities && timeEntry.activities.length > 0) {
-                    const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
-                    if (offlineActivities.length > 0) {
-                        const offlineDuration = offlineActivities.reduce((total, activity) => {
-                            const activityStartTime = new Date(activity.startTime);
-                            const activityEndTime = new Date(activity.endTime);
-
-                            // Only consider offline activities within today's range
-                            if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
-                                return total + (activityEndTime - activityStartTime);
-                            }
-
-                            return total;
-                        }, 0);
-
-                        // Add the offline duration to the daily hours worked
-                        totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
-
-                        for (const activity of offlineActivities) {
-                            const activityStartTime = new Date(activity.startTime);
-                            const activityEndTime = new Date(activity.endTime);
-                            const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
-                            // const timerangeconv = converttimezone(timeRange, usertimezone)
-
-                            groupedScreenshots.push({ time: timeRange });
+                        // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                        if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                            totalHoursWorked.daily += newHoursWorked;
+                        }
+                        // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                        if (startTime >= startOfToday && startTime < endOfToday) {
+                            totalHoursWorked.daily += hoursWorked;
                         }
 
+                    } else {
+                        // Calculate the hours worked using the corrected start and end times
+                        hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                        newHoursWorked = 0;
+                        // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                        if (startTime >= startOfToday && startTime < endOfToday) {
+                            totalHoursWorked.daily += hoursWorked;
+                        }
                     }
-                }
+                    // Check if the time entry has offline activities
+                    if (timeEntry.activities && timeEntry.activities.length > 0) {
+                        const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
+                        if (offlineActivities.length > 0) {
+                            const offlineDuration = offlineActivities.reduce((total, activity) => {
+                                const activityStartTime = new Date(activity.startTime);
+                                const activityEndTime = new Date(activity.endTime);
 
-                // Check if the time entry has screenshots taken today
-                if (startTime >= startOfToday && startTime < endOfToday) {
+                                // Only consider offline activities within today's range
+                                if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
+                                    return total + (activityEndTime - activityStartTime);
+                                }
+
+                                return total;
+                            }, 0);
+
+                            // Add the offline duration to the daily hours worked
+                            totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
+
+                            for (const activity of offlineActivities) {
+                                const activityStartTime = new Date(activity.startTime);
+                                const activityEndTime = new Date(activity.endTime);
+                                const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
+                                // const timerangeconv = converttimezone(timeRange, usertimezone)
+
+                                groupedScreenshots.push({ time: timeRange });
+                            }
+
+                        }
+                    }
+
+                    // Check if the time entry has screenshots taken today
                     if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                         console.log('Screenshots are available for processing.');
                         const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
@@ -901,21 +901,22 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                             );
                         }
                     }
-                }
 
-                if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
-                    totalHoursWorked.weekly += hoursWorked;
-                }
-                if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
-                    totalHoursWorked.weekly += newHoursWorked;
-                }
 
-                if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
-                    totalHoursWorked.monthly += hoursWorked;
-                }
-                if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
-                    totalHoursWorked.monthly += newHoursWorked;
-                }
+                    if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
+                        totalHoursWorked.weekly += hoursWorked;
+                    }
+                    if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
+                        totalHoursWorked.weekly += newHoursWorked;
+                    }
+
+                    if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
+                        totalHoursWorked.monthly += hoursWorked;
+                    }
+                    if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
+                        totalHoursWorked.monthly += newHoursWorked;
+                    }
+                // }
 
             }
         }
