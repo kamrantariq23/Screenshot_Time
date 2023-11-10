@@ -670,7 +670,7 @@ const stopTracking = async (req, res) => {
             const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
             const endTime = new Date(lastScreenshot.createdAt)
             if(endTime){
-                activeTimeEntry.endTime = new Date(user.lastActive) ? new Date(req.body.endTime) : endTime;
+                activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
             }
             else{
                 activeTimeEntry.endTime = new Date(user.lastActive);
@@ -1505,7 +1505,8 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
                                     description: screenshot.description,
                                     time: new Date(screenshot.createdAt).toLocaleString([], { hour: 'numeric', minute: 'numeric', hour12: true }),
                                     trackingId: timeTracking._id,
-                                    visitedUrls: screenshot.visitedUrls
+                                    visitedUrls: screenshot.visitedUrls,
+                                    activities:timeEntry.activities,
                                 })),
                             });
                         }

@@ -3356,6 +3356,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                                     description: screenshot.description,
                                     time: convertedCreatedAt.toFormat('h:mm a'),
                                     visitedUrls: screenshot.visitedUrls,
+                                    activities:timeEntry.activities,
                                 };
                             });
                             let totalcount = 0;

@@ -262,7 +262,8 @@ const getManagerHoursWorked = async (req, res) => {
                                     description: screenshot.description,
                                     time: convertedCreatedAt.toFormat('h:mm a'),
                                     trackingId: timeTracking._id,
-                                    visitedUrls: screenshot.visitedUrls
+                                    visitedUrls: screenshot.visitedUrls,
+                                    activities:timeEntry.activities,
                                 };
                             });
 
