@@ -1322,10 +1322,10 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         const indexAfterSplit = screenshotIndex + 1;
 
         // Set endTime for the first part of the split
-        const endTime = indexBeforeSplit >= 0 ? timeEntry.screenshots[indexBeforeSplit].endTime : timeEntry.startTime;
+        const startTime = indexBeforeSplit >= 0 ? timeEntry.screenshots[indexBeforeSplit].endTime : timeEntry.startTime;
 
         // Set startTime for the second part of the split
-        const startTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
+        const endTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
 
 
         let newTimeEntry = [];
