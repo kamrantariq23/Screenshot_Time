@@ -420,7 +420,7 @@ const addScreenshot = async (req, res) => {
 
         // Upload the screenshot to AWS and get the URL
         const url = await aws.UploadToAws(file);
-        // const startTime = new Date(req.body.startTime)
+        const startTime = new Date(req.body.startTime)
         // Get the current date and time in the user's local time zone
         const userLocalNow = new Date(req.body.createdAt);
 
@@ -436,7 +436,7 @@ const addScreenshot = async (req, res) => {
         visitedUrls.push(newVisitedUrl);
         // Create an object for the added screenshot
         const addedScreenshot = {
-            // startTime: startTime,
+            startTime: startTime,
             endTime: userLocalNow,
             key: url,
             description,
@@ -1299,6 +1299,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
             change: 'Screenshot deleted',
             historyChanges: [],
             offline: false,
+            screenshots: screenshot,
         };
 
         // Add the deleted activity to the time entry

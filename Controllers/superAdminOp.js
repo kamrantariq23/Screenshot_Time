@@ -28,6 +28,7 @@ import User from '../Models/userSchema';
 import TimeTracking from '../Models/timeSchema';
 import EmployeeSettings from '../Models/effectiveSettingSchema';
 import ScreenshotHistory from '../Models/screenshotHistorySchema';
+import Timetracking from './Timetracking';
 
 
 
@@ -1773,11 +1774,17 @@ const trimActivity = (activity, inactiveThreshold) => {
 
 const trimActivityInTimeEntry = async (req, res) => {
     try {
-        const { userId, timeEntryId, activityId } = req.params;
-        const { startTime, endTime } = req.body;
+        const { userId, timeEntryId } = req.params;
+        const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+        const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+
+        // Now, 'startTime' and 'endTime' are DateTime objects in the specified timezone
+
+        console.log(startTime.toJSDate()); // To see the JavaScript Date equivalent
+        console.log(endTime.toJSDate());
 
         // Log the received IDs for debugging
-        console.log('Received IDs:', userId, timeEntryId, activityId);
+        console.log('Received IDs:', userId, timeEntryId);
 
         // Step 1: Find the user
         const user = await User.findById(userId);
@@ -1797,25 +1804,46 @@ const trimActivityInTimeEntry = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
 
-        // Step 4: Find the activity within the time entry
-        const foundActivity = foundTimeEntry.activities.id(activityId);
-        if (!foundActivity) {
-            return res.status(404).json({ success: false, message: 'Activity not found' });
+       // Filter screenshots within the specified time range
+        const screenshotsToMove = foundTimeEntry.screenshots.filter(screenshot => {
+            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+            return screenshotTime >= startTime && screenshotTime <= endTime;
+        });
+        
+
+        // Remove the filtered screenshots from the original foundTimeEntry
+        foundTimeEntry.screenshots = foundTimeEntry.screenshots.filter(screenshot => !screenshotsToMove.includes(screenshot));
+        
+        // Find the index of the screenshot that matches or is just after the endTime
+        const indexToSplit = foundTimeEntry.screenshots.findIndex(screenshot => {
+            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+            return screenshotTime >= endTime;
+        });
+        let newTimeEntry =[];
+        if (indexToSplit !== -1) {
+            // Create a new time entry with the second part of foundTimeEntry
+            newTimeEntry = { ...foundTimeEntry };
+            newTimeEntry.startTime = endTime.toJSDate();
+            newTimeEntry.screenshots = foundTimeEntry.screenshots.slice(indexToSplit);
+            newTimeEntry.endTime = foundTimeEntry.endTime
+            
+            // Adjust the endTime of the original foundTimeEntry
+            foundTimeEntry.endTime = startTime.toJSDate();
+            foundTimeEntry.screenshots = foundTimeEntry.screenshots.slice(0, indexToSplit);
+            
+            // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
         }
+        timeTracking.timeEntries.push(newTimeEntry)
+        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
 
-        // Step 5: Convert start and end times to the desired format
-        const convertedStartTime = new Date(startTime);
-        const convertedEndTime = new Date(endTime);
-
-        // Step 6: Create a new activity entry with the trimmed start and end times
         const trimmedActivity = {
-            startTime: convertedStartTime,
-            endTime: convertedEndTime,
+            startTime: startTime,
+            endTime: endTime,
             changeTime: new Date(),
             editedBy: req.user._id,
             scope: 'trim',
-            change: `Activity trimmed from ${foundActivity.startTime} to ${convertedStartTime} - ${convertedEndTime}`,
-            screenshots: [],
+            change: `Activity trimmed from ${startTime} to ${endTime}`,
+            screenshots: screenshotsToMove,
             historyChanges: [],
         };
 
