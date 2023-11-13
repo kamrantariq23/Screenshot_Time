@@ -134,7 +134,7 @@ eventRouter.delete(
 
 eventRouter.patch('/assign-user-to-manager/:managerId', isAdminMiddleware.isManagerOwner, events.assignUserToManager);
 
-eventRouter.patch('/trim-activity/:userId/:timeEntryId/:activityId', isAdminMiddleware.isManagerOwner, events.trimActivityInTimeEntry);
+eventRouter.patch('/trim-activity/:userId/:timeEntryId', isAdminMiddleware.isManagerOwner, events.trimActivityInTimeEntry);
 
 
 
