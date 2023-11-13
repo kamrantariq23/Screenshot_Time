@@ -669,24 +669,24 @@ const stopTracking = async (req, res) => {
         if (!activeTimeEntry.endTime) {
             const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
             const endTime = new Date(lastScreenshot.createdAt)
-            if(endTime){
+            if (endTime) {
                 activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
             }
-            else{
+            else {
                 activeTimeEntry.endTime = new Date(user.lastActive);
             }
-            
+
 
             if (activeTimeEntry.activities.length > 0) {
                 const lastActivity = activeTimeEntry.activities[activeTimeEntry.activities.length - 1];
                 // Set the endTime of the last activity to the current time (server-side)
-                if(endTime){
+                if (endTime) {
                     lastActivity.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
                 }
-                else{
+                else {
                     lastActivity.endTime = new Date(user.lastActive);
                 }
-                
+
             }
 
             // Save the time tracking document
@@ -1308,6 +1308,46 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         // Remove the screenshot from the time entry
         timeEntry.screenshots.splice(screenshotIndex, 1);
 
+        /////////// // break timeEntry 
+        // Find the index of the screenshot that matches or is just after the endTime
+        // const indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
+        //     const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+        //     return screenshotTime >= screenshotIndex;
+        // });
+
+        // Find the index of the screenshot that is just before the specified index
+        const indexBeforeSplit = screenshotIndex - 1;
+
+        // Find the index of the screenshot that is just after the specified index
+        const indexAfterSplit = screenshotIndex + 1;
+
+        // Set endTime for the first part of the split
+        const endTime = indexBeforeSplit >= 0 ? timeEntry.screenshots[indexBeforeSplit].endTime : timeEntry.startTime;
+
+        // Set startTime for the second part of the split
+        const startTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
+
+
+        let newTimeEntry = [];
+        if (screenshotIndex !== -1) {
+            // Create a new time entry with the second part of timeEntry
+            newTimeEntry = { ...timeEntry };
+            newTimeEntry.startTime = endTime;
+            newTimeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
+            newTimeEntry.endTime = timeEntry.endTime
+
+            // Adjust the endTime of the original timeEntry
+            timeEntry.endTime = startTime;
+            timeEntry.screenshots = timeEntry.screenshots.slice(0, screenshotIndex);
+
+            // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
+        }
+        timeTracking.timeEntries.push(newTimeEntry)
+        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+
+
+        ///////////////break timeentry end
+
         // Calculate the total time tracked for the day after deducting the screenshot duration
         let totalHoursWorked = calculateTotalHoursWorkedForDay(timeTracking);
 
@@ -1507,7 +1547,7 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
                                     time: new Date(screenshot.createdAt).toLocaleString([], { hour: 'numeric', minute: 'numeric', hour12: true }),
                                     trackingId: timeTracking._id,
                                     visitedUrls: screenshot.visitedUrls,
-                                    activities:timeEntry.activities,
+                                    activities: timeEntry.activities,
                                 })),
                             });
                         }
