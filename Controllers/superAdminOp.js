@@ -2209,38 +2209,62 @@ const getTotalHoursAndScreenshots = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const splitActivity = async (req, res) => {
     try {
-        const { timeEntryId, activityId, splitTime, userId } = req.body;
+        const { timeEntryId, userId } = req.body;
+        const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+
+        const timeTracking = await TimeTracking.findOne({
+            userId,
+            'timeEntries._id': timeEntryId,
+        }).exec();
+
+        if (!timeTracking) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+
+        const timeEntry = timeTracking.timeEntries.id(timeEntryId);
+        if (!timeEntry) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+
+        const indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
+            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+            return screenshotTime >= splitTime;
+        });
+        let newTimeEntry =[];
+        if (indexToSplit !== -1) {
+            // Create a new time entry with the second part of timeEntry
+            newTimeEntry = { ...timeEntry };
+            newTimeEntry.startTime = splitTime
+            newTimeEntry.screenshots = timeEntry.screenshots.slice(indexToSplit);
+            newTimeEntry.endTime = timeEntry.endTime
+            
+            // Adjust the endTime of the original timeEntry
+            timeEntry.endTime = splitTime
+            timeEntry.screenshots = timeEntry.screenshots.slice(0, indexToSplit);
+            
+            // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
+        }
+        timeTracking.timeEntries.push(newTimeEntry)
+        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+
+        await timeTracking.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Activity split successfully',
+            splitActivities: [timeEntry, newTimeEntry],
+        });
+    } catch (error) {
+        console.error('Error splitting activity:', error);
+        return res.status(500).json({ success: false, message: 'Failed to split activity' });
+    }
+};
+
+const splitActivityold = async (req, res) => {
+    try {
+        const { timeEntryId, splitTime, userId } = req.body;
 
         const timeTracking = await TimeTracking.findOne({
             userId,
@@ -2353,12 +2377,6 @@ const splitActivity = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to split activity' });
     }
 };
-
-
-
-
-
-
 
 
 const getActivityHistoryChanges = async (req, res) => {
