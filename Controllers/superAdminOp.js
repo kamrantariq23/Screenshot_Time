@@ -3315,7 +3315,19 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 TimeTrackingId = timeTracking._id;
                 let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
 
-                let endTime = timeEntry.endTime ? DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone }) : DateTime.fromJSDate(now, { zone: req.user.timezone });
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+            
+                    if (lastScreenshot) {
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
                 // let startTime = new Date(startconv);
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
@@ -3443,7 +3455,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
     
                         const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
                         console.log('Range', screenshotTimeRange);
-                        
+
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging

@@ -745,8 +745,19 @@ const getTotalHoursAndScreenshots = async (req, res) => {
             for (const timeEntry of timeTracking.timeEntries) {
                 TimeTrackingId = timeTracking._id;
                 let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
-
-                let endTime = timeEntry.endTime ? DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone }) : DateTime.fromJSDate(now, { zone: req.user.timezone });
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+            
+                    if (lastScreenshot) {
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
                 // let startTime = new Date(startconv);
                 // if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
