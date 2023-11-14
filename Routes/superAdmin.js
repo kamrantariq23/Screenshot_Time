@@ -43,7 +43,7 @@ eventRouter.post(
 
 eventRouter.post('/offline-time/:userId', events.addOfflineTime);
 
-eventRouter.post('/split-activity', isAdminMiddleware.isManagerOwner, events.splitActivity);
+eventRouter.post('/split-activity', events.splitActivity);
 
 eventRouter.post('/move-months-screenshots-to-history', isAdminMiddleware.isManagerOwner, events.moveMonthsScreenshotsToHistory);
 
@@ -134,7 +134,7 @@ eventRouter.delete(
 
 eventRouter.patch('/assign-user-to-manager/:managerId', isAdminMiddleware.isManagerOwner, events.assignUserToManager);
 
-eventRouter.patch('/trim-activity/:userId/:timeEntryId', isAdminMiddleware.isManagerOwner, events.trimActivityInTimeEntry);
+eventRouter.patch('/trim-activity/:userId/:timeEntryId', events.trimActivityInTimeEntry);
 
 
 
