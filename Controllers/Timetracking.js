@@ -1305,16 +1305,6 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         // Add the deleted activity to the time entry
         timeEntry.activities.push(deletedActivity);
 
-        // Remove the screenshot from the time entry
-        timeEntry.screenshots.splice(screenshotIndex, 1);
-
-        /////////// // break timeEntry 
-        // Find the index of the screenshot that matches or is just after the endTime
-        // const indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
-        //     const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
-        //     return screenshotTime >= screenshotIndex;
-        // });
-
         // Find the index of the screenshot that is just before the specified index
         const indexBeforeSplit = screenshotIndex - 1;
 
@@ -1327,6 +1317,8 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         // Set startTime for the second part of the split
         const endTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
 
+        // Remove the screenshot from the time entry
+        timeEntry.screenshots.splice(screenshotIndex, 1);
 
         let newTimeEntry = [];
         if (screenshotIndex !== -1) {
@@ -1344,9 +1336,6 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         }
         timeTracking.timeEntries.push(newTimeEntry)
         timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
-
-
-        ///////////////break timeentry end
 
         // Calculate the total time tracked for the day after deducting the screenshot duration
         let totalHoursWorked = calculateTotalHoursWorkedForDay(timeTracking);

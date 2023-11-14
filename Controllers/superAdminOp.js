@@ -868,16 +868,28 @@ const sortedScreenshotsEachEmployee = async (req, res) => {
 
 
 
+const calculateTotalHoursWorkedForDay = (timeTracking) => {
+    let totalHoursWorked = 0;
+    for (const entry of timeTracking.timeEntries) {
+        for (const activity of entry.activities) {
+            // Calculate the duration of the activity in milliseconds
+            const activityDuration = new Date(activity.endTime) - new Date(activity.startTime);
+
+            // Add the activity duration to the total time tracked for the day
+            totalHoursWorked += activityDuration / (1000 * 60 * 60);
+        }
+    }
+    return totalHoursWorked;
+};
 
 
 
 
 
 const deleteScreenshotAndDeductTime = async (req, res) => {
-
     try {
         const { screenshotId, timeTrackingId } = req.params;
-
+        console.log(screenshotId, timeTrackingId);
         const timeTracking = await TimeTracking.findById(timeTrackingId);
 
         if (!timeTracking) {
@@ -885,55 +897,115 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         }
 
         // Find the time entry containing the screenshot
-        const timeEntryIndex = timeTracking.timeEntries.findIndex(entry => {
-            return entry.screenshots.some(screenshot => screenshot._id.toString() === screenshotId);
+        const timeEntry = timeTracking.timeEntries.find((entry) => {
+            return entry.screenshots.some((screenshot) => screenshot._id.toString() === screenshotId);
         });
 
-        if (timeEntryIndex === -1) {
+        if (!timeEntry) {
             return res.status(404).json({ success: false, message: 'Screenshot not found' });
         }
 
-        // Get the time entry
-        const timeEntry = timeTracking.timeEntries[timeEntryIndex];
+        // Find the screenshot and remove it from the time entry
+        const screenshotIndex = timeEntry.screenshots.findIndex(
+            (screenshot) => screenshot._id.toString() === screenshotId
+        );
 
-        // Find the screenshot and remove it
-        const screenshot = timeEntry.screenshots.find(screenshot => screenshot._id.toString() === screenshotId);
-        if (!screenshot) {
+        if (screenshotIndex === -1) {
             return res.status(404).json({ success: false, message: 'Screenshot not found' });
         }
 
-        // Save the deleted screenshot to the history collection
-        const historyScreenshot = new ScreenshotHistory({
-            screenshot: screenshot.screenshot,
-            type: 'deleted',
-            originalTimeTrackingId: timeTracking._id,
-            originalTimeEntryId: timeEntry._id,
-            userId: timeTracking.userId, // Assuming timeTracking has a userId field
-        });
-        console.log(timeTracking.userId);
-        await historyScreenshot.save();
+        const screenshot = timeEntry.screenshots[screenshotIndex];
+
+        // Calculate the duration of the deleted screenshot in milliseconds
+        const screenshotDuration = new Date(screenshot.endTime) - new Date(screenshot.startTime);
+
+        // Create a deleted activity with the necessary fields
+        const deletedActivity = {
+            startTime: screenshot.startTime,
+            endTime: screenshot.endTime,
+            changeTime: new Date(),
+            editedBy: req.user._id,
+            scope: 'deleted',
+            change: 'Screenshot deleted',
+            historyChanges: [],
+            offline: false,
+            screenshots: screenshot,
+        };
+
+        // Add the deleted activity to the time entry
+        timeEntry.activities.push(deletedActivity);
 
         // Remove the screenshot from the time entry
-        const screenshotIndex = timeEntry.screenshots.findIndex(screenshot => screenshot._id.toString() === screenshotId);
-        timeEntry.screenshots.splice(screenshotIndex, 1);
+        // timeEntry.screenshots.splice(screenshotIndex, 1);
 
-        // Deduct 2 minutes (120,000 ms) from the most recent screenshot or the current time if there are no screenshots left
-        if (timeEntry.screenshots.length === 0) {
-            timeEntry.endTime = new Date(Date.now() - 120000);
-        } else {
-            const latestScreenshot = timeEntry.screenshots.reduce((a, b) => {
-                return new Date(a.createdAt) > new Date(b.createdAt) ? a : b;
-            });
-            timeEntry.endTime = new Date(new Date(latestScreenshot.createdAt).getTime() - 120000);
+
+        // Find the index of the screenshot that is just before the specified index
+        const indexBeforeSplit = screenshotIndex - 1;
+
+        // Find the index of the screenshot that is just after the specified index
+        const indexAfterSplit = screenshotIndex + 1;
+
+        // Set endTime for the first part of the split
+        const startTime = indexBeforeSplit >= 0 ? timeEntry.screenshots[indexBeforeSplit].endTime : timeEntry.startTime;
+
+        // Set startTime for the second part of the split
+        let endTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
+        if (endTime=='Invalid Date'){
+            endTime = timeEntry.screenshots[indexAfterSplit].createdAt;
         }
+        // Remove the screenshot from the time entry
+        timeEntry.screenshots.splice(screenshotIndex, 1);
+        
+        let newTimeEntry = [];
+        if (screenshotIndex !== -1) {
+            // Create a new time entry with the second part of timeEntry
+            newTimeEntry = { ...timeEntry };
+            newTimeEntry.startTime = endTime;
+            newTimeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
+            newTimeEntry.endTime = timeEntry.endTime
+
+            // Adjust the endTime of the original timeEntry
+            timeEntry.endTime = startTime;
+            timeEntry.screenshots = timeEntry.screenshots.slice(0, screenshotIndex);
+
+            // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
+        }
+        timeTracking.timeEntries.push(newTimeEntry)
+        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+
+        // Calculate the total time tracked for the day after deducting the screenshot duration
+        let totalHoursWorked = calculateTotalHoursWorkedForDay(timeTracking);
+
+        // Handle ongoing time entry
+        if (!timeEntry.endTime) {
+            // Add 1 minute to the timeEntry.endTime to account for the screenshot deduction
+            timeEntry.endTime = new Date(new Date(timeEntry.endTime).getTime() + 60000);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Screenshot deleted. The deducted time will be available when the ongoing session ends.',
+                deletedActivity,
+                deductedTime: null,
+            });
+        }
+
+        // Handle completed time entry
+        // Deduct the screenshot duration and 1 minute from the total time tracked for the day
+        // eslint-disable-next-line no-const-assign
+        totalHoursWorked -= (screenshotDuration + 60000) / (1000 * 60 * 60);
 
         // Save the updated time tracking document
         await timeTracking.save();
 
-        return res.status(200).json({ success: true, message: 'Screenshot deleted and time deducted' });
+        return res.status(200).json({
+            success: true,
+            message: 'Screenshot deleted and time deducted',
+            deletedActivity,
+            deductedTime: formatTime(totalHoursWorked),
+        });
     } catch (error) {
         console.error('Error deleting screenshot and deducting time:', error);
-        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time' });
+        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time', error:error});
     }
 };
 const getMonthlyScreenshots = async (req, res) => {
