@@ -3434,16 +3434,16 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
                     console.log('visitedUrl', timeEntry.visitedUrls);
 
-                    const screenshotStartTime = startTime.toFormat('h:mm a');
-                    const screenshotEndTime = endTime.toFormat('h:mm a');
-
-                    const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
-                    console.log('Range', screenshotTimeRange);
 
                     if (screenshotsToday.length > 0) {
                         console.log('Length of screenshotsToday:', screenshotsToday.length);
 
-
+                        const screenshotStartTime = startTime.toFormat('h:mm a');
+                        const screenshotEndTime = endTime.toFormat('h:mm a');
+    
+                        const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                        console.log('Range', screenshotTimeRange);
+                        
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
