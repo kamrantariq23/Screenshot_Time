@@ -1495,33 +1495,33 @@ const getTotalHoursWithOfflineAndScreenshots = async (req, res) => {
                     totalHoursWorked.daily += hoursWorked;
 
                     // Check if the time entry has offline activities
-                    if (timeEntry.activities && timeEntry.activities.length > 0) {
-                        const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
-                        if (offlineActivities.length > 0) {
-                            const offlineDuration = offlineActivities.reduce((total, activity) => {
-                                const activityStartTime = new Date(activity.startTime);
-                                const activityEndTime = new Date(activity.endTime);
+                    // if (timeEntry.activities && timeEntry.activities.length > 0) {
+                    //     const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
+                    //     if (offlineActivities.length > 0) {
+                    //         const offlineDuration = offlineActivities.reduce((total, activity) => {
+                    //             const activityStartTime = new Date(activity.startTime);
+                    //             const activityEndTime = new Date(activity.endTime);
 
-                                // Only consider offline activities within today's range
-                                if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
-                                    return total + (activityEndTime - activityStartTime);
-                                }
+                    //             // Only consider offline activities within today's range
+                    //             if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
+                    //                 return total + (activityEndTime - activityStartTime);
+                    //             }
 
-                                return total;
-                            }, 0);
+                    //             return total;
+                    //         }, 0);
 
-                            // Add the offline duration to the daily hours worked
-                            totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
+                    //         // Add the offline duration to the daily hours worked
+                    //         totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
 
-                            for (const activity of offlineActivities) {
-                                const activityStartTime = new Date(activity.startTime);
-                                const activityEndTime = new Date(activity.endTime);
-                                const timeRange = `${activityStartTime.toLocaleTimeString()} - ${activityEndTime.toLocaleTimeString()} (offline)`;
+                    //         for (const activity of offlineActivities) {
+                    //             const activityStartTime = new Date(activity.startTime);
+                    //             const activityEndTime = new Date(activity.endTime);
+                    //             const timeRange = `${activityStartTime.toLocaleTimeString()} - ${activityEndTime.toLocaleTimeString()} (offline)`;
 
-                                groupedScreenshots.push({ time: timeRange });
-                            }
-                        }
-                    }
+                    //             groupedScreenshots.push({ time: timeRange });
+                    //         }
+                    //     }
+                    // }
 
                     // Check if the time entry has screenshots taken today
                     if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
@@ -2225,35 +2225,35 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                     }
                 }
                 // Check if the time entry has offline activities
-                if (timeEntry.activities && timeEntry.activities.length > 0) {
-                    const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
-                    if (offlineActivities.length > 0) {
-                        const offlineDuration = offlineActivities.reduce((total, activity) => {
-                            const activityStartTime = new Date(activity.startTime);
-                            const activityEndTime = new Date(activity.endTime);
+                // if (timeEntry.activities && timeEntry.activities.length > 0) {
+                //     const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
+                //     if (offlineActivities.length > 0) {
+                //         const offlineDuration = offlineActivities.reduce((total, activity) => {
+                //             const activityStartTime = new Date(activity.startTime);
+                //             const activityEndTime = new Date(activity.endTime);
 
-                            // Only consider offline activities within today's range
-                            if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
-                                return total + (activityEndTime - activityStartTime);
-                            }
+                //             // Only consider offline activities within today's range
+                //             if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
+                //                 return total + (activityEndTime - activityStartTime);
+                //             }
 
-                            return total;
-                        }, 0);
+                //             return total;
+                //         }, 0);
 
-                        // Add the offline duration to the daily hours worked
-                        totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
+                //         // Add the offline duration to the daily hours worked
+                //         totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
 
-                        for (const activity of offlineActivities) {
-                            const activityStartTime = new Date(activity.startTime);
-                            const activityEndTime = new Date(activity.endTime);
-                            const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
-                            // const timerangeconv = converttimezone(timeRange, usertimezone)
+                //         for (const activity of offlineActivities) {
+                //             const activityStartTime = new Date(activity.startTime);
+                //             const activityEndTime = new Date(activity.endTime);
+                //             const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
+                //             // const timerangeconv = converttimezone(timeRange, usertimezone)
 
-                            groupedScreenshots.push({ time: timeRange });
-                        }
+                //             groupedScreenshots.push({ time: timeRange });
+                //         }
 
-                    }
-                }
+                //     }
+                // }
 
                 // Check if the time entry has screenshots taken today
                 if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
