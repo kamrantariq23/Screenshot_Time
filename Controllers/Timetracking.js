@@ -1369,7 +1369,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         });
     } catch (error) {
         console.error('Error deleting screenshot and deducting time:', error);
-        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time' });
+        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time' , error: error });
     }
 };
 

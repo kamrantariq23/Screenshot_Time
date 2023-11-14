@@ -41,7 +41,7 @@ eventRouter.post(
     events.emailInviteClient,
 );
 
-eventRouter.post('/offline-time/:userId', isAdminMiddleware.isManagerOwner, events.addOfflineTime);
+eventRouter.post('/offline-time/:userId', events.addOfflineTime);
 
 eventRouter.post('/split-activity', isAdminMiddleware.isManagerOwner, events.splitActivity);
 

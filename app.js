@@ -116,12 +116,13 @@ async function getusers() {
                         // You have the last time entry
                         const lastTimeEntryDetails = lastTimeEntry.timeEntries.slice(-1)[0]; // Get the last time entry
                         if (!lastTimeEntryDetails.endTime) {
+                            let endTime = 0;
                             const lastScreenshot = lastTimeEntryDetails.screenshots.slice(-1)[0]; // Get the last time entry
                             if(lastScreenshot && lastScreenshot.createdAt){
-                                const endTime = new Date(lastScreenshot.createdAt)
+                                 endTime = new Date(lastScreenshot.createdAt)
                             }
                             else{
-                                const endTime = new Date(user.lastActive);
+                                 endTime = new Date(user.lastActive);
                             }
                             
                             lastTimeEntryDetails.endTime = endTime;
