@@ -1950,7 +1950,7 @@ const trimActivityInTimeEntry = async (req, res) => {
     } catch (error) {
         // Log the error for debugging
         console.error('Error trimming activity:', error);
-        return res.status(500).json({ success: false, message: 'Failed to trim activity' });
+        return res.status(500).json({ success: false, message: 'Failed to trim activity', error: error });
     }
 };
 
