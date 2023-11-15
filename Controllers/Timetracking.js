@@ -668,7 +668,14 @@ const stopTracking = async (req, res) => {
         const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
         if (!activeTimeEntry.endTime) {
             const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
-            const endTime = new Date(lastScreenshot.createdAt)
+            let endTime = 0;
+            if(lastScreenshot){
+                endTime = new Date(lastScreenshot.createdAt)
+            }
+            else{
+                endTime = new Date(activeTimeEntry.startTime)
+            }
+            
             if (endTime) {
                 activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
             }
@@ -946,7 +953,20 @@ const getTotalHoursWorked = async (req, res) => {
             for (const timeEntry of timeTracking.timeEntries) {
 
                 const startTime = new Date(timeEntry.startTime);
-                const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = new Date(timeEntry.endTime);
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+            
+                    if (lastScreenshot) {
+                        endTime = new Date(lastScreenshot.createdAt);
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
+                // const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
                 const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
 
                 if (startTime >= startOfToday && startTime < endOfToday) {

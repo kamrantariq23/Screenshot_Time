@@ -363,7 +363,19 @@ const calculateHoursWorked = async (user, period) => {
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            const endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : convertTimezone(user.lastActive, user.timezone);
+            let endTime = 0;
+            if (entry.timeEntries.endTime) {
+                endTime = new Date(entry.timeEntries.endTime);
+            } else {
+                const lastScreenshot = entry.timeEntries.screenshots.slice(-1)[0];
+        
+                if (lastScreenshot) {
+                    endTime = new Date(lastScreenshot.createdAt);
+                }
+                else{
+                    endTime = entry.timeEntries.startTime;
+                }
+            }
             const timeWorked = endTime - entry.timeEntries.startTime;
             return acc + timeWorked;
         }

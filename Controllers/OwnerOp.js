@@ -120,7 +120,19 @@ const calculateHoursWorked = async (user, period) => {
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            let endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : now;
+            let endTime = 0;
+                if (entry.timeEntries.endTime) {
+                    endTime = new Date(entry.timeEntries.endTime);
+                } else {
+                    const lastScreenshot = entry.timeEntries.screenshots.slice(-1)[0];
+            
+                    if (lastScreenshot) {
+                        endTime = new Date(lastScreenshot.createdAt);
+                    }
+                    else{
+                        endTime = entry.timeEntries.startTime;
+                    }
+                }
             return acc + (endTime - entry.timeEntries.startTime);
         }
         return acc;
@@ -428,7 +440,19 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
                 for (const timeTracking of timeTrackings) {
                     for (const timeEntry of timeTracking.timeEntries) {
                         const startTime = new Date(timeEntry.startTime);
-                        const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
+                        let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = new Date(timeEntry.endTime);
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+            
+                    if (lastScreenshot) {
+                        endTime = new Date(lastScreenshot.createdAt);
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
 
                         // console.log('startTime:', startTime);
                         // console.log('endTime:', endTime);

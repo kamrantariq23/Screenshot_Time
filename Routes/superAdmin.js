@@ -105,7 +105,6 @@ eventRouter.delete(
 // only admin can delete
 eventRouter.delete(
     '/deleteScreenshot/:screenshotId/TimeTracking/:timeTrackingId',
-    isAdminMiddleware.isManagerOwner,
     events.deleteScreenshotAndDeductTime,
 );
 
