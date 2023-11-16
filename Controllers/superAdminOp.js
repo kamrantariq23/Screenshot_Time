@@ -2052,8 +2052,9 @@ const addOfflineTime = async (req, res) => {
 
         // Create a new time entry for the offline activity
         const newTimeEntry = {
-            startTime: startTime,
-            endTime: endTime,
+            startTime: new Date(startTime),
+            endTime: new Date(endTime),
+            description: 'offline',
             activities: [{
                 startTime: startTime,
                 endTime: endTime,
@@ -3539,10 +3540,16 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                         const screenshotStartTime = startTime.toFormat('h:mm a');
                         const screenshotEndTime = endTime.toFormat('h:mm a');
-    
-                        const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                        if(timeEntry.description=='offline'){
+                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} ${timeEntry.description}`;
                         console.log('Range', screenshotTimeRange);
-
+                        }
+                        else{
+                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                            console.log('Range', screenshotTimeRange);
+                        }
+    
+                        
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
