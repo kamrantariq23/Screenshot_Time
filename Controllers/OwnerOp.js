@@ -856,7 +856,8 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                         screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} (${timeEntry.description})`;
                         console.log('Range', screenshotTimeRange);
                         groupedScreenshots.push({
-                            time: screenshotTimeRange
+                            time: screenshotTimeRange,
+                            description: 'This is manually added offline time'
                         })
                     }
                     
@@ -870,6 +871,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                         console.log('Range', screenshotTimeRange);
                         groupedScreenshots.push({
                             time: screenshotTimeRange,
+                            description: 'This is manually added offline time'
                         })
                     }
                     

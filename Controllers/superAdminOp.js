@@ -3416,6 +3416,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 if(startTime == endTime){
                     continue;
                 }
+                let screenshotTimeRange = 0
                 // let startTime = new Date(startconv);
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
@@ -3473,6 +3474,35 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
                     }
+                }
+                
+                if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                    const screenshotStartTime = startTime.toFormat('h:mm a');
+                    const screenshotEndTime = endTime.toFormat('h:mm a');
+
+                    if (timeEntry.description == 'offline') {
+                        screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} (${timeEntry.description})`;
+                        console.log('Range', screenshotTimeRange);
+                        groupedScreenshots.push({
+                            time: screenshotTimeRange,
+                            description: 'This is manually added offline time'
+                        })
+                    }
+                    
+                }
+                else if (startTime >= startOfToday && startTime < endOfToday) {
+                    const screenshotStartTime = startTime.toFormat('h:mm a');
+                    const screenshotEndTime = endTime.toFormat('h:mm a');
+
+                    if (timeEntry.description == 'offline') {
+                        screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} (${timeEntry.description})`;
+                        console.log('Range', screenshotTimeRange);
+                        groupedScreenshots.push({
+                            time: screenshotTimeRange,
+                            description: 'This is manually added offline time'
+                        })
+                    }
+                    
                 }
                 // Check if the time entry has offline activities
                 // if (timeEntry.activities && timeEntry.activities.length > 0) {
