@@ -13,6 +13,7 @@ import verifyToken from './Middlewares/verifyToken';
 import User from './Models/userSchema';
 import Pusher from "pusher";
 import timeTracking from './Models/timeSchema';
+import Timetracking from './Controllers/Timetracking';
 dbConnection();
 
 
@@ -100,7 +101,30 @@ async function getusers() {
             // Filter users whose 'lastActive' time is older than 5 minutes ago
 
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
-           
+
+            // const timeTrackings = await timeTracking.find({ userId: '64f59b2e9c3bbf001c5d186f' });
+
+            // for (const timeTracking of timeTrackings) {
+            //     for (const timeEntry of timeTracking.timeEntries) {
+            //         const lastTimeEntryDetails = timeEntry;
+            
+            //         if (!lastTimeEntryDetails.endTime) {
+            //             let endTime = 0;
+            //             const lastScreenshot = lastTimeEntryDetails.screenshots.slice(-1)[0];
+            
+            //             if (lastScreenshot && lastScreenshot.createdAt) {
+            //                 endTime = new Date(lastScreenshot.createdAt);
+            //             } else {
+            //                 endTime = new Date(lastTimeEntryDetails.startTime);
+            //             }
+            
+            //             lastTimeEntryDetails.endTime = endTime;
+            //         }
+            //     }
+            
+            //     // Save the updated timeTracking instance
+            //     await timeTracking.save();
+            // }
 
             if (lastActive < fiveMinutesAgo) {
                 if (user.isActive) {
@@ -118,13 +142,13 @@ async function getusers() {
                         if (!lastTimeEntryDetails.endTime) {
                             let endTime = 0;
                             const lastScreenshot = lastTimeEntryDetails.screenshots.slice(-1)[0]; // Get the last time entry
-                            if(lastScreenshot && lastScreenshot.createdAt){
-                                 endTime = new Date(lastScreenshot.createdAt)
+                            if (lastScreenshot && lastScreenshot.createdAt) {
+                                endTime = new Date(lastScreenshot.createdAt)
                             }
-                            else{
-                                 endTime = new Date(user.lastActive);
+                            else {
+                                endTime = new Date(lastTimeEntryDetails.startTime);
                             }
-                            
+
                             lastTimeEntryDetails.endTime = endTime;
                             await lastTimeEntry.save();
                         }

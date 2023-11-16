@@ -782,6 +782,9 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                         continue;
                     }
                 }
+                if(startTime == endTime){
+                    continue;
+                }
                 // let startTime = new Date(startconv);
                 // if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {

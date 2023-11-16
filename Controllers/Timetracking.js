@@ -2175,6 +2175,9 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                         continue;
                     }
                 }
+                if(startTime == endTime){
+                    continue;
+                }
                 // let startTime = new Date(startconv);
                 if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
                     // Create a new time entry for the next day starting at 12:00 AM
