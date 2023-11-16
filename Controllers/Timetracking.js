@@ -2436,6 +2436,7 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
 const visitedurlSave = async (req, res) => {
     const timeEntryId = req.params.timeEntryId;
     const screenshotId = req.body.screenshotId; // Add a screenshotId to the request body
