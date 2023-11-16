@@ -2263,7 +2263,6 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                             description: 'This is manually added offline time'
                         })
                     }
-                    
                 }
                 // Check if the time entry has offline activities
                 // if (timeEntry.activities && timeEntry.activities.length > 0) {

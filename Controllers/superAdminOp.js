@@ -3570,14 +3570,9 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                         const screenshotStartTime = startTime.toFormat('h:mm a');
                         const screenshotEndTime = endTime.toFormat('h:mm a');
-                        if(timeEntry.description=='offline'){
-                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} ${timeEntry.description}`;
-                        console.log('Range', screenshotTimeRange);
-                        }
-                        else{
+                        
                             const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
                             console.log('Range', screenshotTimeRange);
-                        }
     
                         
                         // Map screenshots to screenshotDetails
