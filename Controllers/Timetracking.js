@@ -663,11 +663,11 @@ const stopTracking = async (req, res) => {
         if (!timeTracking) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
-
+        const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
         // Find and update the specified time entry
         const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
         if (!activeTimeEntry.endTime) {
-            const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
+            
             let endTime = 0;
             if(lastScreenshot){
                 endTime = new Date(lastScreenshot.createdAt)
@@ -699,10 +699,6 @@ const stopTracking = async (req, res) => {
             // Save the time tracking document
             await timeTracking.save();
 
-            // Assuming you have a User model defined in Mongoose
-            // Find the user associated with this time entry
-
-
             if (user) {
                 // Update the user's isActive field to false
                 user.isActive = false;
@@ -710,6 +706,19 @@ const stopTracking = async (req, res) => {
             }
             res.status(200).json({ success: true, data: timeTracking });
         } else {
+            {
+                let endTime = 0;
+                if(lastScreenshot){
+                    endTime = new Date(lastScreenshot.createdAt)
+                }
+                // if (endTime) {
+                //     activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
+                // }
+                activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
+                await timeTracking.save();
+                res.status(200).json({ success: true, message: 'Time entry already ended' });
+            }
+
             activeTimeEntry.endTime = new Date(req.body.endTime)
             await timeTracking.save();
             res.status(400).json({ success: false, message: 'Time entry already ended' });
