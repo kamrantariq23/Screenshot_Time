@@ -1749,7 +1749,7 @@ const splitActivity = async (req, res) => {
 
 const deleteActivity = async (req, res) => {
     try {
-        const { timeTrackingId, activityId } = req.params;
+        const { timeTrackingId, timeEntryId } = req.params;
 
         // Find the time tracking document by ID
         const timeTracking = await TimeTracking.findById(timeTrackingId);
@@ -1764,6 +1764,17 @@ const deleteActivity = async (req, res) => {
         if (!activity) {
             return res.status(404).json({ success: false, message: 'Activity not found' });
         }
+
+        const trimmedActivity = {
+            startTime: startTime,
+            endTime: endTime,
+            changeTime: new Date(),
+            editedBy: req.user._id,
+            scope: 'trim',
+            change: `Activity trimmed from ${startTime} to ${endTime}`,
+            screenshots: screenshotsToMove,
+            historyChanges: [],
+        };
 
         // Remove the activity from the time tracking document
         timeTracking.activities.pull(activityId);

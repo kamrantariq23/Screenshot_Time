@@ -1894,7 +1894,6 @@ const trimActivityInTimeEntry = async (req, res) => {
             return screenshotTime >= startTime && screenshotTime <= endTime;
         });
 
-
         // Remove the filtered screenshots from the original foundTimeEntry
         foundTimeEntry.screenshots = foundTimeEntry.screenshots.filter(screenshot => !screenshotsToMove.includes(screenshot));
 
@@ -1916,9 +1915,14 @@ const trimActivityInTimeEntry = async (req, res) => {
             foundTimeEntry.screenshots = foundTimeEntry.screenshots.slice(0, indexToSplit);
 
             // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
+            timeTracking.timeEntries.push(newTimeEntry)
+            timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
         }
-        timeTracking.timeEntries.push(newTimeEntry)
-        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+        else{
+            foundTimeEntry.startTime= null,
+            foundTimeEntry.endTime= null
+        }
+        
 
         const trimmedActivity = {
             startTime: startTime,
@@ -1931,6 +1935,7 @@ const trimActivityInTimeEntry = async (req, res) => {
             historyChanges: [],
         };
 
+        
         // Step 7: Push the new activity to the activities array
         foundTimeEntry.activities.push(trimmedActivity);
 
