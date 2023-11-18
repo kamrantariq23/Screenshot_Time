@@ -947,10 +947,6 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         // Add the deleted activity to the time entry
         timeEntry.activities.push(deletedActivity);
 
-        // Remove the screenshot from the time entry
-        // timeEntry.screenshots.splice(screenshotIndex, 1);
-
-
         // Find the index of the screenshot that is just before the specified index
         const indexBeforeSplit = screenshotIndex - 1;
 
@@ -970,28 +966,35 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         
         let newTimeEntry = [];
         if (screenshotIndex !== -1) {
-            // Create a new time entry with the second part of timeEntry
+            
             newTimeEntry = { ...timeEntry };
-            newTimeEntry.startTime = endTime;
-            newTimeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
-            newTimeEntry.endTime = timeEntry.endTime
+            newTimeEntry.startTime = new Date(timeEntry.startTime);
+            newTimeEntry.screenshots = timeEntry.screenshots.slice(0, screenshotIndex);
+            newTimeEntry.endTime = new Date(startTime)
 
             // Adjust the endTime of the original timeEntry
-            timeEntry.endTime = startTime;
-            timeEntry.screenshots = timeEntry.screenshots.slice(0, screenshotIndex);
-
+            timeEntry.startTime = new Date(startTime);
+            timeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
             // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
+               
+            timeTracking.timeEntries.push(newTimeEntry)
+            timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
         }
-        timeTracking.timeEntries.push(newTimeEntry)
-        timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
-
+        else{
+            foundTimeEntry.startTime= null,
+            foundTimeEntry.endTime= null
+        }
+        
         // Calculate the total time tracked for the day after deducting the screenshot duration
         let totalHoursWorked = calculateTotalHoursWorkedForDay(timeTracking);
 
         // Handle ongoing time entry
         if (!timeEntry.endTime) {
+            let lastss = timeEntry.screenshots.slice(-1)[0];
             // Add 1 minute to the timeEntry.endTime to account for the screenshot deduction
-            timeEntry.endTime = new Date(new Date(timeEntry.endTime).getTime() + 60000);
+            timeEntry.endTime = new Date(new Date(lastss.createdAt).getTime() + 60000);
+
+            await timeTracking.save();
 
             return res.status(200).json({
                 success: true,
@@ -1015,7 +1018,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
             deletedActivity,
             deductedTime: formatTime(totalHoursWorked),
         });
-    } catch (error) {
+    }  catch (error) {
         console.error('Error deleting screenshot and deducting time:', error);
         return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time', error:error});
     }
