@@ -157,20 +157,26 @@ const updateSetting = async (req, res, next) => {
         }
 
         // Check if the password field is being updated
-        if (updateFields.password) {
-            // Encrypt the new password
-            const hashedPassword = await bcryptjs.hash(updateFields.password, 12);
-            user.password = hashedPassword;
-        }
+        // if (updateFields.password) {
+        //     // Encrypt the new password
+        //     const hashedPassword = await bcryptjs.hash(updateFields.password, 12);
+        //     user.password = hashedPassword;
+        // }
 
         // Update the user's fields
-        Object.keys(updateFields).forEach((key) => {
+        Object.keys(updateFields).forEach(async (key) => {
             if (key === 'timezone') {
                 // Assign the updated timezone value
                 user.timezone = updateFields.timezone;
                 user.createdAt = moment(user.createdAt).tz(user.timezone);
                 user.updatedAt = moment(user.updatedAt).tz(user.timezone);
-            } else {
+            } 
+            if (key ==='password') {
+                // Encrypt the new password
+                const hashedPassword = await bcryptjs.hash(updateFields.password, 12);
+                user.password = hashedPassword;
+            }
+            else {
                 // Update the field with the new value
                 user[key] = updateFields[key];
             }
