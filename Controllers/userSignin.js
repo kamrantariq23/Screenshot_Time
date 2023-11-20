@@ -196,7 +196,7 @@ const updateSetting = async (req, res, next) => {
  
 const verifyPassword = async (req, res, next) => {
     const userId = req.user._id;
-    const oldPassword = req.body;
+    const oldPassword = req.body.oldPassword;
 
     try {
         // Find the user by id
@@ -208,15 +208,18 @@ const verifyPassword = async (req, res, next) => {
 
         // Check if the password field is being updated
         if (oldPassword) {
-            // Encrypt the new password
-            const hashedPassword = await bcryptjs.hash(oldPassword, 12);
-            if(user.password===hashedPassword){
-                res.status(200).json({ success: true, message: "Password Verified"})
-            }
+            bcryptjs.compare(oldPassword, user.password).then(result => {
+                // if password match create payload
+                if (result) {
+                    return res.status(200).json({ success: true, message: "Password Verified"})
+                } else {
+                    return res.status(400).json({ success: false, message: 'Invalid Password' });
+                }
+            });
         }
     } catch (error) {
         console.error('Wrong Password:', error);
-        res.status(500).json({ success: false, error, message: 'Password not Verified' });
+        res.status(500).json({ success: false, error: error, message: 'Something went wrong' });
     }
 }
 
