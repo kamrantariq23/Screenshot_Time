@@ -3492,12 +3492,13 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         console.log('Range', screenshotTimeRange);
                         groupedScreenshots.push({
                             time: screenshotTimeRange,
-                            description: 'This is manually added offline time'
+                            description: 'This is manually added offline time',
+                            timeentryId: timeEntry._id,
                         })
                     }
                     
                 }
-                else if (startTime >= startOfToday && startTime < endOfToday) {
+                if (startTime >= startOfToday && startTime < endOfToday) {
                     const screenshotStartTime = startTime.toFormat('h:mm a');
                     const screenshotEndTime = endTime.toFormat('h:mm a');
 
@@ -3506,7 +3507,8 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         console.log('Range', screenshotTimeRange);
                         groupedScreenshots.push({
                             time: screenshotTimeRange,
-                            description: 'This is manually added offline time'
+                            description: 'This is manually added offline time',
+                            timeentryId: timeEntry._id,
                         })
                     }
                     
