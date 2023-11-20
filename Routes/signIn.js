@@ -18,6 +18,8 @@ signInRouter.delete('/userDelete/:id', isLoggedIn.isLoggedIn, userSignIn.deleteU
 
 signInRouter.patch('/users/:id/last-active', isLoggedIn.isLoggedIn, userSignIn.updateLastActiveTime);
 
+signInRouter.patch('/users/Verifypass', isLoggedIn.isLoggedIn, userSignIn.verifyPassword);
+
 signInRouter.patch('/users/Update', isLoggedIn.isLoggedIn, userSignIn.updateSetting);
 
 signInRouter.patch('/users/update-password/:id', userSignIn.updatePassword);

@@ -160,7 +160,7 @@ const updateSetting = async (req, res, next) => {
         if (updateFields.password) {
             // Encrypt the new password
             const hashedPassword = await bcryptjs.hash(updateFields.password, 12);
-            updateFields.password = hashedPassword;
+            user.password = hashedPassword;
         }
 
         // Update the user's fields
@@ -187,6 +187,32 @@ const updateSetting = async (req, res, next) => {
         res.status(500).json({ success: false, error, message: 'Failed to update user' });
     }
 };
+ 
+const verifyPassword = async (req, res, next) => {
+    const userId = req.user._id;
+    const oldPassword = req.body;
+
+    try {
+        // Find the user by id
+        const user = await Model.UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Check if the password field is being updated
+        if (oldPassword) {
+            // Encrypt the new password
+            const hashedPassword = await bcryptjs.hash(oldPassword, 12);
+            if(user.password===hashedPassword){
+                res.status(200).json({ success: true, message: "Password Verified"})
+            }
+        }
+    } catch (error) {
+        console.error('Wrong Password:', error);
+        res.status(500).json({ success: false, error, message: 'Password not Verified' });
+    }
+}
 
 const updatePassword = async (req, res) => {
     const { password } = req.body;
@@ -231,5 +257,6 @@ export default {
     updateSetting,
     deleteUser,
     getUserActiveStatus,
-    updatePassword
+    updatePassword,
+    verifyPassword
 };
