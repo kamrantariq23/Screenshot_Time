@@ -571,11 +571,15 @@ const MangerDashboard = async (req, res) => {
                 } else {
                     console.log('No recent screenshot found.');
                 }
-                const lastActiveTime = user.lastActive;
-                const minutesAgo = getTimeAgo(lastActiveTime);
+
+                let minutesAgo = 'Awaiting'
+                // Get the user's last active time
+                if(user.lastActive > user.createdAt){
+                    const lastActiveTime = user.lastActive;
+                    minutesAgo = getTimeAgo(lastActiveTime);
+                }
 
                 const currentTime = new Date().getTime();
-                const timeDiff = currentTime - lastActiveTime;
                 const inactiveThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
                 const isActive = user.isActive;
 

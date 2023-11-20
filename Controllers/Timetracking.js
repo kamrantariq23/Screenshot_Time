@@ -663,9 +663,10 @@ const stopTracking = async (req, res) => {
         if (!timeTracking) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
-        const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
+
         // Find and update the specified time entry
         const activeTimeEntry = timeTracking.timeEntries.id(req.params.timeEntryId);
+        const lastScreenshot = activeTimeEntry.screenshots.slice(-1)[0]; // Get the last time entry
         if (!activeTimeEntry.endTime) {
             
             let endTime = 0;
@@ -699,6 +700,10 @@ const stopTracking = async (req, res) => {
             // Save the time tracking document
             await timeTracking.save();
 
+            // Assuming you have a User model defined in Mongoose
+            // Find the user associated with this time entry
+
+
             if (user) {
                 // Update the user's isActive field to false
                 user.isActive = false;
@@ -706,22 +711,16 @@ const stopTracking = async (req, res) => {
             }
             res.status(200).json({ success: true, data: timeTracking });
         } else {
-            {
-                let endTime = 0;
-                if(lastScreenshot){
-                    endTime = new Date(lastScreenshot.createdAt)
-                }
-                // if (endTime) {
-                //     activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
-                // }
-                activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
-                await timeTracking.save();
-                res.status(200).json({ success: true, message: 'Time entry already ended' });
+            let endTime = 0;
+            if(lastScreenshot){
+                endTime = new Date(lastScreenshot.createdAt)
             }
-
-            activeTimeEntry.endTime = new Date(req.body.endTime)
+            // if (endTime) {
+            //     activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
+            // }
+            activeTimeEntry.endTime = new Date(req.body.endTime) ? new Date(req.body.endTime) : endTime;
             await timeTracking.save();
-            res.status(400).json({ success: false, message: 'Time entry already ended' });
+            res.status(200).json({ success: true, message: 'Time entry already ended' });
         }
     } catch (error) {
         console.error('Error stopping time entry:', error);
@@ -794,13 +793,16 @@ async function retrieveScreenshotsForUser(userId) {
                     path: 'screenshots',
                 }
             });
-        timeEntries[0].timeEntries.sort((a, b) => {
-            return new Date(b.startTime) - new Date(a.startTime);
-        });
+            if(timeEntries[0].timeEntries){
+
+            }
 
         if (!timeEntries[0].timeEntries || timeEntries[0].timeEntries.length === 0) {
             return null; // No time entries found for the user
         }
+        timeEntries[0].timeEntries.sort((a, b) => {
+            return new Date(b.startTime) - new Date(a.startTime);
+        });
 
         for (const timeEntry of timeEntries[0].timeEntries) {
             if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
@@ -881,9 +883,14 @@ const getTotalHoursWorked = async (req, res) => {
         }
 
         const project = await ProjectSchema.findOne({ userId });
+
+        let minutesAgo = 'Awaiting'
         // Get the user's last active time
-        const lastActiveTime = user.lastActive;
-        const minutesAgo = getTimeAgo(lastActiveTime);
+        if(user.lastActive > user.createdAt){
+            const lastActiveTime = user.lastActive;
+            minutesAgo = getTimeAgo(lastActiveTime);
+        }
+       
         console.log('idpassed:', userId);
         const lastScreenshot = await retrieveScreenshotsForUser(userId);
         // const lastScreenshot = await getUserScreenshot(userId);
@@ -895,7 +902,6 @@ const getTotalHoursWorked = async (req, res) => {
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
 
         const currentTime = new Date().getTime();
-        const timeDiff = currentTime - lastActiveTime;
         const inactiveThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
         const isActive = user.isActive;
 
@@ -1360,7 +1366,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
             newTimeEntry.endTime = new Date(startTime)
 
             // Adjust the endTime of the original timeEntry
-            timeEntry.startTime = new Date(startTime);
+            timeEntry.startTime = new Date(endTime);
             timeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
             // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
                
@@ -1405,7 +1411,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
             deletedActivity,
             deductedTime: formatTime(totalHoursWorked),
         });
-    }  catch (error) {
+    } catch (error) {
         console.error('Error deleting screenshot and deducting time:', error);
         return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time' , error: error });
     }
@@ -1763,9 +1769,11 @@ const splitActivity = async (req, res) => {
 };
 
 
+
+
 const deleteActivity = async (req, res) => {
     try {
-        const { timeTrackingId, timeEntryId } = req.params;
+        const { timeTrackingId, activityId } = req.params;
 
         // Find the time tracking document by ID
         const timeTracking = await TimeTracking.findById(timeTrackingId);
@@ -1780,17 +1788,6 @@ const deleteActivity = async (req, res) => {
         if (!activity) {
             return res.status(404).json({ success: false, message: 'Activity not found' });
         }
-
-        const trimmedActivity = {
-            startTime: startTime,
-            endTime: endTime,
-            changeTime: new Date(),
-            editedBy: req.user._id,
-            scope: 'trim',
-            change: `Activity trimmed from ${startTime} to ${endTime}`,
-            screenshots: screenshotsToMove,
-            historyChanges: [],
-        };
 
         // Remove the activity from the time tracking document
         timeTracking.activities.pull(activityId);
@@ -2290,6 +2287,7 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                             description: 'This is manually added offline time'
                         })
                     }
+                    
                 }
                 // Check if the time entry has offline activities
                 // if (timeEntry.activities && timeEntry.activities.length > 0) {
@@ -2463,7 +2461,6 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
-
 const visitedurlSave = async (req, res) => {
     const timeEntryId = req.params.timeEntryId;
     const screenshotId = req.body.screenshotId; // Add a screenshotId to the request body
