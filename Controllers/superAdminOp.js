@@ -2091,7 +2091,7 @@ const addOfflineTime = async (req, res) => {
         });
     } catch (error) {
         console.error('Error adding offline time:', error);
-        return res.status(500).json({ success: false, message: 'Failed to add offline time' });
+        return res.status(500).json({ success: false, message: 'Failed to add offline time', error: error });
     }
 };
 
