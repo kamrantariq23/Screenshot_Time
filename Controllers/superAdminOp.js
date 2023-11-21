@@ -368,11 +368,11 @@ const calculateHoursWorked = async (user, period) => {
                 endTime = new Date(entry.timeEntries.endTime);
             } else {
                 const lastScreenshot = entry.timeEntries.screenshots.slice(-1)[0];
-        
+
                 if (lastScreenshot) {
                     endTime = new Date(lastScreenshot.createdAt);
                 }
-                else{
+                else {
                     endTime = entry.timeEntries.startTime;
                 }
             }
@@ -518,7 +518,7 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
 
                 let minutesAgo = 'Awaiting'
                 // Get the user's last active time
-                if(user.lastActive > user.createdAt){
+                if (user.lastActive > user.createdAt) {
                     const lastActiveTime = user.lastActive;
                     minutesAgo = getTimeAgo(lastActiveTime);
                 }
@@ -962,15 +962,15 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
 
         // Set startTime for the second part of the split
         let endTime = indexAfterSplit < timeEntry.screenshots.length ? timeEntry.screenshots[indexAfterSplit].startTime : timeEntry.endTime;
-        if (endTime=='Invalid Date'){
+        if (endTime == 'Invalid Date') {
             endTime = timeEntry.screenshots[indexAfterSplit].createdAt;
         }
         // Remove the screenshot from the time entry
         timeEntry.screenshots.splice(screenshotIndex, 1);
-        
+
         let newTimeEntry = [];
         if (screenshotIndex !== -1) {
-            
+
             newTimeEntry = { ...timeEntry };
             newTimeEntry.startTime = new Date(timeEntry.startTime);
             newTimeEntry.screenshots = timeEntry.screenshots.slice(0, screenshotIndex);
@@ -980,15 +980,15 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
             timeEntry.startTime = new Date(endTime);
             timeEntry.screenshots = timeEntry.screenshots.slice(screenshotIndex);
             // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
-               
+
             timeTracking.timeEntries.push(newTimeEntry)
             timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
         }
-        else{
-            foundTimeEntry.startTime= null,
-            foundTimeEntry.endTime= null
+        else {
+            foundTimeEntry.startTime = null,
+                foundTimeEntry.endTime = null
         }
-        
+
         // Calculate the total time tracked for the day after deducting the screenshot duration
         let totalHoursWorked = calculateTotalHoursWorkedForDay(timeTracking);
 
@@ -1024,7 +1024,7 @@ const deleteScreenshotAndDeductTime = async (req, res) => {
         });
     } catch (error) {
         console.error('Error deleting screenshot and deducting time:', error);
-        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time', error:error});
+        return res.status(500).json({ success: false, message: 'Failed to delete screenshot and deduct time', error: error });
     }
 };
 const getMonthlyScreenshots = async (req, res) => {
@@ -2039,7 +2039,137 @@ const calculateTotalHours = (timeTrackings) => {
     return `${totalHours}h ${totalMinutes}m`;
 };
 
+const findTimeGaps = (startTime, endTime, existingTimeEntries, timezone) => {
+    const gaps = [];
+
+    // Sort existing time entries by start time
+    const sortedEntries = existingTimeEntries.slice().sort((a, b) => a.startTime - b.startTime);
+
+    let currentStart = startTime;
+    for (const entry of sortedEntries) {
+        const entryStart = DateTime.fromJSDate(entry.startTime, { zone: timezone });
+        const entryEnd = DateTime.fromJSDate(entry.endTime, { zone: timezone });
+
+        if(entryStart===entryEnd){
+            continue;
+        }
+        // Check for a gap before the current entry
+        if (currentStart < entryStart) {
+            gaps.push({ start: currentStart, end: entryStart });
+        }
+
+        // Update current start time for the next iteration
+        currentStart = entryEnd > currentStart ? entryEnd : currentStart;
+    }
+
+    // Check for a gap after the last entry
+    if (currentStart < endTime) {
+        gaps.push({ start: currentStart, end: endTime });
+    }
+
+    return gaps;
+};
+
+
 const addOfflineTime = async (req, res) => {
+    const { userId } = req.params;
+    const { notes, projectId } = req.body;
+    const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+    const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+    let timeGaps = []
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const timeTracking = await TimeTracking.findOne({ userId });
+        if (!timeTracking) {
+            return res.status(404).json({ success: false, message: 'Time tracking not found' });
+        }
+
+        // Check for existing time slots within the specified range
+        const existingTimeSlots = timeTracking.timeEntries.filter(entry => {
+            const entryStartTime = DateTime.fromJSDate(entry.startTime, { zone: req.user.timezone });
+            const entryEndTime = DateTime.fromJSDate(entry.endTime, { zone: req.user.timezone });
+            return entryStartTime < entryEndTime && entryStartTime >= startTime && entryEndTime <= endTime;
+        });
+
+        // If there are existing time slots, add new time entries accordingly
+        if (existingTimeSlots.length > 0) {
+
+            // Calculate gaps in time
+             timeGaps = findTimeGaps(startTime, endTime, existingTimeSlots, req.user.timezone);
+
+            // Create new time entries for the calculated gaps
+            for (const gap of timeGaps) {
+                const newTimeEntry = {
+                    startTime: new Date(gap.start),
+                    endTime: new Date(gap.end),
+                    description: 'offline',
+                    activities: [{
+                        startTime: new Date(gap.start),
+                        endTime: new Date(gap.end),
+                        notes,
+                        projectId,
+                        scope: 'offline',
+                        editedBy: req.user._id,
+                        screenshots: [],
+                        historyChanges: [],
+                        offline: true,
+                    }],
+                };
+
+                // Add the new time entry to the time tracking document
+                timeTracking.timeEntries.push(newTimeEntry);
+            }
+
+            // Sort the time entries after adding new entries
+            timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+        } else {
+            // If no existing time slots, create a new time entry for the entire specified range
+            const newTimeEntry = {
+                startTime: new Date(startTime),
+                endTime: new Date(endTime),
+                description: 'offline',
+                activities: [{
+                    startTime,
+                    endTime,
+                    notes,
+                    projectId,
+                    scope: 'offline',
+                    editedBy: req.user._id,
+                    screenshots: [],
+                    historyChanges: [],
+                    offline: true,
+                }],
+            };
+
+            // Add the new time entry to the time tracking document
+            timeTracking.timeEntries.push(newTimeEntry);
+            timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
+        }
+
+        // Save the changes to the time tracking document
+        await timeTracking.save();
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                time:timeGaps,
+                message: 'Offline time added successfully',
+            },
+        });
+    } catch (error) {
+        console.error('Error adding offline time:', error);
+        return res.status(500).json({ success: false, message: 'Failed to add offline time', error: error });
+    }
+};
+
+
+
+const addOfflineTimeoldd = async (req, res) => {
     const { userId } = req.params;
     const { notes, projectId } = req.body;
     // Convert the time format
@@ -3412,7 +3542,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                     endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
                 } else {
                     const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
-            
+
                     if (lastScreenshot) {
                         endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
                     } else {
@@ -3420,7 +3550,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         continue;
                     }
                 }
-                if(startTime == endTime){
+                if (startTime == endTime) {
                     continue;
                 }
                 let screenshotTimeRange = 0
@@ -3482,7 +3612,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                         totalHoursWorked.daily += hoursWorked;
                     }
                 }
-                
+
                 if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
                     const screenshotStartTime = startTime.toFormat('h:mm a');
                     const screenshotEndTime = endTime.toFormat('h:mm a');
@@ -3496,7 +3626,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                             timeentryId: timeEntry._id,
                         })
                     }
-                    
+
                 }
                 if (startTime >= startOfToday && startTime < endOfToday) {
                     const screenshotStartTime = startTime.toFormat('h:mm a');
@@ -3511,7 +3641,7 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                             timeentryId: timeEntry._id,
                         })
                     }
-                    
+
                 }
                 // Check if the time entry has offline activities
                 // if (timeEntry.activities && timeEntry.activities.length > 0) {
@@ -3579,16 +3709,16 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                         const screenshotStartTime = startTime.toFormat('h:mm a');
                         const screenshotEndTime = endTime.toFormat('h:mm a');
-                        if(timeEntry.description=='offline'){
+                        if (timeEntry.description == 'offline') {
                             const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} ${timeEntry.description}`;
-                        console.log('Range', screenshotTimeRange);
+                            console.log('Range', screenshotTimeRange);
                         }
-                        else{
+                        else {
                             const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
                             console.log('Range', screenshotTimeRange);
                         }
-    
-                        
+
+
                         // Map screenshots to screenshotDetails
                         const screenshotDetails = screenshotsToday.map((screenshot) => {
                             // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
