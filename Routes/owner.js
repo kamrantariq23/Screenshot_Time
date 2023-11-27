@@ -10,7 +10,11 @@ import middleware from '../Middlewares/loggedIn';
 
 const eventRouter = express.Router();
 
-
+eventRouter.delete(
+    '/time-tracking/:timeTrackingId/activity/:timeEntryId',
+    middleware.isLoggedIn,
+    events.deleteActivity,
+);
 eventRouter.post('/addEmployee', events.addEmployeeToCompany);
 eventRouter.post('/updateemployee', events.updateEmployeeToCompany);
 eventRouter.get('/companies',middleware.isLoggedIn ,events.getEvents);

@@ -127,6 +127,7 @@ eventRouter.delete(
 // only admin can delete
 eventRouter.delete(
     '/time-tracking/:timeTrackingId/activity/:timeEntryId',
+    isAdminMiddleware.isManagerOwner,
     events.deleteActivity,
 );
 

@@ -61,7 +61,7 @@ eventRouter.get('/week', isLoggedInUser.isLoggedIn, events.getWeeklyRecords);
 //     events.deleteEvent,
 // );
 eventRouter.delete(
-    '/time-tracking/:timeTrackingId/activity/:activityId',
+    '/time-tracking/:timeTrackingId/activity/:timeEntryId',
     isLoggedInUser.isLoggedIn,
     events.deleteActivity,
 );

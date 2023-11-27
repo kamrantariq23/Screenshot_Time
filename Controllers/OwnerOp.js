@@ -276,7 +276,7 @@ const getTotalHoursWorkedAllEmployeesT = async (req, res) => {
 
                 let minutesAgo = 'Awaiting'
                 // Get the user's last active time
-                if(user.lastActive > user.createdAt){
+                if (user.lastActive > user.createdAt) {
                     const lastActiveTime = user.lastActive;
                     minutesAgo = getTimeAgo(lastActiveTime);
                 }
@@ -602,6 +602,58 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
 
 
 
+const deleteActivity = async (req, res) => {
+    try {
+        const { timeTrackingId, timeEntryId } = req.params;
+        console.log(timeTrackingId, timeEntryId);
+        // Find the time tracking document by ID
+        const timeTracking = await TimeTracking.findById(timeTrackingId);
+
+        if (!timeTracking) {
+            return res.status(404).json({ success: false, message: 'Time tracking document not found' });
+        }
+
+        // Find the timeEntry to be deleted by ID
+        const foundTimeEntry = timeTracking.timeEntries.find((timeEntry) => timeEntry._id.toString() === timeEntryId);
+
+        if (!foundTimeEntry) {
+            return res.status(404).json({ success: false, message: 'timeEntry not found' });
+        }
+        const cloneTimeEntry = JSON.parse(JSON.stringify(foundTimeEntry)); // Deep clone the object
+
+        const deleteActivity = {
+            startTime: foundTimeEntry.startTime,
+            endTime: foundTimeEntry.endTime,
+            changeTime: new Date(),
+            editedBy: req.user._id,
+            scope: 'delete timeEntry',
+            change: `delete Activity from ${foundTimeEntry.startTime} to ${foundTimeEntry.endTime}`,
+            screenshots: foundTimeEntry.screenshots.map(screenshot => JSON.parse(JSON.stringify(screenshot))),
+            historyChanges: [{
+                changeTime: new Date(),
+                editedBy: req.user._id,
+                previousData: cloneTimeEntry, // Store the deep clone in historyChanges
+            }],
+        };
+
+        // Step 7: Push the new activity to the activities array
+        foundTimeEntry.activities.push(deleteActivity);
+        foundTimeEntry.screenshots = [];
+        // Step 7: Push the new activity to the activities array
+        foundTimeEntry.deletedBy = req.user._id;
+        foundTimeEntry.deletedAt = new Date()
+        foundTimeEntry.endTime = new Date(foundTimeEntry.startTime)
+        // Remove the timeEntry from the time tracking document
+
+        await timeTracking.save();
+
+        // Return success response
+        res.status(200).json({ success: true, message: 'timeEntry deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting timeEntry:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete timeEntry' });
+    }
+};
 
 
 
@@ -866,7 +918,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                             timeentryId: timeEntry._id,
                         })
                     }
-                    
+
                 }
                 else if (startTime >= startOfToday && startTime < endOfToday) {
                     const screenshotStartTime = startTime.toFormat('h:mm a');
@@ -881,7 +933,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                             timeentryId: timeEntry._id,
                         })
                     }
-                    
+
                 }
                 // Check if the time entry has offline activities
                 // if (timeEntry.activities && timeEntry.activities.length > 0) {
@@ -1262,4 +1314,4 @@ const getSingleEmployee = (req, res) => {
 
 
 
-export default { getEvents, updateEmployeeSettings, getcompanyemployees, getSingleEmployee, getTotalHoursAndScreenshotstest, getTotalHoursWorkedAllEmployeesT, updateUserArchiveStatus, getTotalHoursAndScreenshots, updateEmployeeToCompany, addEmployeeToCompany, deleteEmployee, getTotalHoursWorkedAllEmployees };
+export default { getEvents, updateEmployeeSettings, deleteActivity, getcompanyemployees, getSingleEmployee, getTotalHoursAndScreenshotstest, getTotalHoursWorkedAllEmployeesT, updateUserArchiveStatus, getTotalHoursAndScreenshots, updateEmployeeToCompany, addEmployeeToCompany, deleteEmployee, getTotalHoursWorkedAllEmployees };
