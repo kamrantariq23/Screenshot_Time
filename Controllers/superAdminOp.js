@@ -1982,8 +1982,8 @@ const trimActivityInTimeEntry = async (req, res) => {
 
 const deleteActivity = async (req, res) => {
     try {
-        const { timeTrackingId, activityId } = req.params;
-
+        const { timeTrackingId, timeEntryId } = req.params;
+        console.log(timeTrackingId, timeEntryId);
         // Find the time tracking document by ID
         const timeTracking = await TimeTracking.findById(timeTrackingId);
 
@@ -1991,24 +1991,45 @@ const deleteActivity = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Time tracking document not found' });
         }
 
-        // Find the activity to be deleted by ID
-        const activity = timeTracking.activities.find((activity) => activity._id.toString() === activityId);
+        // Find the timeEntry to be deleted by ID
+        const foundTimeEntry = timeTracking.timeEntries.find((timeEntry) => timeEntry._id.toString() === timeEntryId);
 
-        if (!activity) {
-            return res.status(404).json({ success: false, message: 'Activity not found' });
+        if (!foundTimeEntry) {
+            return res.status(404).json({ success: false, message: 'timeEntry not found' });
         }
+        const cloneTimeEntry = JSON.parse(JSON.stringify(foundTimeEntry)); // Deep clone the object
 
-        // Remove the activity from the time tracking document
-        timeTracking.activities.pull(activityId);
+        const deleteActivity = {
+            startTime: foundTimeEntry.startTime,
+            endTime: foundTimeEntry.endTime,
+            changeTime: new Date(),
+            editedBy: req.user._id,
+            scope: 'delete timeEntry',
+            change: `delete Activity from ${foundTimeEntry.startTime} to ${foundTimeEntry.endTime}`,
+            screenshots: foundTimeEntry.screenshots.map(screenshot => JSON.parse(JSON.stringify(screenshot))),
+            historyChanges: [{
+                changeTime: new Date(),
+                editedBy: req.user._id,
+                previousData: cloneTimeEntry, // Store the deep clone in historyChanges
+            }],
+        };
 
-        // Save the updated time tracking document
-        await timeTracking.save();
+        // Step 7: Push the new activity to the activities array
+        foundTimeEntry.activities.push(deleteActivity);
+        foundTimeEntry.screenshots = [];
+        // Step 7: Push the new activity to the activities array
+        foundTimeEntry.deletedBy = req.user._id;
+        foundTimeEntry.deletedAt = new Date()
+        foundTimeEntry.endTime = new Date(foundTimeEntry.startTime)
+        // Remove the timeEntry from the time tracking document
+
+            await timeTracking.save();
 
         // Return success response
-        res.json({ success: true, message: 'Activity deleted successfully' });
+        res.status(200).json({ success: true, message: 'timeEntry deleted successfully' });
     } catch (error) {
-        console.error('Error deleting activity:', error);
-        res.status(500).json({ success: false, message: 'Failed to delete activity' });
+        console.error('Error deleting timeEntry:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete timeEntry' });
     }
 };
 
@@ -2050,7 +2071,7 @@ const findTimeGaps = (startTime, endTime, existingTimeEntries, timezone) => {
         const entryStart = DateTime.fromJSDate(entry.startTime, { zone: timezone });
         const entryEnd = DateTime.fromJSDate(entry.endTime, { zone: timezone });
 
-        if(entryStart===entryEnd){
+        if (entryStart === entryEnd) {
             continue;
         }
         // Check for a gap before the current entry
@@ -2100,7 +2121,7 @@ const addOfflineTime = async (req, res) => {
         if (existingTimeSlots.length > 0) {
 
             // Calculate gaps in time
-             timeGaps = findTimeGaps(startTime, endTime, existingTimeSlots, req.user.timezone);
+            timeGaps = findTimeGaps(startTime, endTime, existingTimeSlots, req.user.timezone);
 
             // Create new time entries for the calculated gaps
             for (const gap of timeGaps) {
@@ -2157,7 +2178,7 @@ const addOfflineTime = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: {
-                time:timeGaps,
+                time: timeGaps,
                 message: 'Offline time added successfully',
             },
         });
