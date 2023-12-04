@@ -385,7 +385,9 @@ const addScreenshott = async (req, res) => {
 };
 
 const addScreenshot = async (req, res) => {
-    const pusher = res.locals.pusher;
+    
+    try {
+        const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
     const file = req.file;
@@ -393,7 +395,6 @@ const addScreenshot = async (req, res) => {
     const endTime = 0;
     let visitedUrls = [];
     const filename = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/" + file.originalname;
-    try {
         // Find the time tracking document with the given time entry
         const timeTrack = await TimeTracking.findOne({ 'timeEntries._id': timeEntryId });
         if (!timeTrack) {
@@ -501,7 +502,7 @@ const addScreenshot = async (req, res) => {
         });
     } catch (error) {
         console.error('Error adding screenshot:', error);
-        return res.status(500).json({ success: false, message: 'Failed to add screenshot' });
+        return res.status(500).json({ success: false, message: 'Failed to add screenshot',error:error });
     }
 };
 
@@ -884,13 +885,17 @@ const getTotalHoursWorked = async (req, res) => {
 
         const project = await ProjectSchema.findOne({ userId });
 
+        let totalhours = 0;
+    let hoursWorked = 0;
+    let newHoursWorked = 0;
+    let newTimeEntry = []
         let minutesAgo = 'Awaiting'
         // Get the user's last active time
-        if (user.lastActive > user.createdAt) {
+        if(user.lastActive > user.createdAt){
             const lastActiveTime = user.lastActive;
             minutesAgo = getTimeAgo(lastActiveTime);
         }
-
+       
         console.log('idpassed:', userId);
         const lastScreenshot = await retrieveScreenshotsForUser(userId);
         // const lastScreenshot = await getUserScreenshot(userId);
@@ -908,21 +913,33 @@ const getTotalHoursWorked = async (req, res) => {
 
         // Get the start and end times for the current day, week, and month
         const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const endOfToday = new Date(startOfToday);
-        endOfToday.setDate(startOfToday.getDate() + 1);
+        const userDateTime = setHoursDifference(now, req.user.timezoneOffset, req.user.timezone)
+    
+       // Perform calculations in the standard time zone
+       const startOfToday = userDateTime.startOf('day');
+       const endOfToday = userDateTime.endOf('day');
+       const startOfThisWeek = userDateTime.startOf('week');
+       const startOfThisMonth = userDateTime.startOf('month');
 
-        const startOfYesterday = new Date(startOfToday);
-        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+       const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
+       const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
+       // Calculate endOfThisWeek
+       const endOfThisWeek = userDateTime.endOf('week');
 
-        const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+       // Calculate endOfThisMonth
+       const endOfThisMonth = userDateTime.endOf('month');
 
-        const endOfThisWeek = new Date(startOfThisWeek);
-        endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
-
-        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfThisMonth = new Date(startOfThisMonth);
-        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
+        // const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        // const endOfToday = new Date(startOfToday);
+        // endOfToday.setDate(startOfToday.getDate() + 1);
+        // const startOfYesterday = new Date(startOfToday);
+        // startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+        // const startOfThisWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+        // const endOfThisWeek = new Date(startOfThisWeek);
+        // endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
+        // const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        // const endOfThisMonth = new Date(startOfThisMonth);
+        // endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
         // 0 day of the next month, which gives the last day of the current month
 
         // Get the timeTrackings
@@ -967,25 +984,84 @@ const getTotalHoursWorked = async (req, res) => {
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
 
-                const startTime = new Date(timeEntry.startTime);
+                let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+
                 let endTime = 0;
                 if (timeEntry.endTime) {
-                    endTime = new Date(timeEntry.endTime);
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
                 } else {
                     const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
-
+            
                     if (lastScreenshot) {
-                        endTime = new Date(lastScreenshot.createdAt);
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
                     } else {
                         // No screenshots in this timeEntry, skip it
                         continue;
                     }
                 }
-                // const endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : user.lastActive;
-                const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                if(startTime == endTime){
+                    continue;
+                }
+                if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
+                    // Create a new time entry for the next day starting at 12:00 AM
+                    newTimeEntry = { ...timeEntry };
+                    newTimeEntry.startTime = endTime.startOf('day');
 
-                if (startTime >= startOfToday && startTime < endOfToday) {
-                    totalHoursWorked.daily += hoursWorked;
+                    newTimeEntry.endTime = new Date(endTime);
+
+                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                    // timeEntry.startTime = new Date(startTime);
+                    // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone)
+                    timeEntry.endTime = startTime.endOf('day');
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+
+                    // Calculate the hours worked for both time entries
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+                    }
+                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                        totalHoursWorked.daily += newHoursWorked;
+                    }
+                } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
+                    newTimeEntry = { ...timeEntry };
+                    newTimeEntry.startTime = new Date(startTime);
+                    newTimeEntry.endTime = startTime.endOf('day');
+
+                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                    timeEntry.startTime = endTime.startOf('day');
+                    startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+                    // Calculate the hours worked for both time entries
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                        totalHoursWorked.daily += newHoursWorked;
+                    }
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+                    }
+
+                } else {
+                    // Calculate the hours worked using the corrected start and end times
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    newHoursWorked = 0;
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+                    }
+                }
+
+                if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
+                    totalHoursWorked.weekly += newHoursWorked;
                 }
 
                 if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
@@ -995,16 +1071,27 @@ const getTotalHoursWorked = async (req, res) => {
                 if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
                 }
+                if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
+                    totalHoursWorked.monthly += newHoursWorked;
+                }
 
-                if (startTime >= startOfYesterday && startTime < startOfToday) {
+                if (startTime >= startOfYesterday && startTime < endOfYesterday) {
                     totalHoursWorked.yesterday += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= startOfYesterday && newTimeEntry.startTime < endOfYesterday) {
+                    totalHoursWorked.yesterday += newHoursWorked;
                 }
             }
         }
-        const formatHours = (hoursDecimal) => {
-            const hours = Math.floor(Math.abs(hoursDecimal));
-            const minutes = Math.round((Math.abs(hoursDecimal) - hours) * 60);
-            return `${hours}h ${minutes}m`;
+        const formatHours = (time) => {
+            const hours = Math.floor(time);
+            const minutes = Math.floor((time - hours) * 60);
+            if (minutes === 60) {
+                // If minutes are 60, increment the hour and set minutes to 0
+                return `${hours + 1}h 0m`;
+            } else {
+                return `${hours}h ${minutes}m`;
+            }
         };
 
         const formattedTotalHoursWorked = {
@@ -1042,6 +1129,8 @@ const getTotalHoursWorked = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to get total hours worked' });
     }
 };
+
+
 const getActivityData = async (req, res) => {
     const userId = req.user._id;
 

@@ -336,48 +336,130 @@ const editCompanyName = (req, res) => {
 };
 const calculateHoursWorked = async (user, period) => {
     const now = new Date();
+    const userDateTime = setHoursDifference(now, user.ownertimezoneOffset, user.ownertimezone)
+    let totalhours = 0;
+    let hoursWorked = 0;
+    let newHoursWorked = 0;
+    let newTimeEntry = []
+       // Perform calculations in the standard time zone
+       const startOfToday = userDateTime.startOf('day');
+       const endOfToday = userDateTime.endOf('day');
+       const startOfThisWeek = userDateTime.startOf('week');
+       const startOfThisMonth = userDateTime.startOf('month');
+
+       const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
+       const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
+       // Calculate endOfThisWeek
+       const endOfThisWeek = userDateTime.endOf('week');
+
+       // Calculate endOfThisMonth
+       const endOfThisMonth = userDateTime.endOf('month');
+
     const periods = {
         daily: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
+            start: userDateTime.startOf('day'),
+            end: userDateTime.endOf('day'),
         },
         yesterday: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999),
+            start: userDateTime.minus({ days: 1 }).startOf('day'), // Subtract 1 day for yesterday,
+            end: startOfYesterday.endOf('day'), // Start of today is the end of yesterday
         },
         weekly: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + (6 - now.getDay()), 23, 59, 59, 999),
+            start: userDateTime.startOf('week'),
+            end: userDateTime.endOf('week'),
         },
         monthly: {
-            start: new Date(now.getFullYear(), now.getMonth(), 1),
-            end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
+            start: userDateTime.startOf('month'),
+            end: userDateTime.endOf('month'),
         },
     };
 
     const timeEntries = await TimeTracking.aggregate([
         { $match: { userId: user._id } },
         { $unwind: '$timeEntries' },
-        { $match: { 'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end } } },
+        {
+            $match: {
+                $or: [
+                    // Time entries that start and end within the selected period
+                    {
+                        'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end },
+                    },
+                    // Time entries that started before the selected period and extend into it
+                    {
+                        'timeEntries.startTime': { $lt: periods[period].start },
+                        'timeEntries.endTime': { $gte: periods[period].start },
+                    },
+                    // Time entries that start from yesterday and end on today
+                    {
+                        'timeEntries.startTime': { $lt: periods[period].end },
+                        'timeEntries.endTime': { $gte: periods[period].start },
+                    },
+                ],
+            },
+        },
     ]);
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
+            let startTime = DateTime.fromJSDate(entry.timeEntries.startTime, { zone: user.ownertimezone });
             let endTime = 0;
             if (entry.timeEntries.endTime) {
-                endTime = new Date(entry.timeEntries.endTime);
+                endTime = DateTime.fromJSDate(entry.timeEntries.endTime, { zone: user.ownertimezone });
             } else {
                 const lastScreenshot = entry.timeEntries.screenshots.slice(-1)[0];
 
                 if (lastScreenshot) {
-                    endTime = new Date(lastScreenshot.createdAt);
+                    endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: user.ownertimezone });
                 }
                 else {
-                    endTime = entry.timeEntries.startTime;
+                    endTime = startTime;
                 }
             }
-            const timeWorked = endTime - entry.timeEntries.startTime;
-            return acc + timeWorked;
+            if (startTime >= periods[period].start && startTime < periods[period].end && endTime > periods[period].end) {
+                // Create a new time entry for the next day starting at 12:00 AM
+                newTimeEntry = { ...entry.timeEntries };
+                newTimeEntry.startTime = endTime.startOf('day');
+
+                newTimeEntry.endTime = new Date(endTime);
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                entry.timeEntries.endTime = startTime.endOf('day');
+                endTime = entry.timeEntries.endTime;
+
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime);
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                
+            } else if (startTime < periods[period].start && endTime >= periods[period].start && endTime < periods[period].end) {
+                newTimeEntry = { ...entry.timeEntries };
+                newTimeEntry.startTime = new Date(startTime);
+                newTimeEntry.endTime = startTime.endOf('day');
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                entry.timeEntries.startTime = endTime.startOf('day');
+                startTime = entry.timeEntries.startTime;
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime);
+                //  (endTime - entry.timeEntries.startTime);
+
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime);
+
+            } else {
+                // Calculate the hours worked using the corrected start and end times
+                hoursWorked = (endTime - startTime);
+                newHoursWorked = 0;
+            }
+            if (startTime >= periods[period].start && startTime < periods[period].end) {
+                totalhours += hoursWorked;
+
+            }
+            if (newTimeEntry.startTime >= periods[period].start && newTimeEntry.startTime < periods[period].end) {
+                totalhours += newHoursWorked;
+            }
+            return acc = totalhours;
         }
         return acc;
     }, 0);
@@ -479,8 +561,10 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
         let totalUsersWorkingToday = 0;
         const offlineUsers = [];
 
-        const usersWorkingToday = await Promise.all(
+        let usersWorkingToday = await Promise.all(
             users.map(async (user) => {
+                user.ownertimezoneOffset = req.user.timezoneOffset
+                user.ownertimezone = req.user.timezone
                 const employeeId = user._id;
 
                 totalUsers++;
@@ -518,7 +602,7 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
 
                 let minutesAgo = 'Awaiting'
                 // Get the user's last active time
-                if (user.lastActive > user.createdAt) {
+                if(user.lastActive > user.createdAt){
                     const lastActiveTime = user.lastActive;
                     minutesAgo = getTimeAgo(lastActiveTime);
                 }
