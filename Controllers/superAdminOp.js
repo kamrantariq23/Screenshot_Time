@@ -2614,7 +2614,6 @@ const getTotalHoursAndScreenshots = async (req, res) => {
 
                 //             groupedScreenshots.push({ time: timeRange });
                 //         }
-
                 //     }
                 // }
 

@@ -66,7 +66,7 @@ eventRouter.delete(
     events.deleteActivity,
 );
 
-
+eventRouter.patch('/capture-screenshot/:timeEntryId/screenshots', isLoggedInUser.isLoggedIn, events.addScreenshotab);
 eventRouter.patch('/edit/:timeEntryId', isLoggedInUser.isLoggedIn, events.stopTracking);
 eventRouter.patch('/time-entries/:timeEntryId/screenshots', isLoggedInUser.isLoggedIn, upload.single('file'), events.addScreenshot);
 eventRouter.patch('/url/time-entry/:timeEntryId', isLoggedInUser.isLoggedIn, events.visitedurlSave);

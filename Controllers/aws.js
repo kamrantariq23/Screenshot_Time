@@ -17,7 +17,8 @@ const UploadToAws = file => {
             const params = {
                 Bucket: config.AWS_BUCKET,
                 Key: file.originalname,
-                Body: file.buffer,
+                // Body: file.buffer,
+                Body: Buffer.from(file.buffer),
                 accessKeyId: config.AWS_ACCESS_KEY,
                 secretAccessKey: config.MY_AWS_SECRET_ACCESS_KEY,
                 region: config.MY_AWS_REGION,

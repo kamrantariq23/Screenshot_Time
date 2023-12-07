@@ -14,6 +14,10 @@ import User from './Models/userSchema';
 import Pusher from "pusher";
 import timeTracking from './Models/timeSchema';
 import Timetracking from './Controllers/Timetracking';
+import screenshot from 'screenshot-desktop';
+// import screenshot from 'node-screenshot';
+const fs = require('fs');
+const Jimp = require('jimp');
 dbConnection();
 
 
@@ -85,6 +89,78 @@ pusher.trigger("ss-track", "my-event", {
 });
 // i have implemented it in signup controller like this {next(new Error('Image is required'))}
 app.use(errorHandler);
+
+app.get('/capture-screenshot', async (req, res) => {
+
+    try {
+            const img = await screenshot();
+    const formattedData = "b'" + Array.from(img).map(byte => '\\x' + byte.toString(16).padStart(2, '0')).join('') + "'";
+    const base64Image = img.toString('base64');
+    const fileName = `screenshot_${Date.now()}.jpg`;
+    // const outputPath = `C:/Users/Falsafey/Pictures/${fileName}`;
+    // fs.writeFileSync(outputPath, img);
+    const imageInfo = {
+      originalName: fileName,
+      size: img.length,
+      imageUrl: base64Image,
+      buffer: formattedData,
+      image: img
+    };
+    
+    // const imgBuffer = await screenshot();
+
+    // // Convert the image to a Jimp object
+    // const screenshotData = await Jimp.read(imgBuffer);
+
+    // // Resize or manipulate the image as needed
+    // screenshotData.resize(800, Jimp.AUTO); // Adjust dimensions as needed
+
+    // const bufferr = await screenshotData.getBufferAsync(Jimp.MIME_JPEG);
+
+
+    // // Convert the image data to a string in the desired format
+    // const formattedData = "b'" + Array.from(bufferr).map(byte => '\\x' + byte.toString(16).padStart(2, '0')).join('') + "'";
+
+    // // Convert the image data to base64
+    // const base64Image = screenshotData.toString('base64');
+
+    // const imageInfo = {
+    //   size: screenshotData.length,
+    //   imageUrl: base64Image,
+    //   buffer: formattedData,
+    // };
+    res.json(imageInfo);
+    //  // Capture screenshot
+    // const imgBuffer = await screenshot();
+
+    // // Convert the image to a Jimp object
+    // const screenshotData = await Jimp.read(imgBuffer);
+
+    // // Resize or manipulate the image as needed
+    // screenshotData.resize(800, Jimp.AUTO); // Adjust dimensions as needed
+
+    // const bufferr =  await screenshotData.getBufferAsync(Jimp.MIME_JPEG);
+   
+  
+    //   // Convert the image data to a string in the desired format
+    //   const formattedData = "b'" + Array.from(bufferr).map(byte => '\\x' + byte.toString(16).padStart(2, '0')).join('') + "'";
+  
+    //   // Convert the image data to base64
+    //   const base64Image = screenshotData.toString('base64');
+  
+    //   const imageInfo = {
+    //     size: screenshotData.length,
+    //     imageUrl: base64Image,
+    //     buffer: formattedData,
+    //   };
+      // Send the base64-encoded image data and file path to the client
+    //   res.json({ screenshot: base64Image, filePath: outputPath });
+    } catch (err) {
+      console.error('Error capturing screenshot:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
 getusers()
 async function getusers() {
     try {
