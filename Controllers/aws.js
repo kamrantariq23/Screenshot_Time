@@ -14,11 +14,19 @@ const UploadToAws = file => {
 
     return new Promise(function(resolve, reject) {
         s3bucket.createBucket(function() {
+            let bodyContent;
+            if (file.buffer instanceof Buffer) {
+                // If file.buffer is already a Buffer, use it directly
+                bodyContent = file.buffer;
+            } else {
+                // If file.buffer is an ArrayBuffer or an ArrayBufferView, convert to Buffer
+                bodyContent = Buffer.from(file.buffer);
+            }
             const params = {
                 Bucket: config.AWS_BUCKET,
                 Key: file.originalname,
-                // Body: file.buffer,
-                Body: Buffer.from(file.buffer),
+                Body: bodyContent,
+                // Body: Buffer.from(file.buffer),
                 accessKeyId: config.AWS_ACCESS_KEY,
                 secretAccessKey: config.MY_AWS_SECRET_ACCESS_KEY,
                 region: config.MY_AWS_REGION,

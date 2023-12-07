@@ -510,7 +510,7 @@ const addScreenshot = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
-    const file = req.body.file;
+    const file = req.file;
     const { activityPercentage } = req.body;
     const endTime = 0;
     let visitedUrls = [];
