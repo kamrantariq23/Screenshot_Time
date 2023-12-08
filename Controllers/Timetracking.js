@@ -521,7 +521,7 @@ const addScreenshot = async (req, res) => {
         if (!timeTrack) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
-// hello
+
         // Get the specific time entry from the time tracking document
         const timeEntry = timeTrack.timeEntries.id(timeEntryId);
         if (!timeEntry) {
@@ -2409,9 +2409,29 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
         let hoursWorked = 0;
         const groupedScreenshots = [];
         var newTimeEntry = [];
+        const totalHoursByDay = [];
 
+        const formatTime = (time) => {
+            const hours = Math.floor(time);
+            const minutes = Math.floor((time - hours) * 60);
+            if (minutes === 60) {
+                // If minutes are 60, increment the hour and set minutes to 0
+                return `${hours + 1}h 0m`;
+            } else {
+                return `${hours}h ${minutes}m`;
+            }
+        };
         // const now = new Date();
         const now = user.lastActive; // Current time for handling ongoing time entries
+        for (let i = 1; i <= userDateTime.daysInMonth; i++) {
+            const currentDay = userDateTime.set({ day: i });
+
+            // Calculate start and end of the current day
+            const startOfDay = currentDay.startOf('day');
+            const endOfDay = currentDay.endOf('day');
+
+            // Initialize total hours worked for the current day
+            let totalHoursForDay = 0;
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
@@ -2455,9 +2475,11 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
                     if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
+                        totalHoursForDay += Math.max(hoursWorked, 0);
                     }
                     if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
                         totalHoursWorked.daily += newHoursWorked;
+                        
                     }
                 } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
                     newTimeEntry = { ...timeEntry };
@@ -2491,6 +2513,11 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                     if (startTime >= startOfToday && startTime < endOfToday) {
                         totalHoursWorked.daily += hoursWorked;
                     }
+                }
+                if (startTime >= startOfDay && startTime < endOfDay) {
+                    // Calculate the hours worked for the time entry
+                    const hoursWorked = (Math.min(endOfDay, endTime) - Math.max(startOfDay, startTime)) / (1000 * 60 * 60);
+                    totalHoursForDay += Math.max(hoursWorked, 0);
                 }
                 let screenshotTimeRange = 0
                 if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
@@ -2612,22 +2639,17 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
 
             }
         }
-
+  // Add total hours for the current day to the array
+  let dayhours = formatTime(Math.max(totalHoursForDay, 0))
+            totalHoursByDay.push({
+                date: currentDay.toJSDate(),
+                totalHours: dayhours,
+            });
+        }
         totalHoursWorked.daily = Math.max(totalHoursWorked.daily, 0);
         totalHoursWorked.weekly = Math.max(totalHoursWorked.weekly, 0);
         totalHoursWorked.monthly = Math.max(totalHoursWorked.monthly, 0);
 
-
-        const formatTime = (time) => {
-            const hours = Math.floor(time);
-            const minutes = Math.floor((time - hours) * 60);
-            if (minutes === 60) {
-                // If minutes are 60, increment the hour and set minutes to 0
-                return `${hours + 1}h 0m`;
-            } else {
-                return `${hours}h ${minutes}m`;
-            }
-        };
 
         const formattedTotalHoursWorked = {
             daily: formatTime(totalHoursWorked.daily),
@@ -2647,6 +2669,7 @@ const getTotalHoursWithOfflineAndScreenshotse = async (req, res) => {
                     weekly: Math.round(totalHoursWorked.weekly * ratePerHour),
                     monthly: Math.round(totalHoursWorked.monthly * ratePerHour),
                 },
+                totalHoursByDay,
                 groupedScreenshots,
                 totalactivity: totalActivityToday,
                 timezone: user.timezone,
