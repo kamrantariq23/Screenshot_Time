@@ -502,7 +502,7 @@ const addScreenshotab = async (req, res) => {
         });
     } catch (error) {
         console.error('Error adding screenshot:', error);
-        return res.status(500).json({ success: false, message: 'Failed to add screenshot' });
+        return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
     }
 };
 
