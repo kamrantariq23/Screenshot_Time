@@ -504,7 +504,7 @@ const addScreenshotab = async (req, res) => {
         console.error('Error adding screenshot:', error);
         return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
     }
-};
+// };hmm 
 
 const addScreenshot = async (req, res) => {
     const pusher = res.locals.pusher;
