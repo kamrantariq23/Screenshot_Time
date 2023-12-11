@@ -2724,6 +2724,140 @@ const getTotalHoursAndScreenshots = async (req, res) => {
     }
 };
 
+const getTotalHoursByDay = async (req, res) => {
+    const { userId } = req.params;
+    const date = req.query.date ? new Date(req.query.date) : new Date();
+
+    const converttimezone = (time, timezone) => {
+
+        const originalTime = DateTime.fromJSDate(time);
+        const convertedTime = originalTime.setZone(timezone);
+        return convertedTime;
+    };
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Convert user input to the application's standard time zone
+        const userDateTime = setHoursDifference(date, req.user.timezoneOffset, req.user.timezone)
+
+        // Perform calculations in the standard time zone
+        const startOfToday = userDateTime.startOf('day');
+        const endOfToday = userDateTime.endOf('day');
+
+        const timeTrackings = await TimeTracking.find({ userId });
+
+        var newTimeEntry = [];
+        const totalHoursByDay = [];
+
+        const formatTime = (time) => {
+            const hours = Math.floor(time);
+            const minutes = Math.floor((time - hours) * 60);
+            if (minutes === 60) {
+                // If minutes are 60, increment the hour and set minutes to 0
+                return `${hours + 1}h 0m`;
+            } else {
+                return `${hours}h ${minutes}m`;
+            }
+        };
+        // const now = new Date();
+        for (let i = 1; i <= userDateTime.daysInMonth; i++) {
+            const currentDay = userDateTime.set({ day: i });
+
+            // Calculate start and end of the current day
+            const startOfDay = currentDay.startOf('day');
+            const endOfDay = currentDay.endOf('day');
+
+            // Initialize total hours worked for the current day
+            let totalHoursForDay = 0;
+
+            for (const timeTracking of timeTrackings) {
+                for (const timeEntry of timeTracking.timeEntries) {
+                    let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+
+                    let endTime = 0;
+                    if (timeEntry.endTime) {
+                        endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+                    } else {
+                        const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+
+                        if (lastScreenshot) {
+                            endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
+                        } else {
+                            // No screenshots in this timeEntry, skip it
+                            continue;
+                        }
+                    }
+                    if (startTime == endTime) {
+                        continue;
+                    }
+                    // let startTime = new Date(startconv);
+                    if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
+                        // Create a new time entry for the next day starting at 12:00 AM
+                        newTimeEntry = { ...timeEntry };
+                        newTimeEntry.startTime = endTime.startOf('day');
+
+                        newTimeEntry.endTime = new Date(endTime);
+
+                        // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                        // timeEntry.startTime = new Date(startTime);
+                        // startTime = setHoursDifference(timeEntry.startTime, req.user.timezoneOffset, req.user.timezone)
+                        timeEntry.endTime = startTime.endOf('day');
+                        endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+
+                    } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
+                        newTimeEntry = { ...timeEntry };
+                        newTimeEntry.startTime = new Date(startTime);
+                        newTimeEntry.endTime = startTime.endOf('day');
+
+                        // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                        timeEntry.startTime = endTime.startOf('day');
+                        startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+
+
+                    }
+                    if (startTime >= startOfDay && startTime < endOfDay) {
+                        // Calculate the hours worked for the time entry
+                        const hoursWorkedd = (Math.min(endOfDay, endTime) - Math.max(startOfDay, startTime)) / (1000 * 60 * 60);
+                        totalHoursForDay += Math.max(hoursWorkedd, 0);
+                    }
+                    if (newTimeEntry.startTime >= startOfDay && newTimeEntry.startTime < endOfDay) {
+                        // Calculate the hours worked for the time entry
+                        const hoursWorkedd = (Math.min(endOfDay, newTimeEntry.endTime) - Math.max(startOfDay, newTimeEntry.startTime)) / (1000 * 60 * 60);
+                        totalHoursForDay += Math.max(hoursWorkedd, 0);
+                    }
+
+                }
+            }
+            // Add total hours for the current day to the array
+            let dayhours = formatTime(Math.max(totalHoursForDay, 0))
+            totalHoursByDay.push({
+                date: currentDay.toFormat('d-L-yyyy'),
+                totalHours: dayhours,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                totalHoursByDay,
+                timezone: user.timezone,
+                name: user.name,
+                email: user.email,
+                usertype: user.userType,
+                startOfToday: startOfToday,
+                endOfToday: endOfToday,
+            },
+        });
+    } catch (error) {
+        console.error('Error getting total hours and screenshots:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
 
 const splitActivity = async (req, res) => {
     try {
@@ -4175,4 +4309,4 @@ const getTotalMonthlyWorkingHours = async (req, res) => {
 
 
 
-export default { checkPass, forgotPassword, getProjects, getCustomDateRangeRecords, getWorkingHoursSummary, getAllemployeesr, getTotalMonthlyWorkingHours, getTotalHoursAndScreenshote, getWeeklyRecords, getTotalAnnualWorkingHours, getAllClients, splitActivity, countEmployeesInProject, getTotalHoursAndScreenshots, getHistoryChanges, getMonthlyScreenshots, deleteActivity, trimActivityInTimeEntry, getActivityData, getSingleEmployee, assignUserToManager, emailInviteExp, emailInviteClient, emailInvite, getTotalHoursQ, getEffectiveSettingsEachUser, archiveProject, deleteEmployee, updateEmployeeSettings, deleteScreenshotAndDeductTime, moveMonthsScreenshotsToHistory, addProjects, deleteEvent, updateUserArchiveStatus, editEvent, getSingleEvent, getUsersStatus, updateBillingInfo, getUsersWorkingToday, updateCompanyNameForAllEmployees, getAllemployees, editCompanyName, getTotalHoursWorked, editProject, getTotalHoursWorkedAllEmployees, sortedScreenshotsEachEmployee, deleteProject, addOfflineTime };
+export default { checkPass, forgotPassword, getProjects, getCustomDateRangeRecords, getWorkingHoursSummary, getAllemployeesr, getTotalMonthlyWorkingHours, getTotalHoursAndScreenshote, getWeeklyRecords, getTotalAnnualWorkingHours, getAllClients, splitActivity, countEmployeesInProject, getTotalHoursByDay, getTotalHoursAndScreenshots, getHistoryChanges, getMonthlyScreenshots, deleteActivity, trimActivityInTimeEntry, getActivityData, getSingleEmployee, assignUserToManager, emailInviteExp, emailInviteClient, emailInvite, getTotalHoursQ, getEffectiveSettingsEachUser, archiveProject, deleteEmployee, updateEmployeeSettings, deleteScreenshotAndDeductTime, moveMonthsScreenshotsToHistory, addProjects, deleteEvent, updateUserArchiveStatus, editEvent, getSingleEvent, getUsersStatus, updateBillingInfo, getUsersWorkingToday, updateCompanyNameForAllEmployees, getAllemployees, editCompanyName, getTotalHoursWorked, editProject, getTotalHoursWorkedAllEmployees, sortedScreenshotsEachEmployee, deleteProject, addOfflineTime };

@@ -77,6 +77,8 @@ eventRouter.get('/activity/:eid', isAdminMiddleware.isManagerOwner, events.getAc
 
 eventRouter.get('/sorted-screenshots/:userId', isAdminMiddleware.isManagerOwner, events.sortedScreenshotsEachEmployee);
 
+eventRouter.get('/hoursbyday/:userId', isAdminMiddleware.isManagerOwner, events.getTotalHoursByDay);
+
 eventRouter.get('/sorted-datebased/:userId', isAdminMiddleware.isManagerOwner, events.getTotalHoursAndScreenshote);
 
 eventRouter.get('/user/:id/time-records', events.getTotalHoursWorked);

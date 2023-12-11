@@ -40,6 +40,8 @@ eventRouter.get('/', isLoggedInUser.isLoggedIn, IsUserArchived, events.getDailyT
 
 eventRouter.get('/Activities', isLoggedInUser.isLoggedIn, IsUserArchived, events.getActivityData);
 
+eventRouter.get('/hoursbyday', isLoggedInUser.isLoggedIn, events.getTotalHoursByDay);
+
 eventRouter.get('/sorted-screenshot', isLoggedInUser.isLoggedIn, events.getTotalHoursWithOfflineAndScreenshotse);
 
 eventRouter.get('/hours', isLoggedInUser.isLoggedIn, events.getTotalHoursWorked);

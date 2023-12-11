@@ -23,6 +23,7 @@ eventRouter.get('/getDisabledEmployee',middleware.isLoggedIn, events.getcompanye
 eventRouter.get('/getCompanyemployee',middleware.isLoggedIn, events.getTotalHoursWorkedAllEmployeesT);
 eventRouter.get('/settingsE/:userId', middleware.isLoggedIn, events.updateEmployeeSettings);
 eventRouter.get('/sorted-datebased/:userId', middleware.isLoggedIn, events.getTotalHoursAndScreenshots);
+eventRouter.get('/hoursbyday/:userId', middleware.isLoggedIn, events.getTotalHoursByDay);
 // eventRouter.post(
 //     '/addProject',
 //     isAdminMiddleware.isManagerOwner,
