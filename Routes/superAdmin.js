@@ -137,8 +137,6 @@ eventRouter.patch('/assign-user-to-manager/:managerId', isAdminMiddleware.isMana
 
 eventRouter.patch('/trim-activity/:userId/:timeEntryId', events.trimActivityInTimeEntry);
 
-
-
 eventRouter.patch('/UpdateBillingInfo/:userId', events.updateBillingInfo);
 
 eventRouter.patch('/archived/:userId', events.updateUserArchiveStatus);

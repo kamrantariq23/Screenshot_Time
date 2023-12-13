@@ -388,7 +388,7 @@ const addScreenshott = async (req, res) => {
 
 
 
-const addScreenshotabeasy = async (req, res) => {
+const addScreenshotab = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
@@ -503,7 +503,7 @@ const addScreenshotabeasy = async (req, res) => {
 };
 
 
-const addScreenshotab = async (req, res) => {
+const addScreenshotabold = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;

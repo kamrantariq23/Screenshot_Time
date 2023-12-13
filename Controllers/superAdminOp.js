@@ -341,19 +341,19 @@ const calculateHoursWorked = async (user, period) => {
     let hoursWorked = 0;
     let newHoursWorked = 0;
     let newTimeEntry = []
-       // Perform calculations in the standard time zone
-       const startOfToday = userDateTime.startOf('day');
-       const endOfToday = userDateTime.endOf('day');
-       const startOfThisWeek = userDateTime.startOf('week');
-       const startOfThisMonth = userDateTime.startOf('month');
+    // Perform calculations in the standard time zone
+    const startOfToday = userDateTime.startOf('day');
+    const endOfToday = userDateTime.endOf('day');
+    const startOfThisWeek = userDateTime.startOf('week');
+    const startOfThisMonth = userDateTime.startOf('month');
 
-       const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
-       const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
-       // Calculate endOfThisWeek
-       const endOfThisWeek = userDateTime.endOf('week');
+    const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
+    const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
+    // Calculate endOfThisWeek
+    const endOfThisWeek = userDateTime.endOf('week');
 
-       // Calculate endOfThisMonth
-       const endOfThisMonth = userDateTime.endOf('month');
+    // Calculate endOfThisMonth
+    const endOfThisMonth = userDateTime.endOf('month');
 
     const periods = {
         daily: {
@@ -431,7 +431,7 @@ const calculateHoursWorked = async (user, period) => {
                 newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime);
 
                 // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                
+
             } else if (startTime < periods[period].start && endTime >= periods[period].start && endTime < periods[period].end) {
                 newTimeEntry = { ...entry.timeEntries };
                 newTimeEntry.startTime = new Date(startTime);
@@ -602,7 +602,7 @@ const getTotalHoursWorkedAllEmployees = async (req, res) => {
 
                 let minutesAgo = 'Awaiting'
                 // Get the user's last active time
-                if(user.lastActive > user.createdAt){
+                if (user.lastActive > user.createdAt) {
                     const lastActiveTime = user.lastActive;
                     minutesAgo = getTimeAgo(lastActiveTime);
                 }
@@ -1383,8 +1383,12 @@ const getEffectiveSettingsEachUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
+        var employeeSettings = []
+        if (user.employeeSettings) {
+            employeeSettings = await EmployeeSettings.findOne({ userId: user._id });
+            // Now you can use the employeeSettings object as needed
+        }
 
-        const employeeSettings = user.employeeSettings;
         return res.status(200).json({ success: true, employeeSettings });
     } catch (error) {
         console.error('Error retrieving employee settings:', error);
@@ -2107,7 +2111,7 @@ const deleteActivity = async (req, res) => {
         foundTimeEntry.endTime = new Date(foundTimeEntry.startTime)
         // Remove the timeEntry from the time tracking document
 
-            await timeTracking.save();
+        await timeTracking.save();
 
         // Return success response
         res.status(200).json({ success: true, message: 'timeEntry deleted successfully' });
@@ -4095,10 +4099,10 @@ const getTotalHoursAndScreenshote = async (req, res) => {
 
                         const screenshotStartTime = startTime.toFormat('h:mm a');
                         const screenshotEndTime = endTime.toFormat('h:mm a');
-                       
-                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
-                            console.log('Range', screenshotTimeRange);
-                       
+
+                        const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                        console.log('Range', screenshotTimeRange);
+
 
 
                         // Map screenshots to screenshotDetails
