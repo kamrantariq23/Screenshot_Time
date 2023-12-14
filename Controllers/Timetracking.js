@@ -14,7 +14,10 @@ import ScreenshotHistory from '../Models/screenshotHistorySchema';
 import aws from './aws';
 import updationSchema from '../Models/updationSchema';
 import screenshot from 'screenshot-desktop';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
+const execAsync = promisify(exec);
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
@@ -386,13 +389,137 @@ const addScreenshott = async (req, res) => {
     }
 };
 
+const addScreenshotabscrot = async (req, res) => {
+    const pusher = res.locals.pusher;
+    const { timeEntryId } = req.params;
+    const { description, activityPercentage } = req.body;
+    const endTime = 0;
+    let visitedUrls = [];
 
+    try {
+        const timeTrack = await TimeTracking.findOne({ 'timeEntries._id': timeEntryId });
 
-const addScreenshotab = async (req, res) => {
+        if (!timeTrack) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+
+        const timeEntry = timeTrack.timeEntries.id(timeEntryId);
+
+        if (!timeEntry) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+
+        // Capture screenshot using scrot
+        const screenshotPath = await captureScreenshot(`screenshot_${req.body.startTime}_${req.user._id}.jpeg`);
+
+        // Upload the screenshot to AWS and get the URL
+        const url = await aws.UploadToAws({
+            path: screenshotPath,
+            originalname: `screenshot_${req.body.startTime}_${req.user._id}.jpeg`,
+        });
+
+        const startTime = new Date(req.body.startTime);
+        const userLocalNow = new Date(req.body.createdAt);
+        const currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
+        const createdAt = userLocalNow;
+
+        const newVisitedUrl = {
+            activityPercentage,
+        };
+        visitedUrls.push(newVisitedUrl);
+
+        const addedScreenshot = {
+            startTime,
+            endTime: userLocalNow,
+            key: url,
+            description,
+            time: currentTime,
+            createdAt,
+            visitedUrls,
+        };
+
+        timeEntry.screenshots.push(addedScreenshot);
+
+        if (timeEntry.endTime) {
+            timeEntry.endTime = userLocalNow;
+        }
+
+        const splitActivities = timeEntry.activities.filter((activity) => {
+            return activity.startTime <= createdAt && activity.endTime >= createdAt;
+        });
+
+        if (splitActivities.length > 0) {
+            splitActivities.forEach((activity) => {
+                activity.endTime = createdAt;
+            });
+        }
+
+        await timeTrack.save();
+
+        const newTimeEntry = {
+            key: url,
+            description,
+            time: currentTime,
+            createdAt,
+            visitedUrls,
+            user_id: req.user._id,
+            timeEntryId,
+        };
+
+        await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                lastActive: userLocalNow,
+                isActive: true,
+            },
+            { new: true }
+        );
+
+        const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
+
+        pusher.trigger('ss-track', 'new-ss', {
+            message: 'new screenshots',
+            data: newTimeEntry,
+        });
+
+        return res.status(200).json({
+            success: true,
+            id: addedScreenshotId,
+            screenshot: url,
+            time: currentTime,
+            data: timeEntry,
+            filename: `screenshot_${req.body.startTime}_${req.user._id}.jpeg`,
+            message: 'Screenshot added successfully',
+        });
+    } catch (error) {
+        console.error('Error adding screenshot:', error);
+        return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
+    }
+};
+
+const captureScreenshot = async (filename) => {
+    try {
+        // Execute scrot command to capture the entire desktop
+        const { stdout, stderr } = await execAsync(`scrot ${filename}`);
+
+        if (stderr) {
+            throw new Error(stderr);
+        }
+
+        return filename;
+    } catch (error) {
+        console.error('Error capturing screenshot:', error);
+        throw error;
+    }
+};
+
+const addScreenshotabdesktop = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
     const { activityPercentage } = req.body;
+    // req.body.startTime;
+    // req.body.createdAt;
     const endTime = 0;
     let visitedUrls = [];
 
@@ -503,7 +630,7 @@ const addScreenshotab = async (req, res) => {
 };
 
 
-const addScreenshotabold = async (req, res) => {
+const addScreenshotab = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;

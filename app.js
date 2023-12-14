@@ -15,6 +15,8 @@ import Pusher from "pusher";
 import timeTracking from './Models/timeSchema';
 import Timetracking from './Controllers/Timetracking';
 import screenshot from 'screenshot-desktop';
+// const robot = require('robotjs');
+// const schedule = require('node-schedule');
 
 dbConnection();
 
@@ -171,6 +173,14 @@ async function getusers() {
     }
 }
 setInterval(getusers, 60000); // 60000 milliseconds = 1 minute
+
+// Check if the mouse has moved
+// const mousePos = robot.getMousePos();
+// console.log(`Mouse position: x=${mousePos.x} y=${mousePos.y}`);
+
+// // Check if any key is pressed
+// const isAnyKeyPressed = robot.keyIsPressed();
+// console.log(`Any key state: ${isAnyKeyPressed ? 'pressed' : 'not pressed'}`);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () =>
