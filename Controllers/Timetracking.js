@@ -496,11 +496,37 @@ const addScreenshotabscrot = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
     }
 };
+const importFresh = require('import-fresh');
+const { spawnSync } = importFresh('child_process');
+
+const captureScreenshotperfect = async () => {
+    try {
+        // Execute scrot command to capture the entire desktop in JPEG format
+        const command = 'xvfb-run';
+        const args = ['scrot', '-q', '100', '--', '-'];
+        const { stdout, stderr, status } = spawnSync(command, args, { encoding: 'base64' });
+        // const scrotArgs = ['-t', '100', `"${filename}"`]; // Set quality to 100 (maximum)
+        // const { stderr, stdout, status } = spawnSync('scrot', scrotArgs, { encoding: 'base64' });
+        if (status !== 0) {
+            console.error('Error capturing screenshot:', stderr);
+            throw new Error(stderr);
+        }
+
+        // Convert the captured image data from base64 to a Buffer
+        const buffer = Buffer.from(stdout, 'base64');
+
+        return buffer;
+    } catch (error) {
+        console.error('Error capturing screenshot:', error);
+        throw error;
+    }
+};
 
 const captureScreenshot = async (filename) => {
     try {
         // Execute scrot command to capture the entire desktop
-        const { stdout, stderr } = await execAsync(`scrot ${filename}`);
+        const { stdout, stderr } = await execAsync(`xvfb-run scrot -e 'mv $f ${filename}'`);
+        // const { stdout, stderr } = await execAsync(`scrot ${filename}`);
 
         if (stderr) {
             throw new Error(stderr);

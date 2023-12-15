@@ -914,7 +914,9 @@ const sortedScreenshotsEachEmployee = async (req, res) => {
                 ) {
                     // Iterate through screenshots of the time entry
                     timeEntry.screenshots.forEach((screenshot) => {
-                        const screenshotTime = screenshot.createdAt;
+                        const screenshotTime = new Date(screenshot.startTime) || new Date(screenshot.createdAt);
+                        // Assuming screenshot.startTime and screenshot.createdAt are JavaScript Date objects
+
                         const screenshotHours = screenshotTime.getHours();
                         const screenshotMinutes = screenshotTime.getMinutes();
                         const amOrPmScreenshot = screenshotHours < 12 ? 'A.M' : 'P.M';
@@ -945,7 +947,10 @@ const sortedScreenshotsEachEmployee = async (req, res) => {
 
         // Calculate the position for each screenshot within the timeline
         sortedScreenshots.forEach((screenshot, index) => {
-            const screenshotTime = screenshot.createdAt;
+            const screenshotTime = DateTime.fromJSDate(
+                new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                { zone: req.user.timezone }
+            );
             const screenshotStartTime = screenshotTime - startOfDate; // Calculate the time since the start of the provided date in milliseconds
 
             // Calculate the position as a percentage based on the timeline duration and width
@@ -1954,13 +1959,13 @@ const trimActivity = (activity, inactiveThreshold) => {
 const trimActivityInTimeEntry = async (req, res) => {
     try {
         const { userId, timeEntryId } = req.params;
-        const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
-        const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
-
+        const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
+        const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
+        var screenshotsToMove = 0
         // Now, 'startTime' and 'endTime' are DateTime objects in the specified timezone
 
-        console.log(startTime.toJSDate()); // To see the JavaScript Date equivalent
-        console.log(endTime.toJSDate());
+        console.log(startTime.toISO()); // To see the JavaScript Date equivalent
+        console.log(endTime.toISO());
 
         // Log the received IDs for debugging
         console.log('Received IDs:', userId, timeEntryId);
@@ -1982,20 +1987,27 @@ const trimActivityInTimeEntry = async (req, res) => {
         if (!foundTimeEntry) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
+        if (foundTimeEntry.startTime <= startTime && foundTimeEntry.endTime >= endTime) {
+            // Filter screenshots within the specified time range
+            screenshotsToMove = foundTimeEntry.screenshots.filter(screenshot => {
+                const screenshotTime = DateTime.fromJSDate(
+                    new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                    { zone: req.user.timezone }
+                );
+                return screenshotTime >= startTime && screenshotTime <= endTime;
+            });
+        }
+        else {
+            return res.status(404).json({ success: false, message: 'Invalid time' });
+        }
 
-        // Filter screenshots within the specified time range
-        const screenshotsToMove = foundTimeEntry.screenshots.filter(screenshot => {
-            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
-            return screenshotTime >= startTime && screenshotTime <= endTime;
-        });
-
-
-        // Remove the filtered screenshots from the original foundTimeEntry
-        foundTimeEntry.screenshots = foundTimeEntry.screenshots.filter(screenshot => !screenshotsToMove.includes(screenshot));
 
         // Find the index of the screenshot that matches or is just after the endTime
         const indexToSplit = foundTimeEntry.screenshots.findIndex(screenshot => {
-            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+            const screenshotTime = DateTime.fromJSDate(
+                new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                { zone: req.user.timezone }
+            );
             return screenshotTime >= endTime;
         });
         let newTimeEntry = [];
@@ -2012,12 +2024,14 @@ const trimActivityInTimeEntry = async (req, res) => {
 
             // Now, foundTimeEntry contains screenshots up to endTime, and newTimeEntry contains screenshots after endTime
         }
+        // Remove the filtered screenshots from the original foundTimeEntry
+        foundTimeEntry.screenshots = foundTimeEntry.screenshots.filter(screenshot => !screenshotsToMove.includes(screenshot));
         timeTracking.timeEntries.push(newTimeEntry)
         timeTracking.timeEntries.sort((a, b) => a.startTime - b.startTime);
 
         const trimmedActivity = {
-            startTime: startTime,
-            endTime: endTime,
+            startTime: startTime.toJSDate(),
+            endTime: endTime.toJSDate(),
             changeTime: new Date(),
             editedBy: req.user._id,
             scope: 'trim',
@@ -2183,8 +2197,8 @@ const findTimeGaps = (startTime, endTime, existingTimeEntries, timezone) => {
 const addOfflineTime = async (req, res) => {
     const { userId } = req.params;
     const { notes, projectId } = req.body;
-    const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
-    const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+    const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
+    const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
     let timeGaps = []
 
     try {
@@ -2282,8 +2296,8 @@ const addOfflineTimeoldd = async (req, res) => {
     const { userId } = req.params;
     const { notes, projectId } = req.body;
     // Convert the time format
-    const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
-    const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+    const startTime = DateTime.fromFormat(req.body.startTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
+    const endTime = DateTime.fromFormat(req.body.endTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
     try {
         const user = await User.findById(userId);
         if (!user) {
@@ -2354,7 +2368,7 @@ const addOfflineTimeold = async (req, res) => {
         }
 
         // Convert the time format using moment.js
-        const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+        const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
         const startTimeFormatted = moment(startTime, 'h:mm A').toISOString();
         const endTimeFormatted = moment(endTime, 'h:mm A').toISOString();
 
@@ -2595,7 +2609,7 @@ const getTotalHoursAndScreenshots = async (req, res) => {
                 if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                     console.log('Screenshots are available for processing.');
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
-                        const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
+                        const screenshotTime = converttimezone(new Date(screenshot.startTime) || new Date(screenshot.createdAt), req.user.timezone);
 
                         return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
@@ -2866,7 +2880,7 @@ const getTotalHoursByDay = async (req, res) => {
 const splitActivity = async (req, res) => {
     try {
         const { timeEntryId, userId } = req.body;
-        const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd hh:mm a", { zone: req.user.timezone });
+        const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
 
         const timeTracking = await TimeTracking.findOne({
             userId,
@@ -2883,8 +2897,11 @@ const splitActivity = async (req, res) => {
         }
 
         const indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
-            const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
-            return screenshotTime >= splitTime;
+            // Assuming screenshot.startTime and screenshot.createdAt are JavaScript Date objects
+            const screenshotTime = DateTime.fromJSDate(
+                new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                { zone: req.user.timezone }
+            ); return screenshotTime >= splitTime;
         });
         let newTimeEntry = [];
         if (indexToSplit !== -1) {
@@ -4085,8 +4102,12 @@ const getTotalHoursAndScreenshote = async (req, res) => {
                 if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
                     console.log('Screenshots are available for processing.');
                     const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
-                        const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
-
+                        // const screenshotTime = DateTime.fromJSDate(screenshot.createdAt, { zone: req.user.timezone });
+                        // Assuming screenshot.startTime and screenshot.createdAt are JavaScript Date objects
+                        const screenshotTime = DateTime.fromJSDate(
+                            new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                            { zone: req.user.timezone }
+                        );
                         return screenshotTime >= startOfToday && screenshotTime < endOfToday;
                     });
 
