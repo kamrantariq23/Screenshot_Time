@@ -2878,6 +2878,7 @@ const getTotalHoursByDay = async (req, res) => {
 };
 
 const splitActivity = async (req, res) => {
+    let indexToSplit;
     try {
         const { timeEntryId, userId } = req.body;
         const splitTime = DateTime.fromFormat(req.body.splitTime, "yyyy-MM-dd h:mm a", { zone: req.user.timezone });
@@ -2895,14 +2896,20 @@ const splitActivity = async (req, res) => {
         if (!timeEntry) {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
+        if (timeEntry.startTime <= splitTime && foundTimeEntry.endTime >= splitTime) {
+            indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
+                // Assuming screenshot.startTime and screenshot.createdAt are JavaScript Date objects
+                const screenshotTime = DateTime.fromJSDate(
+                    new Date(screenshot.startTime) || new Date(screenshot.createdAt),
+                    { zone: req.user.timezone }
+                ); return screenshotTime >= splitTime;
+            });
+        }
+        else {
+            return res.status(404).json({ success: false, message: 'Invalid time' });
+        }
 
-        const indexToSplit = timeEntry.screenshots.findIndex(screenshot => {
-            // Assuming screenshot.startTime and screenshot.createdAt are JavaScript Date objects
-            const screenshotTime = DateTime.fromJSDate(
-                new Date(screenshot.startTime) || new Date(screenshot.createdAt),
-                { zone: req.user.timezone }
-            ); return screenshotTime >= splitTime;
-        });
+        
         let newTimeEntry = [];
         if (indexToSplit !== -1) {
             // Create a new time entry with the second part of timeEntry
