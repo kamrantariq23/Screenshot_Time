@@ -15,7 +15,7 @@ const eventRouter = express.Router();
 eventRouter.get('/week', middleware.isLoggedIn, events.getWeeklyRecords);
 eventRouter.post('/totalDate', middleware.isLoggedIn, events.getDailyRecords);
 eventRouter.get('/month',middleware.isLoggedIn,events.getMonthlyRecords);
-
+// hello
 eventRouter.delete(
     '/time-tracking/:timeTrackingId/activity/:timeEntryId',
     middleware.isLoggedIn,
