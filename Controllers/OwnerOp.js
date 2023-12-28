@@ -1540,29 +1540,22 @@ const getDailyRecords = async (req, res) => {
     }
     const now = new Date();
     const userDateTime = setHoursDifference(now, user.ownertimezoneOffset, user.ownertimezone)
-    // Perform calculations in the standard time zone
-    const startOfToday = userDateTime.startOf('day');
-    const endOfToday = userDateTime.endOf('day');
 
-    const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
-    const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
+    const daySpecifier = req.query.daySpecifier; // Get the daySpecifier from the URL parameter
 
-    const weekSpecifier = req.query.weekSpecifier; // Get the weekSpecifier from the URL parameter
-
-    let weekStartDate; let weekEndDate;
+    let dayStartTime; let dayEndTime;
     const userSevenDaysAgo = setHoursDifference(sevenDaysAgo, req.user.timezoneOffset, req.user.timezone)
     const userCurrentDate = setHoursDifference(currentDate, req.user.timezoneOffset, req.user.timezone)
 
-    if (weekSpecifier === 'previous') {
+    if (daySpecifier === 'previous') {
 
-        // Calculate the first and last dates of the previous week
-        weekStartDate = userSevenDaysAgo.startOf('week');
-        weekEndDate = userSevenDaysAgo.endOf('week');
-    } else if (weekSpecifier === 'this') {
+        // Calculate the first and last dates of the previous day
+        dayStartTime = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
+        dayEndTime = dayStartTime.endOf('day'); // Start of today is the end of yesterday
+    } else if (daySpecifier === 'this') {
 
-        // Calculate the first and last dates of the current week
-        weekStartDate = userCurrentDate.startOf('week');
-        weekEndDate = userCurrentDate.endOf('week');
+        dayStartTime = userDateTime.startOf('day');
+        dayEndTime = userDateTime.endOf('day');
     } else {
         return res.status(400).json({ success: false, message: 'Invalid week specifier' });
     }
