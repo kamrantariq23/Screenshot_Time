@@ -8,6 +8,13 @@ import isAdminMiddleware from '../Middlewares/isSuperAdmin';
 
 const eventRouter = express.Router();
 
+// Routes with Query
+//  ############ REPORTS ###############
+eventRouter.get('/week', isAdminMiddleware.isManagerOwner, events.getWeeklyRecords);
+eventRouter.post('/totalDate', isAdminMiddleware.isManagerOwner, events.getCustomDateRangeRecords);
+eventRouter.get('/month',isAdminMiddleware.isManagerOwner,events.getMonthlyRecords);
+
+
 eventRouter.post(
     '/addProject',
     isAdminMiddleware.isManagerOwner,
@@ -41,13 +48,14 @@ eventRouter.post(
     events.emailInviteClient,
 );
 
-eventRouter.post('/offline-time/:userId', events.addOfflineTime);
+
+
+
+
 
 eventRouter.post('/split-activity', events.splitActivity);
 
 eventRouter.post('/move-months-screenshots-to-history', isAdminMiddleware.isManagerOwner, events.moveMonthsScreenshotsToHistory);
-
-eventRouter.get('/', isAdminMiddleware.isManagerOwner, events.getProjects);
 
 eventRouter.get('/historyChanges', isAdminMiddleware.isManagerOwner, events.getHistoryChanges);
 
@@ -66,8 +74,7 @@ eventRouter.get('/allEmployeesworkinghour', isAdminMiddleware.isManagerOwner, ev
 eventRouter.get('/allUsersWorkinghours', isAdminMiddleware.isManagerOwner, events.getUsersWorkingToday);
 
 eventRouter.get('/allWorkinghours', isAdminMiddleware.isManagerOwner, events.getWorkingHoursSummary);
-
-eventRouter.get('/:eid', events.getSingleEvent);
+eventRouter.post('/offline-time/:userId', events.addOfflineTime);
 
 eventRouter.get('/project/:projectId', events.countEmployeesInProject);
 
@@ -83,19 +90,18 @@ eventRouter.get('/sorted-datebased/:userId', isAdminMiddleware.isManagerOwner, e
 
 eventRouter.get('/user/:id/time-records', events.getTotalHoursWorked);
 
-eventRouter.post('/totalDate', isAdminMiddleware.isManagerOwner, events.getCustomDateRangeRecords);
+
 
 // eventRouter.get('/month', isAdminMiddleware.isManagerOwner, events.getMonthlyRecords);
 
 // eventRouter.get('/monthlyrecord', isAdminMiddleware.isManagerOwner, events.getMonthlyRecords);
 
-eventRouter.get('/monthlyrecordofAll/:monthspecifier',isAdminMiddleware.isManagerOwner,events.getTotalMonthlyWorkingHours);
 
 // eventRouter.get('/yearRecords', isAdminMiddleware.isManagerOwner, events.getTotalYearlyWorkingHours);
 
 eventRouter.get('/annualRecord/:year',isAdminMiddleware.isManagerOwner,events.getTotalAnnualWorkingHours);
 
-eventRouter.get('/week/:weekSpecifier', isAdminMiddleware.isManagerOwner, events.getWeeklyRecords);
+
 
 // only admin can delete
 eventRouter.delete(
@@ -149,10 +155,12 @@ eventRouter.patch('/editProjectName/:projectId', isAdminMiddleware.isManagerOwne
 
 eventRouter.patch('/archiveProject/:projectId', isAdminMiddleware.isManagerOwner, events.archiveProject);
 
-
-
 eventRouter.patch('/editCompanyNameForAllEmployee', isAdminMiddleware.isManagerOwner, events.updateCompanyNameForAllEmployees);
 
 // eventRouter.patch('/usersSplit/:userId/time-trackings/:timeTrackingId/time-entries/:timeEntryId/split-screenshots', isAdminMiddleware.isManagerOwner, events.splitActivity);
+
+//  when access any route with query automatically accessed this route and it gives CastId error thats why i have to put it here 
+eventRouter.get('/', isAdminMiddleware.isManagerOwner, events.getProjects);
+eventRouter.get('/:eid', events.getSingleEvent);
 
 export default eventRouter;

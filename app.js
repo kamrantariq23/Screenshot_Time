@@ -108,29 +108,23 @@ async function getusers() {
 
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
 
-            // const timeTrackings = await timeTracking.find({ userId: '64f59b2e9c3bbf001c5d186f' });
+            // const timeTrackings = await timeTracking.find({ userId: '65408e5e8471cc001db7c0ae' });
 
             // for (const timeTracking of timeTrackings) {
             //     for (const timeEntry of timeTracking.timeEntries) {
-            //         const lastTimeEntryDetails = timeEntry;
-            
-            //         if (!lastTimeEntryDetails.endTime) {
-            //             let endTime = 0;
-            //             const lastScreenshot = lastTimeEntryDetails.screenshots.slice(-1)[0];
-            
-            //             if (lastScreenshot && lastScreenshot.createdAt) {
-            //                 endTime = new Date(lastScreenshot.createdAt);
-            //             } else {
-            //                 endTime = new Date(lastTimeEntryDetails.startTime);
+            //         // Assuming 'screenshots' and 'visitedUrls' arrays exist
+            //         if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+            //             for (const screenshot of timeEntry.screenshots) {
+            //                 if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
+            //                     screenshot.visitedUrls[0].url = "Google Chrome";
+            //                 }
             //             }
-            
-            //             lastTimeEntryDetails.endTime = endTime;
             //         }
             //     }
-            
-            //     // Save the updated timeTracking instance
-            //     await timeTracking.save();
             // }
+    
+            // // Save the updated data back to the database
+            // await Promise.all(timeTrackings.map(timeTracking => timeTracking.save()));
 
             if (lastActive < fiveMinutesAgo) {
                 if (user.isActive) {

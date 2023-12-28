@@ -26,6 +26,7 @@ signInRouter.patch('/users/update-password/:id', userSignIn.updatePassword);
 
 signInRouter.post('/admin', adminSignIn);
 
+// for Super Admin 
 signInRouter.post('/ownerSignIn', superAdminSignIn);
 
 signInRouter.get('/userStatus-active', isLoggedIn.isLoggedIn, userSignIn.getUserActiveStatus);

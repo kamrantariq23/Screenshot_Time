@@ -34,6 +34,7 @@ const getAllUserActiveStatus = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to get user active status' });
     }
 };
+
 const getManagedUsers = async (req, res) => {
     try {
         const { managerId } = req.params;
@@ -71,10 +72,6 @@ const getManagedUsers = async (req, res) => {
         return res.status(500).json({ message: 'Failed to get managed users' });
     }
 };
-
-
-
-
 
 function formatTimeFrame(startTime, endTime) {
     const formatHoursAndMinutes = (date) => {
@@ -123,22 +120,28 @@ function groupScreenshotsByTimeSlots(screenshots, timeSlotDurationInMinutes) {
 
     return groupedScreenshots;
 }
+
+const formatTime = (time) => {
+    const hours = Math.floor(time);
+    const minutes = Math.floor((time - hours) * 60);
+    if (minutes === 60) {
+        // If minutes are 60, increment the hour and set minutes to 0
+        return `${hours + 1}h 0m`;
+    } else {
+        return `${hours}h ${minutes}m`;
+    }
+};
+
 const getManagerHoursWorked = async (req, res) => {
     const { userId } = req.params;
-    const managerId = req.user._id;
-    console.log(req.user._id);
     const date = req.query.date ? new Date(req.query.date) : new Date();
+
     const converttimezone = (time, timezone) => {
 
         const originalTime = DateTime.fromJSDate(time);
         const convertedTime = originalTime.setZone(timezone);
-        //  // Log the original and converted times
-        // console.log('Original Time:', originalTime.toString());
-        // console.log('Converted Time:', convertedTime.toString());
         return convertedTime;
     };
-
-
 
     try {
         const user = await UserSchema.findById(userId);
@@ -147,18 +150,26 @@ const getManagerHoursWorked = async (req, res) => {
         }
 
         const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
+        const { DateTime } = require('luxon');
 
-        const startOfToday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const endOfToday = new Date(startOfToday);
-        endOfToday.setDate(startOfToday.getDate() + 1);
-        const startOfThisWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
-        const endOfThisWeek = new Date(startOfThisWeek);
-        endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
+        // Convert user input to the application's standard time zone
+        const userDateTime = setHoursDifference(date, req.user.timezoneOffset, req.user.timezone)
 
-        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        const endOfThisMonth = new Date(startOfThisMonth);
-        endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
-        // 0 day of the next month, which gives the last day of the current month
+        // Perform calculations in the standard time zone
+        const startOfToday = userDateTime.startOf('day');
+        const endOfToday = userDateTime.endOf('day');
+        const startOfThisWeek = userDateTime.startOf('week');
+        const startOfThisMonth = userDateTime.startOf('month');
+
+        // Format and display the results in the user's preferred time zone
+        const startOfTodayFormatted = startOfToday.setZone(req.user.timezone).toLocaleString();
+        const endOfTodayFormatted = endOfToday.setZone(req.user.timezone).toLocaleString();
+        // Calculate endOfThisWeek
+        const endOfThisWeek = userDateTime.endOf('week');
+
+        // Calculate endOfThisMonth
+        const endOfThisMonth = userDateTime.endOf('month');
+        // ...and so on for other calculations
 
         const timeTrackings = await TimeTracking.find({ userId });
         const activityData = {
@@ -172,118 +183,205 @@ const getManagerHoursWorked = async (req, res) => {
             monthly: 0,
             offline: 0,
         };
-
+        let activityCount = 0;
+        let totalActivity = 0;
+        let newHoursWorked = 0;
+        let TimeTrackingId = 0;
+        let hoursWorked = 0;
         const groupedScreenshots = [];
+        var newTimeEntry = [];
 
-        const now = new Date(); // Current time for handling ongoing time entries
+        // const now = new Date();
+        const now = user.lastActive; // Current time for handling ongoing time entries
 
         for (const timeTracking of timeTrackings) {
             for (const timeEntry of timeTracking.timeEntries) {
-                let startTime = converttimezone(timeEntry.startTime, user.timezone);
-                let endTime = timeEntry.endTime ? converttimezone(timeEntry.endTime, user.timezone) : converttimezone(now, user.timezone);
-                // let startTime = new Date(startconv);
-                // let endTime = endtimeconv ? new Date(endtimeconv) : now;
-                // let startTime = new Date(timeEntry.startTime);
-                // let endTime = timeEntry.endTime ? new Date(timeEntry.endTime) : now; // Use current time for ongoing entry
+                TimeTrackingId = timeTracking._id;
+                let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
 
-                // Check if endTime is earlier than startTime, and if so, swap them
-                if (endTime < startTime) {
-                    [startTime, endTime] = [endTime, startTime];
+                    if (lastScreenshot) {
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: req.user.timezone });
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
+                if (startTime == endTime) {
+                    continue;
+                }
+                let screenshotTimeRange = 0
+
+                if (startTime >= startOfToday && startTime < endOfToday && endTime > endOfToday) {
+                    // Create a new time entry for the next day starting at 12:00 AM
+                    newTimeEntry = { ...timeEntry };
+                    newTimeEntry.startTime = endTime.startOf('day');
+
+                    newTimeEntry.endTime = new Date(endTime);
+
+                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                    timeEntry.endTime = startTime.endOf('day');
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: req.user.timezone });
+
+                    // Calculate the hours worked for both time entries
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+
+                    }
+                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                        totalHoursWorked.daily += newHoursWorked;
+                    }
+                } else if (startTime < startOfToday && endTime >= startOfToday && endTime < endOfToday) {
+                    newTimeEntry = { ...timeEntry };
+                    newTimeEntry.startTime = new Date(startTime);
+                    newTimeEntry.endTime = startTime.endOf('day');
+
+                    // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                    timeEntry.startTime = endTime.startOf('day');
+                    startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: req.user.timezone });
+                    // Calculate the hours worked for both time entries
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+
+                    newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                        totalHoursWorked.daily += newHoursWorked;
+                    }
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+                    }
+
+                } else {
+                    // Calculate the hours worked using the corrected start and end times
+                    hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                    newHoursWorked = 0;
+                    // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                    if (startTime >= startOfToday && startTime < endOfToday) {
+                        totalHoursWorked.daily += hoursWorked;
+                    }
                 }
 
-                // Calculate the hours worked using the corrected start and end times
-                const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                if (newTimeEntry.startTime >= startOfToday && newTimeEntry.startTime < endOfToday) {
+                    const screenshotStartTime = startTime.toFormat('h:mm a');
+                    const screenshotEndTime = endTime.toFormat('h:mm a');
 
-                // Check if the time entry is within today
-                if (startTime >= startOfToday && startTime < endOfToday) {
-                    totalHoursWorked.daily += hoursWorked;
+                    if (timeEntry.description == 'offline') {
+                        screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} (${timeEntry.description})`;
+                        console.log('Range', screenshotTimeRange);
+                        groupedScreenshots.push({
+                            time: screenshotTimeRange,
+                            description: 'This is manually added offline time',
+                            timeentryId: timeEntry._id,
+                        })
+                    }
 
-                    // Check if the time entry has offline activities
-                    // if (timeEntry.activities && timeEntry.activities.length > 0) {
-                    //     const offlineActivities = timeEntry.activities.filter((activity) => activity.offline);
-                    //     if (offlineActivities.length > 0) {
-                    //         const offlineDuration = offlineActivities.reduce((total, activity) => {
-                    //             const activityStartTime = new Date(activity.startTime);
-                    //             const activityEndTime = new Date(activity.endTime);
+                }
+                else if (startTime >= startOfToday && startTime < endOfToday) {
+                    const screenshotStartTime = startTime.toFormat('h:mm a');
+                    const screenshotEndTime = endTime.toFormat('h:mm a');
 
-                    //             // Only consider offline activities within today's range
-                    //             if (activityStartTime >= startTime && activityEndTime >= startTime && activityEndTime < endTime) {
-                    //                 return total + (activityEndTime - activityStartTime);
-                    //             }
+                    if (timeEntry.description == 'offline') {
+                        screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime} (${timeEntry.description})`;
+                        console.log('Range', screenshotTimeRange);
+                        groupedScreenshots.push({
+                            time: screenshotTimeRange,
+                            description: 'This is manually added offline time',
+                            timeentryId: timeEntry._id,
+                        })
+                    }
 
-                    //             return total;
-                    //         }, 0);
+                }
 
-                    //         // Add the offline duration to the daily hours worked
-                    //         totalHoursWorked.daily += offlineDuration / (1000 * 60 * 60);
+                // Check if the time entry has screenshots taken today
+                if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+                    console.log('Screenshots are available for processing.');
+                    const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
+                        const screenshotTime = converttimezone(screenshot.createdAt, req.user.timezone);
 
-                    //         for (const activity of offlineActivities) {
-                    //             const activityStartTime = new Date(activity.startTime);
-                    //             const activityEndTime = new Date(activity.endTime);
-                    //             const timeRange = `${activityStartTime.toString()} - ${activityEndTime.toString()} (offline)`;
-                    //             // const timerangeconv = converttimezone(timeRange, usertimezone)
+                        return screenshotTime >= startOfToday && screenshotTime < endOfToday;
+                    });
 
-                    //             groupedScreenshots.push({ time: timeRange });
-                    //         }
+                    console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
+                    console.log('visitedUrl', timeEntry.visitedUrls);
 
+                    if (screenshotsToday.length > 0) {
+                        console.log('Length of screenshotsToday:', screenshotsToday.length);
 
+                        const screenshotStartTime = startTime.toFormat('h:mm a');
+                        const screenshotEndTime = endTime.toFormat('h:mm a');
 
-                    //     }
-                    // }
+                        screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
+                        console.log('Range', screenshotTimeRange);
 
-                    // Check if the time entry has screenshots taken today
-                    if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
-                        console.log('Screenshots are available for processing.');
-                        const screenshotsToday = timeEntry.screenshots.filter((screenshot) => {
-                            const screenshotTime = new Date(screenshot.createdAt);
-                            return screenshotTime >= startOfToday && screenshotTime < endOfToday;
+                        // Map screenshots to screenshotDetails
+                        const screenshotDetails = screenshotsToday.map((screenshot) => {
+                            // console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
+                            const convertedCreatedAt = converttimezone(screenshot.createdAt, req.user.timezone);
+
+                            // Calculate the total activity for this screenshot
+                            if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
+                                totalActivity += screenshot.visitedUrls[0].activityPercentage || 0;
+                                activityCount += 1;
+                            }
+
+                            return {
+                                _id: screenshot._id,
+                                key: screenshot.key,
+                                description: screenshot.description,
+                                time: convertedCreatedAt.toFormat('h:mm a'),
+                                visitedUrls: screenshot.visitedUrls,
+                                activities: timeEntry.activities,
+                            };
                         });
+                        let totalcount = 0;
+                        const totalActivityForScreenshots = screenshotDetails.reduce((total, screenshot) => {
+                            // Check if visitedUrls and activityPercentage are defined
+                            if (screenshot.visitedUrls && screenshot.visitedUrls[0] && screenshot.visitedUrls[0].activityPercentage !== undefined) {
+                                return total + screenshot.visitedUrls[0].activityPercentage;
+                            }
+                            return total;
+                        }, 0);
 
-                        console.log('Screenshots Today:', screenshotsToday); // Log the screenshots for debugging
-                        console.log('visitedUrl', timeEntry.visitedUrls);
+                        const maxPossibleActivity = 100 * screenshotDetails.length; // Assuming each screenshot can have a maximum activity of 100%
 
-                        if (screenshotsToday.length > 0) {
-                            console.log('Length of screenshotsToday:', screenshotsToday.length);
+                        const totalActivityAsPercentage = totalActivityForScreenshots / screenshotDetails.length;
 
-                            const screenshotStartTime = startTime.toFormat('h:mm a');
-                            const screenshotEndTime = endTime.toFormat('h:mm a');
-
-                            const screenshotTimeRange = `${screenshotStartTime} - ${screenshotEndTime}`;
-                            console.log('Range', screenshotTimeRange);
-
-                            // Map screenshots to screenshotDetails
-                            const screenshotDetails = screenshotsToday.map((screenshot) => {
-                                console.log('Processing screenshot:', screenshot); // Log each screenshot for debugging
-                                const convertedCreatedAt = converttimezone(screenshot.createdAt, user.timezone);
-
-                                return {
-                                    _id: screenshot._id,
-                                    key: screenshot.key,
-                                    description: screenshot.description,
-                                    time: convertedCreatedAt.toFormat('h:mm a'),
-                                    trackingId: timeTracking._id,
-                                    visitedUrls: screenshot.visitedUrls,
-                                    activities:timeEntry.activities,
-                                };
-                            });
-
-                            // Push screenshot data to groupedScreenshots
-                            console.log('Pushing screenshots:', screenshotDetails);
-                            groupedScreenshots.push({ time: screenshotTimeRange, screenshots: screenshotDetails });
-                        }
-
+                        // Push screenshot data to groupedScreenshots along with totalactivity as a percentage
+                        groupedScreenshots.push(
+                            {
+                                time: screenshotTimeRange,
+                                screenshots: screenshotDetails,
+                                totalactivity: totalActivityAsPercentage,
+                                timeentryId: timeEntry._id,
+                            }
+                        );
                     }
                 }
 
                 if (startTime >= startOfThisWeek && startTime < endOfThisWeek) {
                     totalHoursWorked.weekly += hoursWorked;
                 }
+                if (newTimeEntry.startTime >= startOfThisWeek && newTimeEntry.startTime < endOfThisWeek) {
+                    totalHoursWorked.weekly += newHoursWorked;
+                }
 
                 if (startTime >= startOfThisMonth && startTime < endOfThisMonth) {
                     totalHoursWorked.monthly += hoursWorked;
                 }
-
-
+                if (newTimeEntry.startTime >= startOfThisMonth && newTimeEntry.startTime < endOfThisMonth) {
+                    totalHoursWorked.monthly += newHoursWorked;
+                }
             }
         }
 
@@ -291,18 +389,14 @@ const getManagerHoursWorked = async (req, res) => {
         totalHoursWorked.weekly = Math.max(totalHoursWorked.weekly, 0);
         totalHoursWorked.monthly = Math.max(totalHoursWorked.monthly, 0);
 
-
-        const formatTime = (time) => {
-            const hours = Math.floor(time);
-            const minutes = Math.round((time - hours) * 60);
-            return `${hours}h ${minutes}m`;
-        };
-
         const formattedTotalHoursWorked = {
             daily: formatTime(totalHoursWorked.daily),
             weekly: formatTime(totalHoursWorked.weekly),
             monthly: formatTime(totalHoursWorked.monthly),
         };
+
+        const totalActivityToday = activityCount > 0 ? (totalActivity / activityCount) : 0;
+        console.log('Total Activity Today:', totalActivityToday + '%');
 
         return res.status(200).json({
             success: true,
@@ -314,11 +408,15 @@ const getManagerHoursWorked = async (req, res) => {
                     monthly: Math.round(totalHoursWorked.monthly * ratePerHour),
                 },
                 groupedScreenshots,
-                activityData,
+                totalactivity: totalActivityToday,
                 timezone: user.timezone,
                 name: user.name,
                 email: user.email,
                 usertype: user.userType,
+                startOfToday: startOfToday,
+                endOfToday: endOfToday,
+                startOfThisWeek: startOfThisWeek,
+                TimeTrackingId: TimeTrackingId,
             },
         });
     } catch (error) {
@@ -326,9 +424,6 @@ const getManagerHoursWorked = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
-
-
-
 
 const getActivityData = async (req, res) => {
     const { eid } = req.params;
@@ -350,7 +445,7 @@ const getActivityData = async (req, res) => {
         const endOfThisWeek = new Date(startOfThisWeek);
         endOfThisWeek.setDate(startOfThisWeek.getDate() + 7); // 6 days added to the start of the week
 
-        const startOfThisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfThisMonth = new Date(startOfThisMonth);
         endOfThisMonth.setMonth(startOfThisMonth.getMonth() + 1); // 1 month added to the start of the month
         // 0 day of the next month, which gives the last day of the current month
@@ -397,6 +492,7 @@ const getActivityData = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to get activity data' });
     }
 };
+
 const getMinutesAgo = (lastActiveTime) => {
     const currentTime = new Date();
     const timeDiffInMs = currentTime.getTime() - lastActiveTime.getTime();
@@ -415,38 +511,171 @@ function formatHoursAndMinutes(time) {
 
     return `${hours}h ${minutes}m`;
 }
+
+const setHoursDifference = (starttToday, timezoneOffset, timezone) => {
+    // var startOToday = '2023-10-20T00:00:00.000Z'
+    var currentOffset = starttToday.getTimezoneOffset();
+    var targetTimezoneOffset = timezoneOffset * 60;
+    var timezoneDifference = targetTimezoneOffset + currentOffset;
+    starttToday.setMinutes(starttToday.getMinutes() - timezoneDifference);
+    const originalTime = DateTime.fromJSDate(starttToday);
+    const convertedTime = originalTime.setZone(timezone);
+    //  // Log the original and converted times
+    return convertedTime;
+}
+
 const calculateHoursWorked = async (user, period) => {
     const now = new Date();
+    const userDateTime = setHoursDifference(now, user.ownertimezoneOffset, user.ownertimezone)
+    let totalhours = 0;
+    let hoursWorked = 0;
+    let newHoursWorked = 0;
+    let newTimeEntry = []
+    // Perform calculations in the standard time zone
+    const startOfToday = userDateTime.startOf('day');
+    const endOfToday = userDateTime.endOf('day');
+    const startOfThisWeek = userDateTime.startOf('week');
+    const startOfThisMonth = userDateTime.startOf('month');
+
+    const startOfYesterday = userDateTime.minus({ days: 1 }).startOf('day'); // Subtract 1 day for yesterday
+    const endOfYesterday = startOfYesterday.endOf('day'); // Start of today is the end of yesterday
+    // Calculate endOfThisWeek
+    const endOfThisWeek = userDateTime.endOf('week');
+
+    // Calculate endOfThisMonth
+    const endOfThisMonth = userDateTime.endOf('month');
+
     const periods = {
         daily: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
+            start: userDateTime.startOf('day'),
+            end: userDateTime.endOf('day'),
         },
         yesterday: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999),
+            start: userDateTime.minus({ days: 1 }).startOf('day'), // Subtract 1 day for yesterday,
+            end: startOfYesterday.endOf('day'), // Start of today is the end of yesterday
         },
         weekly: {
-            start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()),
-            end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + (6 - now.getDay()), 23, 59, 59, 999),
+            start: userDateTime.startOf('week'),
+            end: userDateTime.endOf('week'),
         },
         monthly: {
-            start: new Date(now.getFullYear(), now.getMonth(), 1),
-            end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
+            start: userDateTime.startOf('month'),
+            end: userDateTime.endOf('month'),
         },
     };
 
     const timeEntries = await TimeTracking.aggregate([
         { $match: { userId: user._id } },
         { $unwind: '$timeEntries' },
-        { $match: { 'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end } } },
+        {
+            $match: {
+                $or: [
+                    // Condition 1
+                    {
+                        'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end },
+                        'timeEntries.endTime': { $gt: periods[period].end }
+                    },
+                    // Condition 2
+                    {
+                        'timeEntries.startTime': { $lt: periods[period].start },
+                        'timeEntries.endTime': { $gte: periods[period].start, $lt: periods[period].end }
+                    },
+                    // Condition 3 (Within the current month)
+                    {
+                        'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end },
+                        'timeEntries.endTime': { $gte: periods[period].start, $lt: periods[period].end }
+                    },
+                ],
+            },
+        },
     ]);
+    
+    // const timeEntries = await TimeTracking.aggregate([
+    //     { $match: { userId: user._id } },
+    //     { $unwind: '$timeEntries' },
+    //     {
+    //         $match: {
+    //             $or: [
+    //                 // Time entries that start and end within the selected period
+    //                 {
+    //                     'timeEntries.startTime': { $gte: periods[period].start, $lt: periods[period].end },
+    //                 },
+    //                 // Time entries that started before the selected period and extend into it
+    //                 {
+    //                     'timeEntries.startTime': { $lt: periods[period].start },
+    //                     'timeEntries.endTime': { $gte: periods[period].start },
+    //                 },
+    //                 // Time entries that start from yesterday and end on today
+    //                 {
+    //                     'timeEntries.startTime': { $lt: periods[period].end },
+    //                     'timeEntries.endTime': { $gte: periods[period].end },
+    //                 },
+    //             ],
+    //         },
+    //     },
+    // ]);
 
     const totalMilliseconds = timeEntries.reduce((acc, entry) => {
         if (entry.timeEntries.startTime) {
-            const endTime = entry.timeEntries.endTime ? entry.timeEntries.endTime : user.lastActive;
-            const timeWorked = endTime - entry.timeEntries.startTime;
-            return acc + timeWorked;
+            let startTime = DateTime.fromJSDate(entry.timeEntries.startTime, { zone: user.ownertimezone });
+            let endTime = 0;
+            if (entry.timeEntries.endTime) {
+                endTime = DateTime.fromJSDate(entry.timeEntries.endTime, { zone: user.ownertimezone });
+            } else {
+                const lastScreenshot = entry.timeEntries.screenshots.slice(-1)[0];
+
+                if (lastScreenshot) {
+                    endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: user.ownertimezone });
+                }
+                else {
+                    endTime = startTime;
+                }
+            }
+            if (startTime >= periods[period].start && startTime < periods[period].end && endTime > periods[period].end) {
+                // Create a new time entry for the next day starting at 12:00 AM
+                newTimeEntry = { ...entry.timeEntries };
+                newTimeEntry.startTime = endTime.startOf('day');
+
+                newTimeEntry.endTime = new Date(endTime);
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+                entry.timeEntries.endTime = startTime.endOf('day');
+                endTime = entry.timeEntries.endTime;
+
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime);
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+
+            } else if (startTime < periods[period].start && endTime >= periods[period].start && endTime < periods[period].end) {
+                newTimeEntry = { ...entry.timeEntries };
+                newTimeEntry.startTime = new Date(startTime);
+                newTimeEntry.endTime = startTime.endOf('day');
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                entry.timeEntries.startTime = endTime.startOf('day');
+                startTime = entry.timeEntries.startTime;
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime);
+                //  (endTime - entry.timeEntries.startTime);
+
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime);
+
+            } else {
+                // Calculate the hours worked using the corrected start and end times
+                hoursWorked = (endTime - startTime);
+                newHoursWorked = 0;
+            }
+            if (startTime >= periods[period].start && startTime < periods[period].end) {
+                totalhours += hoursWorked;
+
+            }
+            if (newTimeEntry.startTime >= periods[period].start && newTimeEntry.startTime < periods[period].end) {
+                totalhours += newHoursWorked;
+            }
+            return acc = totalhours;
         }
         return acc;
     }, 0);
@@ -456,6 +685,7 @@ const calculateHoursWorked = async (user, period) => {
 
     return { hours: totalHours, minutes: totalMinutes };
 };
+
 const getTimeAgo = (lastActiveTime) => {
     const currentTime = new Date();
     const timeDiffInMs = currentTime.getTime() - lastActiveTime.getTime();
@@ -469,15 +699,14 @@ const getTimeAgo = (lastActiveTime) => {
         return hoursAgo > 1 ? `${hoursAgo} hours ago` : `${hoursAgo} hour ago`;
     }
     return daysAgo > 1 ? `${daysAgo} days ago` : `${daysAgo} day ago`;
-
 };
+
 const calculateBillingAmount = async (user, period) => {
     const ratePerHour = user.billingInfo ? user.billingInfo.ratePerHour : 0;
     const totalHoursWorked = await calculateHoursWorked(user, period);
     const totalBillingAmount = (totalHoursWorked.hours + totalHoursWorked.minutes / 60) * ratePerHour;
     return Math.round(totalBillingAmount);
 };
-
 
 async function retrieveScreenshotsForUser(userId) {
     try {
@@ -516,7 +745,8 @@ async function retrieveScreenshotsForUser(userId) {
 
 const MangerDashboard = async (req, res) => {
     try {
-        const users = await UserSchema.find({ company: req.user.company, managerId: req.user.id });
+        const users = await UserSchema.find({ company: req.user.company, managerId: req.user._id });
+          
         const totalHoursAll = {
             daily: { hours: 0, minutes: 0 },
             yesterday: { hours: 0, minutes: 0 },
@@ -537,6 +767,8 @@ const MangerDashboard = async (req, res) => {
 
         const usersWorkingToday = await Promise.all(
             users.map(async (user) => {
+                user.ownertimezoneOffset = req.user.timezoneOffset
+                user.ownertimezone = req.user.timezone
                 const employeeId = user._id;
 
                 totalUsers++;
@@ -641,38 +873,7 @@ const MangerDashboard = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-const getMonthlyScreenshots = async (req, res) => {
-    const managerId = req.user._id;
-    const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    try {
-        // Fetch users managed by the manager
-        const managedUsers = await UserSchema.find({ managerId });
-
-        // Retrieve monthly screenshots for each managed user
-        const screenshotPromises = managedUsers.map(async (user) => {
-            const historyItems = await ScreenshotHistory.find({
-                userId: user._id,
-                createdAt: {
-                    $gte: startOfMonth,
-                    $lte: endOfMonth,
-                },
-            });
-            return historyItems.map((item) => item.screenshot);
-        });
-
-        // Combine screenshots into a single array
-        const monthlyScreenshots = await Promise.all(screenshotPromises);
-        const combinedScreenshots = monthlyScreenshots.flat();
-
-        res.status(200).json(combinedScreenshots);
-    } catch (error) {
-        console.error('Error retrieving monthly screenshots:', error);
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
 const deleteScreenshotAndDeductTime = async (req, res) => {
     try {
         const { screenshotId, timeTrackingId } = req.params;
@@ -783,6 +984,7 @@ const addEmployeeToProject = async (req, res) => {
         res.status(500).send({ message: 'Internal server error.' });
     }
 };
+
 const removeEmployeeFromProject = async (req, res) => {
     const { pId } = req.params;
     const { userId } = req.body;
@@ -818,4 +1020,5 @@ const removeEmployeeFromProject = async (req, res) => {
         res.status(500).send({ message: 'Internal server error.' });
     }
 };
-export default { getAllUserActiveStatus, getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, getActivityData, MangerDashboard, getMonthlyScreenshots };
+
+export default { getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, MangerDashboard };

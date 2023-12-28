@@ -29,9 +29,8 @@ eventRouter.get('/managed-users/:managerId', isAdminMiddleware.isManagerOwner, e
 
 eventRouter.get('/datebasedusers/user/:userId', isAdminMiddleware.isManagerOwner, events.getManagerHoursWorked);
 
-eventRouter.get('/activity/:eid', isAdminMiddleware.isManagerOwner, events.getActivityData);
+// eventRouter.get('/activity/:eid', isAdminMiddleware.isManagerOwner, events.getActivityData);
 
-eventRouter.get('/history-emp', isAdminMiddleware.isManagerOwner, events.getMonthlyScreenshots);
 
 // eventRouter.get('/history/:userId', isAdminMiddleware.isManagerOwner, events.getMonthlyScreenshots);
 

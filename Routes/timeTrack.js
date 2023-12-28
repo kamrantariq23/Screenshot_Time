@@ -48,9 +48,9 @@ eventRouter.get('/hours', isLoggedInUser.isLoggedIn, events.getTotalHoursWorked)
 
 eventRouter.get('/totalDate', isLoggedInUser.isLoggedIn, events.getCustomDateRangeRecords);
 
-eventRouter.get('/month/:monthSpecifier', isLoggedInUser.isLoggedIn, events.getMonthlyRecords);
+eventRouter.get('/month', isLoggedInUser.isLoggedIn, events.getMonthlyRecords);
 
-eventRouter.get('/year/:year', isLoggedInUser.isLoggedIn, events.getTotalWorkingHoursForYear);
+eventRouter.get('/year', isLoggedInUser.isLoggedIn, events.getTotalWorkingHoursForYear);
 
 eventRouter.get('/week', isLoggedInUser.isLoggedIn, events.getWeeklyRecords);
 
@@ -72,7 +72,7 @@ eventRouter.patch('/capture-screenshot/:timeEntryId/screenshots', isLoggedInUser
 eventRouter.patch('/edit/:timeEntryId', isLoggedInUser.isLoggedIn, events.stopTracking);
 eventRouter.patch('/time-entries/:timeEntryId/screenshots', isLoggedInUser.isLoggedIn, upload.single('file'), events.addScreenshot);
 eventRouter.patch('/url/time-entry/:timeEntryId', isLoggedInUser.isLoggedIn, events.visitedurlSave);
-eventRouter.patch('/ReportActivity', isLoggedInUser.isLoggedIn, events.updateActivityData);
+eventRouter.patch('/ReportActivity', isLoggedInUser.isLoggedIn, events.ReportActivity);
 //updation file api's
 eventRouter.post('/updateAppurl', upload.single('file'),  events.updateAppUrl);
 eventRouter.get('/updatedFile', events.updatedFile);
