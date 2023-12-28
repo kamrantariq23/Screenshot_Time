@@ -10,6 +10,7 @@ import UserSchema from '../Models/userSchema';
 import TimeTracking from '../Models/timeSchema';
 import ScreenshotHistory from '../Models/screenshotHistorySchema';
 import ProjectSchema from '../Models/projectSchema';
+import EmployeeSettings from '../Models/effectiveSettingSchema';
 
 
 const getAllUserActiveStatus = async (req, res) => {
@@ -1021,4 +1022,85 @@ const removeEmployeeFromProject = async (req, res) => {
     }
 };
 
-export default { getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, MangerDashboard };
+const updateEmployeeSettings = async (req, res) => {
+    const userData = req.body; // Assuming userData is an array of objects, each containing user ID and settings data
+
+    try {
+        const updatedSettings = [];
+
+        for (const userDataEntry of userData) {
+            const userId = userDataEntry.userId;
+            const settingsData = userDataEntry.settings;
+
+            const user = await UserSchema.findById(userId);
+            if (!user) {
+                // Handle the case where a user is not found
+                continue; // Move to the next user
+            }
+
+            let settings;
+
+            if (!user.employeeSettings) {
+                // Create a new employee settings record if it doesn't exist
+                const settingsDataWithUserId = {
+                    userId: user._id,
+                    ...settingsData, // You might want to process settingsData accordingly
+                };
+
+                settings = new EmployeeSettings(settingsDataWithUserId);
+                await settings.save();
+                user.employeeSettings = settings._id;
+                await user.save();
+            } else {
+                // Update the existing employee settings record
+                settings = await EmployeeSettings.findByIdAndUpdate(
+                    user.employeeSettings,
+                    settingsData,
+                    { new: true, runValidators: true }
+                );
+            }
+
+            if (!settings) {
+                // Handle the case where settings are not found
+                continue; // Move to the next user
+            }
+
+            updatedSettings.push(settings);
+        }
+
+        if (updatedSettings.length === 0) {
+            // Handle the case where no settings were updated
+            return res.status(404).json({ success: false, message: 'No employee settings were updated' });
+        }
+
+        res.status(200).json({ success: true, message: 'Employee settings updated', data: updatedSettings });
+    } catch (error) {
+        console.error('Error updating employee settings:', error);
+        res.status(500).json({ success: false, message: 'Failed to update employee settings', error: error });
+    }
+};
+
+const getEffectiveSettingsEachUser = async (req, res) => {
+    const { userId } = req.params;
+    try {
+
+
+        const user = await UserSchema.findOne({ _id: userId }).populate('employeeSettings');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        var employeeSettings = []
+        if (user.employeeSettings) {
+            employeeSettings = await EmployeeSettings.findOne({ userId: user._id });
+            // Now you can use the employeeSettings object as needed
+        }
+
+        return res.status(200).json({ success: true, employeeSettings });
+    } catch (error) {
+        console.error('Error retrieving employee settings:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+export default { getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, MangerDashboard, updateEmployeeSettings, getEffectiveSettingsEachUser };

@@ -682,7 +682,6 @@ const addScreenshotab = async (req, res) => {
         if (req.body.screenshotId) {
             const file = req.body.file;
             
-            try {
                 addedScreenshotId = req.body.screenshotId
                 const indexOfData = timeEntry.screenshots.id(addedScreenshotId);
                 fileBuffer = Buffer.from(file, 'base64');
@@ -703,11 +702,6 @@ const addScreenshotab = async (req, res) => {
                 fileBuffer.originalname = file;
                 // Save the updated time tracking document
                 await timeTrack.save();
-            }
-            catch (error) {
-                console.error('Error adding screenshot:', error);
-                return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
-            }
 
         }
         else {

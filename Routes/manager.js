@@ -29,6 +29,10 @@ eventRouter.get('/managed-users/:managerId', isAdminMiddleware.isManagerOwner, e
 
 eventRouter.get('/datebasedusers/user/:userId', isAdminMiddleware.isManagerOwner, events.getManagerHoursWorked);
 
+eventRouter.get('/Settings/:userId', events.getEffectiveSettingsEachUser);
+
+eventRouter.patch('/settingsE/', isAdminMiddleware.isManagerOwner, events.updateEmployeeSettings);
+
 // eventRouter.get('/activity/:eid', isAdminMiddleware.isManagerOwner, events.getActivityData);
 
 
