@@ -590,7 +590,7 @@ const calculateHoursWorked = async (user, period) => {
             },
         },
     ]);
-    
+
     // const timeEntries = await TimeTracking.aggregate([
     //     { $match: { userId: user._id } },
     //     { $unwind: '$timeEntries' },
@@ -729,7 +729,7 @@ async function retrieveScreenshotsForUser(userId) {
             if (timeEntry.timeEntries.screenshots && timeEntry.timeEntries.screenshots.length > 0) {
                 // Get the last screenshot from the time entry
                 const lastScreenshot = timeEntry.timeEntries.screenshots[timeEntry.timeEntries.screenshots.length - 1];
-                latestScreenshot= lastScreenshot ;
+                latestScreenshot = lastScreenshot;
 
                 // If the last screenshots are found, return and exit the loop
                 return latestScreenshot;
@@ -747,7 +747,7 @@ async function retrieveScreenshotsForUser(userId) {
 const MangerDashboard = async (req, res) => {
     try {
         const users = await UserSchema.find({ company: req.user.company, managerId: req.user._id });
-          
+
         const totalHoursAll = {
             daily: { hours: 0, minutes: 0 },
             yesterday: { hours: 0, minutes: 0 },
@@ -807,7 +807,7 @@ const MangerDashboard = async (req, res) => {
 
                 let minutesAgo = 'Awaiting'
                 // Get the user's last active time
-                if(user.lastActive > user.createdAt){
+                if (user.lastActive > user.createdAt) {
                     const lastActiveTime = user.lastActive;
                     minutesAgo = getTimeAgo(lastActiveTime);
                 }
@@ -1103,4 +1103,547 @@ const getEffectiveSettingsEachUser = async (req, res) => {
     }
 };
 
-export default { getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, MangerDashboard, updateEmployeeSettings, getEffectiveSettingsEachUser };
+
+const getWeeklyRecords = async (req, res) => {
+    let users = []
+
+    if (req.query.userId) {
+        const userId = req.query.userId
+
+        // If userId is provided, fetch a single user based on the userId
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        users = [user]; // Convert the single user into an array
+    } else {
+        // If userId is not provided, fetch all users (or users based on a certain criteria, e.g., company)
+        const companyId = req.user.company; // Change this based on your actual user structure
+
+        users = await UserSchema.find({ company: companyId })
+    }
+    const currentDate = new Date();
+    // Create a new date representing 7 days ago
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+    const weekSpecifier = req.query.weekSpecifier; // Get the weekSpecifier from the URL parameter
+
+    let weekStartDate; let weekEndDate;
+    const userSevenDaysAgo = setHoursDifference(sevenDaysAgo, req.user.timezoneOffset, req.user.timezone)
+    const userCurrentDate = setHoursDifference(currentDate, req.user.timezoneOffset, req.user.timezone)
+
+    if (weekSpecifier === 'previous') {
+        // Calculate the previous week number
+
+        // Calculate the first and last dates of the previous week
+        weekStartDate = userSevenDaysAgo.startOf('week');
+        weekEndDate = userSevenDaysAgo.endOf('week');
+    } else if (weekSpecifier === 'this') {
+        // Calculate the week number of the current date
+
+        // Calculate the first and last dates of the current week
+        weekStartDate = userCurrentDate.startOf('week');
+        weekEndDate = userCurrentDate.endOf('week');
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid week specifier' });
+    }
+
+    try {
+        let ReportPercentage = await getReportForWeek(users, weekStartDate, weekEndDate, req.user.timezone)
+        const totalWeekHours = await getTotalHoursForWeek(users, weekStartDate, weekEndDate, req.user.timezone);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                weekSpecifier,
+                totalWeek: formatTime(totalWeekHours),
+                ReportPercentage: ReportPercentage
+            },
+        });
+    } catch (error) {
+        console.error('Error getting weekly records:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+const getReportForWeek = async (user, weekStartDate, weekEndDate, timezone) => {
+    const timeTrackings = await TimeTracking.find({ userId: user._id });
+    // Assuming totalMatchValues is the sum of all matchvalues
+    let totalMatchValues = 0;
+    let ReportPercentage = [];
+    for (const timeTracking of timeTrackings) {
+        for (const timeEntry of timeTracking.timeEntries) {
+            if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+                let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+
+                    if (lastScreenshot) {
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: timezone });
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
+                if (startTime == endTime) {
+                    continue;
+                }
+                if (startTime < weekStartDate && endTime < weekStartDate || startTime > weekEndDate) {
+                    continue;
+                }
+                // else if (startTime > weekEndDate) {
+                //     break;
+                // }
+                else {
+                    for (const screenshot of timeEntry.screenshots) {
+                        const screenshotTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+
+                        if (screenshotTime >= weekStartDate && screenshotTime <= weekEndDate) {
+
+                            const description = screenshot.description;
+
+                            // Check if description is not in ReportPercentage
+                            const existingIndex = ReportPercentage.findIndex(item => item.description === description);
+
+                            if (existingIndex === -1) {
+                                // If not in ReportPercentage, add it
+                                ReportPercentage.push({ description, matchValue: 1 });
+                                totalMatchValues += 1;  // Increment totalMatchValues
+                            } else {
+                                // If already in ReportPercentage, increment matchValue
+                                ReportPercentage[existingIndex].matchValue++;
+                                totalMatchValues++;  // Increment totalMatchValues
+                            }
+
+                            if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
+                                // Check if description is not in ReportPercentage
+                                const url = screenshot.visitedUrls[0].url ? screenshot.visitedUrls[0].url : 'Others';
+                                const existingIndexUrl = ReportPercentage.findIndex(item => item.description === url);
+
+                                if (existingIndexUrl === -1) {
+                                    // If not in ReportPercentage, add it
+                                    ReportPercentage.push({ description: url, matchValue: 1 });
+                                    totalMatchValues += 1;  // Increment totalMatchValues
+                                } else {
+                                    // If already in ReportPercentage, increment matchValue
+                                    ReportPercentage[existingIndexUrl].matchValue++;
+                                    totalMatchValues++;  // Increment totalMatchValues
+                                }
+                            }
+                        }
+                        else if (screenshotTime > weekEndDate) {
+                            break;
+                        }
+                    }
+                }
+            };
+        }
+    }
+    // Calculate percentage
+
+    const thresholdPercentage = 2;
+    let indextoRemove = [];
+
+    ReportPercentage.forEach((item, index) => {
+        if (!item.percentage) {
+            // Calculate percentage if not already calculated
+            item.percentage = (item.matchValue * 100) / totalMatchValues;
+        }
+
+        if (item.percentage < thresholdPercentage) {
+            indextoRemove.push(index);
+
+            // Find the index of "Others"
+            let indexOthers = ReportPercentage.findIndex((otherItem) => otherItem.description === 'Others');
+
+            if (indexOthers === -1) {
+                // If "Others" doesn't exist, create it
+                ReportPercentage.push({
+                    description: 'Others',
+                    matchValue: item.matchValue,
+                    percentage: item.percentage,
+                });
+            } else {
+                // If "Others" exists, update its values
+                if (!ReportPercentage[indexOthers].percentage) {
+                    ReportPercentage[indexOthers].percentage = (ReportPercentage[indexOthers].matchValue * 100) / totalMatchValues;
+                }
+                ReportPercentage[indexOthers].percentage += item.percentage;
+                ReportPercentage[indexOthers].matchValue += item.matchValue;
+            }
+        }
+    });
+
+    // Create a new array without elements at the specified indices
+    const newArray = ReportPercentage.filter((_, index) => !indextoRemove.includes(index));
+
+    // Now, newArray contains the elements with percentage >= 2 and "Others" category
+    console.log(newArray);
+
+    return newArray;
+};
+
+const getTotalHoursForWeek = async (user, weekStartDate, weekEndDate, timezone) => {
+    const timeTrackings = await TimeTracking.find({ userId: user._id });
+
+    let totalHours = 0;
+    var newTimeEntry = [];
+    let newHoursWorked = 0;
+    let hoursWorked = 0;
+
+    for (const timeTracking of timeTrackings) {
+        for (const timeEntry of timeTracking.timeEntries) {
+            let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+
+            let endTime = 0;
+            if (timeEntry.endTime) {
+                endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+            } else {
+                const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+
+                if (lastScreenshot) {
+                    endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: timezone });
+                } else {
+                    // No screenshots in this timeEntry, skip it
+                    continue;
+                }
+            }
+            if (startTime == endTime) {
+                continue;
+            }
+            // let startTime = new Date(startconv);
+            if (startTime >= weekStartDate && startTime < weekEndDate && endTime > weekEndDate) {
+                // Create a new time entry for the next day starting at 12:00 AM
+                newTimeEntry = { ...timeEntry };
+                newTimeEntry.startTime = endTime.startOf('day');
+
+                newTimeEntry.endTime = new Date(endTime);
+
+                timeEntry.endTime = startTime.endOf('day');
+                endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    totalHours += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= weekStartDate && newTimeEntry.startTime < weekEndDate) {
+                    totalHours += newHoursWorked;
+                }
+            } else if (startTime < weekStartDate && endTime >= weekStartDate && endTime < weekEndDate) {
+                newTimeEntry = { ...timeEntry };
+                newTimeEntry.startTime = new Date(startTime);
+                newTimeEntry.endTime = startTime.endOf('day');
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                timeEntry.startTime = endTime.startOf('day');
+                startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (newTimeEntry.startTime >= weekStartDate && newTimeEntry.startTime < weekEndDate) {
+                    totalHours += newHoursWorked;
+                }
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    totalHours += hoursWorked;
+                }
+
+            } else {
+                // Calculate the hours worked using the corrected start and end times
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                newHoursWorked = 0;
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    totalHours += hoursWorked;
+                }
+            }
+        }
+    }
+
+    return totalHours;
+};
+
+const getMonthlyRecords = async (req, res) => {
+    let users = []
+
+    if (req.query.userId) {
+        const userId = req.query.userId
+
+        // If userId is provided, fetch a single user based on the userId
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        users = [user]; // Convert the single user into an array
+    } else {
+        // If userId is not provided, fetch all users (or users based on a certain criteria, e.g., company)
+        const companyId = req.user.company; // Change this based on your actual user structure
+
+        users = await UserSchema.find({ company: companyId })
+    }    const currentDate = new Date();
+    const userCurrentDate = setHoursDifference(currentDate, req.user.timezoneOffset, req.user.timezone)
+
+    const monthSpecifier = req.query.monthSpecifier; // Get the monthSpecifier from the URL parameter
+
+    let monthStartDate; let monthEndDate;
+    // Create a new date representing 7 days ago
+    const lastMonth = new Date();
+    lastMonth.setDate(1);
+    lastMonth.setDate(0);
+
+    const userLastMonth = setHoursDifference(lastMonth, req.user.timezoneOffset, req.user.timezone)
+
+    if (monthSpecifier === 'previous') {
+        // Calculate the previous month number
+
+        monthStartDate = userLastMonth.startOf('month');
+        monthEndDate = userLastMonth.endOf('month');
+    } else if (monthSpecifier === 'this') {
+        // Calculate the month number of the current dat
+
+        monthStartDate = userCurrentDate.startOf('month');
+        monthEndDate = userCurrentDate.endOf('month');
+    } else {
+        return res.status(400).json({ success: false, message: 'Invalid Month specifier' });
+    }
+
+    try {
+        let ReportPercentage = await getReportForMonth(users, monthStartDate, monthEndDate, req.user.timezone)
+        const totalMonthHours = await getTotalHoursForMonth(users, monthStartDate, monthEndDate, req.user.timezone);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                monthSpecifier,
+                totalMonth: formatTime(totalMonthHours),
+                ReportPercentage: ReportPercentage
+            },
+        });
+    } catch (error) {
+        console.error('Error getting monthly records:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+const getReportForMonth = async (user, monthStartDate, monthEndDate, timezone) => {
+    const timeTrackings = await TimeTracking.find({ userId: user._id });
+    // Assuming totalMatchValues is the sum of all matchvalues
+    let totalMatchValues = 0;
+    let ReportPercentage = [];
+    for (const timeTracking of timeTrackings) {
+        for (const timeEntry of timeTracking.timeEntries) {
+            if (timeEntry.screenshots && timeEntry.screenshots.length > 0) {
+                let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+                let endTime = 0;
+                if (timeEntry.endTime) {
+                    endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+                } else {
+                    const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+
+                    if (lastScreenshot) {
+                        endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: timezone });
+                    } else {
+                        // No screenshots in this timeEntry, skip it
+                        continue;
+                    }
+                }
+                if (startTime == endTime) {
+                    continue;
+                }
+                if (startTime < monthStartDate && endTime < monthStartDate || startTime > monthEndDate) {
+                    continue;
+                }
+                // else if (startTime > monthEndDate) {
+                //     break;
+                // }
+                else {
+                    for (const screenshot of timeEntry.screenshots) {
+                        const screenshotTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+
+                        if (screenshotTime >= monthStartDate && screenshotTime <= monthEndDate) {
+
+                            const description = screenshot.description;
+
+                            // Check if description is not in ReportPercentage
+                            const existingIndex = ReportPercentage.findIndex(item => item.description === description);
+
+                            if (existingIndex === -1) {
+                                // If not in ReportPercentage, add it
+                                ReportPercentage.push({ description, matchValue: 1 });
+                                totalMatchValues += 1;  // Increment totalMatchValues
+                            } else {
+                                // If already in ReportPercentage, increment matchValue
+                                ReportPercentage[existingIndex].matchValue++;
+                                totalMatchValues++;  // Increment totalMatchValues
+                            }
+
+                            if (screenshot.visitedUrls && screenshot.visitedUrls.length > 0) {
+                                // Check if description is not in ReportPercentage
+                                const url = screenshot.visitedUrls[0].url ? screenshot.visitedUrls[0].url : 'Others';
+                                const existingIndexUrl = ReportPercentage.findIndex(item => item.description === url);
+
+                                if (existingIndexUrl === -1) {
+                                    // If not in ReportPercentage, add it
+                                    ReportPercentage.push({ description: url, matchValue: 1 });
+                                    totalMatchValues += 1;  // Increment totalMatchValues
+                                } else {
+                                    // If already in ReportPercentage, increment matchValue
+                                    ReportPercentage[existingIndexUrl].matchValue++;
+                                    totalMatchValues++;  // Increment totalMatchValues
+                                }
+                            }
+                        }
+                        else if (screenshotTime > monthEndDate) {
+                            break;
+                        }
+                    }
+                }
+            };
+        }
+    }
+    // Calculate percentage
+
+    const thresholdPercentage = 2;
+    let indextoRemove = [];
+
+    ReportPercentage.forEach((item, index) => {
+        if (!item.percentage) {
+            // Calculate percentage if not already calculated
+            item.percentage = (item.matchValue * 100) / totalMatchValues;
+        }
+
+        if (item.percentage < thresholdPercentage) {
+            indextoRemove.push(index);
+
+            // Find the index of "Others"
+            let indexOthers = ReportPercentage.findIndex((otherItem) => otherItem.description === 'Others');
+
+            if (indexOthers === -1) {
+                // If "Others" doesn't exist, create it
+                ReportPercentage.push({
+                    description: 'Others',
+                    matchValue: item.matchValue,
+                    percentage: item.percentage,
+                });
+            } else {
+                // If "Others" exists, update its values
+                if (!ReportPercentage[indexOthers].percentage) {
+                    ReportPercentage[indexOthers].percentage = (ReportPercentage[indexOthers].matchValue * 100) / totalMatchValues;
+                }
+                ReportPercentage[indexOthers].percentage += item.percentage;
+                ReportPercentage[indexOthers].matchValue += item.matchValue;
+            }
+        }
+    });
+
+    // Create a new array without elements at the specified indices
+    const newArray = ReportPercentage.filter((_, index) => !indextoRemove.includes(index));
+
+    // Now, newArray contains the elements with percentage >= 2 and "Others" category
+    console.log(newArray);
+
+    return newArray;
+};
+
+const getTotalHoursForMonth = async (user, monthStartDate, monthEndDate, timezone) => {
+    const timeTrackings = await TimeTracking.find({ userId: user._id });
+
+    let totalHours = 0;
+    var newTimeEntry = [];
+    let newHoursWorked = 0;
+    let hoursWorked = 0;
+
+    for (const timeTracking of timeTrackings) {
+        for (const timeEntry of timeTracking.timeEntries) {
+            let startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+
+            let endTime = 0;
+            if (timeEntry.endTime) {
+                endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+            } else {
+                const lastScreenshot = timeEntry.screenshots.slice(-1)[0];
+
+                if (lastScreenshot) {
+                    endTime = DateTime.fromJSDate(lastScreenshot.createdAt, { zone: timezone });
+                } else {
+                    // No screenshots in this timeEntry, skip it
+                    continue;
+                }
+            }
+            if (startTime == endTime) {
+                continue;
+            }
+            // let startTime = new Date(startconv);
+            if (startTime >= monthStartDate && startTime < monthEndDate && endTime > monthEndDate) {
+                // Create a new time entry for the next day starting at 12:00 AM
+                newTimeEntry = { ...timeEntry };
+                newTimeEntry.startTime = endTime.startOf('day');
+
+                newTimeEntry.endTime = new Date(endTime);
+
+                timeEntry.endTime = startTime.endOf('day');
+                endTime = DateTime.fromJSDate(timeEntry.endTime, { zone: timezone });
+
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= monthStartDate && startTime < monthEndDate) {
+                    totalHours += hoursWorked;
+                }
+                if (newTimeEntry.startTime >= monthStartDate && newTimeEntry.startTime < monthEndDate) {
+                    totalHours += newHoursWorked;
+                }
+            } else if (startTime < monthStartDate && endTime >= monthStartDate && endTime < monthEndDate) {
+                newTimeEntry = { ...timeEntry };
+                newTimeEntry.startTime = new Date(startTime);
+                newTimeEntry.endTime = startTime.endOf('day');
+
+                // Modify the endTime of the original time entry to be 11:59:59.999 PM of the current day
+
+                timeEntry.startTime = endTime.startOf('day');
+                startTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
+                // Calculate the hours worked for both time entries
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                //  (endTime - timeEntry.startTime) / (1000 * 60 * 60);
+
+                newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
+
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (newTimeEntry.startTime >= monthStartDate && newTimeEntry.startTime < monthEndDate) {
+                    totalHours += newHoursWorked;
+                }
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= monthStartDate && startTime < monthEndDate) {
+                    totalHours += hoursWorked;
+                }
+
+            } else {
+                // Calculate the hours worked using the corrected start and end times
+                hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                newHoursWorked = 0;
+                // Add hours worked to the appropriate time range (daily, weekly, monthly)
+                if (startTime >= monthStartDate && startTime < monthEndDate) {
+                    totalHours += hoursWorked;
+                }
+            }
+        }
+    }
+
+    return totalHours;
+};
+
+export default { getManagedUsers, getManagerHoursWorked, addEmployeeToProject, removeEmployeeFromProject, deleteScreenshotAndDeductTime, MangerDashboard, updateEmployeeSettings, getEffectiveSettingsEachUser, getWeeklyRecords, getMonthlyRecords };

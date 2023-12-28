@@ -334,6 +334,7 @@ const editCompanyName = (req, res) => {
         }
     });
 };
+
 const calculateHoursWorked = async (user, period) => {
     const now = new Date();
     const userDateTime = setHoursDifference(now, user.ownertimezoneOffset, user.ownertimezone)
@@ -3416,10 +3417,22 @@ const getTotalHoursForWeekold = async (userId, weekStartDate, weekEndDate) => {
 };
 
 const getWeeklyRecords = async (req, res) => {
-    const userId = req.query.userId
-    const user = await User.findById(userId);
-    if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+    let users = []
+
+    if (req.query.userId) {
+        const userId = req.query.userId
+
+        // If userId is provided, fetch a single user based on the userId
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        users = [user]; // Convert the single user into an array
+    } else {
+        // If userId is not provided, fetch all users (or users based on a certain criteria, e.g., company)
+        const companyId = req.user.company; // Change this based on your actual user structure
+
+        users = await UserSchema.find({ company: companyId })
     }
     const currentDate = new Date();
     // Create a new date representing 7 days ago
@@ -3437,8 +3450,6 @@ const getWeeklyRecords = async (req, res) => {
         const currentYear = currentDate.getFullYear();
 
         // Calculate the first and last dates of the previous week
-        // weekStartDate = getFirstDateOfWeek(currentYear, previousWeekNumber);
-        // weekEndDate = getLastDateOfWeek(currentYear, previousWeekNumber);
         weekStartDate = userSevenDaysAgo.startOf('week');
         weekEndDate = userSevenDaysAgo.endOf('week');
     } else if (weekSpecifier === 'this') {
@@ -3447,8 +3458,6 @@ const getWeeklyRecords = async (req, res) => {
         const currentYear = currentDate.getFullYear();
 
         // Calculate the first and last dates of the current week
-        // weekStartDate = getFirstDateOfWeek(currentYear, currentWeekNumber);
-        // weekEndDate = getLastDateOfWeek(currentYear, currentWeekNumber);
         weekStartDate = userCurrentDate.startOf('week');
         weekEndDate = userCurrentDate.endOf('week');
     } else {
@@ -3456,8 +3465,8 @@ const getWeeklyRecords = async (req, res) => {
     }
 
     try {
-        let ReportPercentage = await getReportForWeek(user, weekStartDate, weekEndDate, req.user.timezone)
-        const totalWeekHours = await getTotalHoursForWeek(user, weekStartDate, weekEndDate, req.user.timezone);
+        let ReportPercentage = await getReportForWeek(users, weekStartDate, weekEndDate, req.user.timezone)
+        const totalWeekHours = await getTotalHoursForWeek(users, weekStartDate, weekEndDate, req.user.timezone);
 
         return res.status(200).json({
             success: true,
@@ -4536,17 +4545,29 @@ const calculateTotalMonthlyWorkingHours = async (users, monthSpecifier) => {
 };
 
 const getMonthlyRecords = async (req, res) => {
-    const userId = req.query.userId;
-    const currentDate = new Date();
+    let users = []
+
+    if (req.query.userId) {
+        const userId = req.query.userId
+
+        // If userId is provided, fetch a single user based on the userId
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        users = [user]; // Convert the single user into an array
+    } else {
+        // If userId is not provided, fetch all users (or users based on a certain criteria, e.g., company)
+        const companyId = req.user.company; // Change this based on your actual user structure
+
+        users = await UserSchema.find({ company: companyId })
+    }    const currentDate = new Date();
     const userCurrentDate = setHoursDifference(currentDate, req.user.timezoneOffset, req.user.timezone)
 
     const monthSpecifier = req.query.monthSpecifier; // Get the monthSpecifier from the URL parameter
 
     let monthStartDate; let monthEndDate;
-    const user = await User.findById(userId);
-    if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-    }
+  
     // Create a new date representing 7 days ago
     const lastMonth = new Date();
     lastMonth.setDate(1);
@@ -4569,8 +4590,8 @@ const getMonthlyRecords = async (req, res) => {
     }
 
     try {
-        let ReportPercentage = await getReportForMonth(user, monthStartDate, monthEndDate, req.user.timezone)
-        const totalMonthHours = await getTotalHoursForMonth(user, monthStartDate, monthEndDate, req.user.timezone);
+        let ReportPercentage = await getReportForMonth(users, monthStartDate, monthEndDate, req.user.timezone)
+        const totalMonthHours = await getTotalHoursForMonth(users, monthStartDate, monthEndDate, req.user.timezone);
 
         return res.status(200).json({
             success: true,

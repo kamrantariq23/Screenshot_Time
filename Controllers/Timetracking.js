@@ -699,7 +699,6 @@ const addScreenshotab = async (req, res) => {
                 userLocalNow = new Date(indexOfData.startTime)
                 currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
 
-                fileBuffer.originalname = file;
                 // Save the updated time tracking document
                 await timeTrack.save();
 

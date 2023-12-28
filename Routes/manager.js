@@ -8,6 +8,11 @@ import isAdminMiddleware from '../Middlewares/isManager';
 
 const eventRouter = express.Router();
 
+// Routes with Query
+//  ############ REPORTS ###############
+eventRouter.get('/week', isAdminMiddleware.isManagerOwner, events.getWeeklyRecords);
+// eventRouter.post('/totalDate', isAdminMiddleware.isManagerOwner, events.getCustomDateRangeRecords);
+eventRouter.get('/month',isAdminMiddleware.isManagerOwner,events.getMonthlyRecords);
 // eventRouter.post(
 //     '/addProject',
 //     isAdminMiddleware.isManagerOwner,
