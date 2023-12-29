@@ -656,7 +656,7 @@ const addScreenshotabdesktop = async (req, res) => {
 };
 
 
-const addScreenshotab = async (req, res) => {
+const addScreenshotabcon = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     let addedScreenshotId = 0;
@@ -771,7 +771,6 @@ const addScreenshotab = async (req, res) => {
             });
         }
 
-
         // Update the user's lastActive field to the current time
         await User.findByIdAndUpdate(
             req.user._id, {
@@ -792,6 +791,131 @@ const addScreenshotab = async (req, res) => {
     } catch (error) {
         console.error('Error adding screenshot:', error);
         return res.status(500).json({ success: false, message: 'Failed to add screenshot', Error: error });
+    }
+};
+
+const addScreenshotab = async (req, res) => {
+    const pusher = res.locals.pusher;
+    const { timeEntryId } = req.params;
+    const { description } = req.body;
+    const file = req.file;
+    const { activityPercentage } = req.body;
+    const description2 = req.body.description2;
+    const endTime = 0;
+    let visitedUrls = [];
+    const filename = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/" + file.originalname;
+    try {
+        // Find the time tracking document with the given time entry
+        const timeTrack = await TimeTracking.findOne({ 'timeEntries._id': timeEntryId });
+        if (!timeTrack) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+
+        // Get the specific time entry from the time tracking document
+        const timeEntry = timeTrack.timeEntries.id(timeEntryId);
+        if (!timeEntry) {
+            return res.status(404).json({ success: false, message: 'Time entry not found' });
+        }
+        else {
+            // Check if the filename already exists in any of the screenshots
+            if (timeEntry.screenshots.some(screenshot => screenshot.key == filename)) {
+                return res.status(200).json({ success: true, message: 'Filename already exists in one of the screenshots', filename: file.originalname, data: timeEntry });
+            }
+        }
+
+        // Check if a file (screenshot) is provided in the request
+        if (!file) {
+            return res.status(400).json({ success: false, message: 'No file provided' });
+        }
+        const startTime = new Date(req.body.startTime)
+
+        fileBuffer = Buffer.from(file, 'base64');
+        fileBuffer.originalname = `screenshot_${startTime}_${req.user._id}.jpeg`;
+        // Upload the screenshot to AWS and get the URL
+        const url = await aws.UploadToAws(fileBuffer);
+        // Get the current date and time in the user's local time zone
+        const userLocalNow = new Date(req.body.createdAt);
+
+        // Get the current time as a string in 'hour:minute' format
+        const currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
+
+        const createdAt = userLocalNow;
+
+        const newVisitedUrl = {
+            activityPercentage, // Use the provided activityPercentage
+            url: description2,
+            // You can add other properties as needed
+        };
+        visitedUrls.push(newVisitedUrl);
+        // Create an object for the added screenshot
+        const addedScreenshot = {
+            startTime: startTime,
+            endTime: userLocalNow,
+            key: url,
+            description,
+            time: currentTime,
+            createdAt,
+            visitedUrls,
+        };
+        console.log(addedScreenshot);
+        // Push the screenshot to the time entry's screenshots array
+        timeEntry.screenshots.push(addedScreenshot);
+        if (timeEntry.endTime) {
+            timeEntry.endTime = userLocalNow;
+        }
+
+        // Filter activities that overlap with the screenshot's createdAt time
+        const splitActivities = timeEntry.activities.filter((activity) => {
+            return activity.startTime <= createdAt && activity.endTime >= createdAt;
+        });
+
+        // If there are overlapping activities, update their endTime to the screenshot's createdAt time
+        if (splitActivities.length > 0) {
+            splitActivities.forEach((activity) => {
+                activity.endTime = createdAt;
+            });
+        }
+
+        // Save the updated time tracking document
+        await timeTrack.save();
+
+        var newTimeEntry = {
+            key: url,
+            description: description,
+            time: currentTime,
+            createdAt: createdAt,
+            visitedUrls: visitedUrls,
+            user_id: req.user._id,
+            timeEntryId: timeEntryId
+        };
+
+
+        // Update the user's lastActive field to the current time
+        await User.findByIdAndUpdate(
+            req.user._id, {
+            lastActive: userLocalNow,
+            isActive: true,
+        }, { new: true });
+        const addedScreenshotId = timeEntry.screenshots[timeEntry.screenshots.length - 1]._id;
+        // Return the success response with the screenshot URL and time
+        // applying real time
+        pusher.trigger("ss-track", "new-ss", {
+            message: "new screenshots",
+            data: newTimeEntry,
+        });
+
+        return res.status(200).json({
+            success: true,
+            id: addedScreenshotId,
+            screenshot: url,
+            time: currentTime,
+            data: timeEntry,
+            filename: file.originalname,
+            message: 'Screenshot added successfully',
+        });
+    } catch (error) {
+        console.error('Error adding screenshot:', error);
+        return res.status(500).json({ success: false, message: 'Failed to add screenshot' });
     }
 };
 

@@ -1539,13 +1539,11 @@ const getDailyRecords = async (req, res) => {
         users = await UserSchema.find({ company: companyId })
     }
     const now = new Date();
-    const userDateTime = setHoursDifference(now, user.ownertimezoneOffset, user.ownertimezone)
+    const userDateTime = setHoursDifference(now, req.user.timezoneOffset, req.user.timezone)
 
     const daySpecifier = req.query.daySpecifier; // Get the daySpecifier from the URL parameter
 
     let dayStartTime; let dayEndTime;
-    const userSevenDaysAgo = setHoursDifference(sevenDaysAgo, req.user.timezoneOffset, req.user.timezone)
-    const userCurrentDate = setHoursDifference(currentDate, req.user.timezoneOffset, req.user.timezone)
 
     if (daySpecifier === 'previous') {
 
@@ -1561,13 +1559,13 @@ const getDailyRecords = async (req, res) => {
     }
 
     try {
-        let ReportPercentage = await getReportForDay(users, weekStartDate, weekEndDate, req.user.timezone)
-        const totalWeekHours = await getTotalHoursForDay(users, weekStartDate, weekEndDate, req.user.timezone);
+        let ReportPercentage = await getReportForDay(users, dayStartTime, dayEndTime, req.user.timezone)
+        const totalWeekHours = await getTotalHoursForDay(users, dayStartTime, dayEndTime, req.user.timezone);
 
         return res.status(200).json({
             success: true,
             data: {
-                weekSpecifier,
+                daySpecifier,
                 totalWeek: formatTime(totalWeekHours),
                 ReportPercentage: ReportPercentage
             },
@@ -1578,7 +1576,7 @@ const getDailyRecords = async (req, res) => {
     }
 };
 
-const getReportForDay = async (users, weekStartDate, weekEndDate, timezone) => {
+const getReportForDay = async (users, dayStartTime, dayEndTime, timezone) => {
     let totalMatchValues = 0;
     let ReportPercentage = [];
     for (const user of users) {
@@ -1605,17 +1603,17 @@ const getReportForDay = async (users, weekStartDate, weekEndDate, timezone) => {
                     if (startTime == endTime) {
                         continue;
                     }
-                    if (startTime < weekStartDate && endTime < weekStartDate || startTime > weekEndDate) {
+                    if (startTime < dayStartTime && endTime < dayStartTime || startTime > dayEndTime) {
                         continue;
                     }
-                    // else if (startTime > weekEndDate) {
+                    // else if (startTime > dayEndTime) {
                     //     break;
                     // }
                     else {
                         for (const screenshot of timeEntry.screenshots) {
                             const screenshotTime = DateTime.fromJSDate(timeEntry.startTime, { zone: timezone });
 
-                            if (screenshotTime >= weekStartDate && screenshotTime <= weekEndDate) {
+                            if (screenshotTime >= dayStartTime && screenshotTime <= dayEndTime) {
 
                                 const description = screenshot.description;
 
@@ -1648,7 +1646,7 @@ const getReportForDay = async (users, weekStartDate, weekEndDate, timezone) => {
                                     }
                                 }
                             }
-                            else if (screenshotTime > weekEndDate) {
+                            else if (screenshotTime > dayEndTime) {
                                 break;
                             }
                         }
@@ -1701,7 +1699,7 @@ const getReportForDay = async (users, weekStartDate, weekEndDate, timezone) => {
     return newArray;
 };
 
-const getTotalHoursForDay = async (users, weekStartDate, weekEndDate, timezone) => {
+const getTotalHoursForDay = async (users, dayStartTime, dayEndTime, timezone) => {
     let totalHours = 0;
     var newTimeEntry = [];
     let newHoursWorked = 0;
@@ -1730,7 +1728,7 @@ const getTotalHoursForDay = async (users, weekStartDate, weekEndDate, timezone) 
                     continue;
                 }
                 // let startTime = new Date(startconv);
-                if (startTime >= weekStartDate && startTime < weekEndDate && endTime > weekEndDate) {
+                if (startTime >= dayStartTime && startTime < dayEndTime && endTime > dayEndTime) {
                     // Create a new time entry for the next day starting at 12:00 AM
                     newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = endTime.startOf('day');
@@ -1745,13 +1743,13 @@ const getTotalHoursForDay = async (users, weekStartDate, weekEndDate, timezone) 
                     newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    if (startTime >= dayStartTime && startTime < dayEndTime) {
                         totalHours += hoursWorked;
                     }
-                    if (newTimeEntry.startTime >= weekStartDate && newTimeEntry.startTime < weekEndDate) {
+                    if (newTimeEntry.startTime >= dayStartTime && newTimeEntry.startTime < dayEndTime) {
                         totalHours += newHoursWorked;
                     }
-                } else if (startTime < weekStartDate && endTime >= weekStartDate && endTime < weekEndDate) {
+                } else if (startTime < dayStartTime && endTime >= dayStartTime && endTime < dayEndTime) {
                     newTimeEntry = { ...timeEntry };
                     newTimeEntry.startTime = new Date(startTime);
                     newTimeEntry.endTime = startTime.endOf('day');
@@ -1767,11 +1765,11 @@ const getTotalHoursForDay = async (users, weekStartDate, weekEndDate, timezone) 
                     newHoursWorked = (newTimeEntry.endTime - newTimeEntry.startTime) / (1000 * 60 * 60);
 
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (newTimeEntry.startTime >= weekStartDate && newTimeEntry.startTime < weekEndDate) {
+                    if (newTimeEntry.startTime >= dayStartTime && newTimeEntry.startTime < dayEndTime) {
                         totalHours += newHoursWorked;
                     }
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    if (startTime >= dayStartTime && startTime < dayEndTime) {
                         totalHours += hoursWorked;
                     }
 
@@ -1780,7 +1778,7 @@ const getTotalHoursForDay = async (users, weekStartDate, weekEndDate, timezone) 
                     hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
                     newHoursWorked = 0;
                     // Add hours worked to the appropriate time range (daily, weekly, monthly)
-                    if (startTime >= weekStartDate && startTime < weekEndDate) {
+                    if (startTime >= dayStartTime && startTime < dayEndTime) {
                         totalHours += hoursWorked;
                     }
                 }

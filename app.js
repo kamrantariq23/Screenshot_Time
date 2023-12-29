@@ -90,10 +90,49 @@ pusher.trigger("ss-track", "my-event", {
 // i have implemented it in signup controller like this {next(new Error('Image is required'))}
 app.use(errorHandler);
 
+async function deleteTimeTrackingsNotInUsers() {
+    try {
+        // Step 1: Fetch all data from the timetracking and users collections
+        const timeTrackings = await timeTracking.find();
+        const users = await User.find();
 
+        // Step 2: Identify userId values from timetracking that do not exist in users
+        const userIdsInTimetracking = timeTrackings.map(entry => entry.userId);
+        const userIdsInUsers = users.map(user => user.userId);
+
+        const userIdsToDelete = userIdsInTimetracking.filter(userId => !userIdsInUsers.includes(userId));
+
+        // Step 3: Delete data from timetracking for userIds that do not exist in users
+        const deleteResult = await TimeTracking.deleteMany({ userId: { $in: userIdsToDelete } });
+
+        console.log(`${deleteResult.deletedCount} documents deleted from TimeTracking`);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 getusers()
 async function getusers() {
     try {
+        // Step 1: Fetch all data from the timetracking and users collections
+        // const timeTrackings = await timeTracking.find();
+        // const userss = await User.find();
+
+        // // Step 2: Identify userId values from timetracking that do not exist in userss
+        // const userIdsInTimetracking = timeTrackings.map(entry =>
+        //     entry.userId);
+        // const userIdsInUsers = userss.map(user =>
+        //     user._id);
+
+        // // Alternatively, using set operations
+        // const userIdsToDelete = userIdsInTimetracking.filter(userId =>
+        //     !userIdsInUsers.some(user => user.toString() === userId.toString())
+        // );
+
+
+        // // Step 3: Delete data from timetracking for userIds that do not exist in users
+        // const deleteResult = await TimeTracking.deleteMany({ userId: { $in: userIdsToDelete } });
+
+        // console.log(`${deleteResult.deletedCount} documents deleted from TimeTracking`);
 
         // Query the "user" table to retrieve all users
         const users = await User.find();
@@ -122,7 +161,7 @@ async function getusers() {
             //         }
             //     }
             // }
-    
+
             // // Save the updated data back to the database
             // await Promise.all(timeTrackings.map(timeTracking => timeTracking.save()));
 
