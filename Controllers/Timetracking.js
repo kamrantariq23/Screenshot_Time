@@ -811,6 +811,7 @@ const addScreenshotab = async (req, res) => {
         if (!file) {
             return res.status(400).json({ success: false, message: 'No file provided' });
         }
+        else{
         const startTime = new Date(req.body.startTime)
 
         fileBuffer = Buffer.from(file, 'base64');
@@ -920,6 +921,7 @@ const addScreenshotab = async (req, res) => {
             filename: file.originalname,
             message: 'Screenshot added successfully',
         });
+    }
     } catch (error) {
         console.error('Error adding screenshot:', error);
         return res.status(500).json({ success: false, message: 'Failed to add screenshot' });
