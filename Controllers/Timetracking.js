@@ -803,6 +803,8 @@ const addScreenshotab = async (req, res) => {
     const description2 = req.body.description2;
     const endTime = 0;
     let url;
+    let fileBuffer ;
+
     let visitedUrls = [];
     try {
         // Check if a file (screenshot) is provided in the request

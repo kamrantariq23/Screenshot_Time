@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     verification:
     {
         type: String,
-        default:'null'
+        default: 'null'
     },
     userType: {
         type: String,
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EffectiveSettings'
 
-           },
+    },
 
 
     assignedUsers: [{
@@ -75,13 +75,13 @@ const userSchema = new mongoose.Schema({
     timezoneOffset: {
         type: String
     },
-    gLink:{
-        type:String
-    },
-    expirationTimestamp : {
+    gLink: {
         type: String
     },
-    otpTime : {
+    expirationTimestamp: {
+        type: String
+    },
+    otpTime: {
         type: String
     },
     inviteStatus: {
@@ -91,10 +91,10 @@ const userSchema = new mongoose.Schema({
 
 }, {
     timestamps: true,
-}, );
+},);
 
 
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
     this.company = this.company.toLowerCase(); // Normalize the company name to lowercase
     next();
 });
