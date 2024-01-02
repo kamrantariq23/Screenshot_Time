@@ -813,10 +813,6 @@ const addScreenshotab = async (req, res) => {
         }
         const startTime = new Date(req.body.startTime)
 
-        fileBuffer = Buffer.from(file, 'base64');
-        fileBuffer.originalname = `screenshot_${startTime}_${req.user._id}.jpeg`;
-        const filename = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/" + fileBuffer.originalname;
-
         // Find the time tracking document with the given time entry
         const timeTrack = await TimeTracking.findOne({ 'timeEntries._id': timeEntryId });
         if (!timeTrack) {
@@ -829,12 +825,16 @@ const addScreenshotab = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Time entry not found' });
         }
         else {
+            if (file !== null && file !== undefined) {
+                fileBuffer = Buffer.from(file, 'base64');
+        fileBuffer.originalname = `screenshot_${startTime}_${req.user._id}.jpeg`;
+        const filename = "https://screenshot-monitor.s3.us-east-2.amazonaws.com/" + fileBuffer.originalname;
             // Check if the filename already exists in any of the screenshots
             if (timeEntry.screenshots.some(screenshot => screenshot.key == filename)) {
                 return res.status(200).json({ success: true, message: 'Filename already exists in one of the screenshots', filename: file.originalname, data: timeEntry });
             }
             else {
-                if (file) {
+                
                     // Upload the screenshot to AWS and get the URL
                     url = await aws.UploadToAws(fileBuffer);
                 }
