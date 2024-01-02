@@ -665,7 +665,7 @@ const addScreenshotabcon = async (req, res) => {
     const endTime = 0;
     let url = `screenshot_.jpeg`;
     let visitedUrls = [];
-    let fileBuffer ;
+    let fileBuffer;
 
     try {
         // Find the time tracking document with the given time entry
@@ -681,26 +681,26 @@ const addScreenshotabcon = async (req, res) => {
         }
         if (req.body.screenshotId) {
             const file = req.body.file;
-            
-                addedScreenshotId = req.body.screenshotId
-                const indexOfData = timeEntry.screenshots.id(addedScreenshotId);
-                fileBuffer = Buffer.from(file, 'base64');
-                fileBuffer.originalname = `screenshot_${indexOfData.startTime}_${req.user._id}.jpeg`;
-                // Upload the screenshot to AWS and get the URL
-                url = await aws.UploadToAws(fileBuffer);
-                // Check if the element was found
-                if (indexOfData !== -1) {
-                    // Update the url property of the found element
-                    indexOfData.key = file;
-                    console.log(`Updated url for screenshot with _id ${addedScreenshotId}`);
-                } else {
-                    console.log(`Screenshot with _id ${addedScreenshotId} not found`);
-                }
-                userLocalNow = new Date(indexOfData.startTime)
-                currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
 
-                // Save the updated time tracking document
-                await timeTrack.save();
+            addedScreenshotId = req.body.screenshotId
+            const indexOfData = timeEntry.screenshots.id(addedScreenshotId);
+            fileBuffer = Buffer.from(file, 'base64');
+            fileBuffer.originalname = `screenshot_${indexOfData.startTime}_${req.user._id}.jpeg`;
+            // Upload the screenshot to AWS and get the URL
+            url = await aws.UploadToAws(fileBuffer);
+            // Check if the element was found
+            if (indexOfData !== -1) {
+                // Update the url property of the found element
+                indexOfData.key = file;
+                console.log(`Updated url for screenshot with _id ${addedScreenshotId}`);
+            } else {
+                console.log(`Screenshot with _id ${addedScreenshotId} not found`);
+            }
+            userLocalNow = new Date(indexOfData.startTime)
+            currentTime = userLocalNow.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' });
+
+            // Save the updated time tracking document
+            await timeTrack.save();
 
         }
         else {
@@ -803,7 +803,7 @@ const addScreenshotab = async (req, res) => {
     const description2 = req.body.description2;
     const endTime = 0;
     let url;
-    let fileBuffer ;
+    let fileBuffer;
 
     let visitedUrls = [];
     try {
@@ -811,7 +811,6 @@ const addScreenshotab = async (req, res) => {
         if (!file) {
             return res.status(400).json({ success: false, message: 'No file provided' });
         }
-        else{
         const startTime = new Date(req.body.startTime)
 
         fileBuffer = Buffer.from(file, 'base64');
@@ -834,13 +833,15 @@ const addScreenshotab = async (req, res) => {
             if (timeEntry.screenshots.some(screenshot => screenshot.key == filename)) {
                 return res.status(200).json({ success: true, message: 'Filename already exists in one of the screenshots', filename: file.originalname, data: timeEntry });
             }
-            else{
-            // Upload the screenshot to AWS and get the URL
-            url = await aws.UploadToAws(fileBuffer);
+            else {
+                if (file) {
+                    // Upload the screenshot to AWS and get the URL
+                    url = await aws.UploadToAws(fileBuffer);
+                }
             }
         }
 
-        
+
         // Get the current date and time in the user's local time zone
         const userLocalNow = new Date(req.body.createdAt);
 
@@ -921,7 +922,6 @@ const addScreenshotab = async (req, res) => {
             filename: file.originalname,
             message: 'Screenshot added successfully',
         });
-    }
     } catch (error) {
         console.error('Error adding screenshot:', error);
         return res.status(500).json({ success: false, message: 'Failed to add screenshot' });
