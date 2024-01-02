@@ -798,7 +798,7 @@ const addScreenshotab = async (req, res) => {
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
-    const file = req.file;
+    const file = req.body.file;
     const { activityPercentage } = req.body;
     const description2 = req.body.description2;
     const endTime = 0;

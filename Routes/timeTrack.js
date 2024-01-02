@@ -46,6 +46,8 @@ eventRouter.get('/sorted-screenshot', isLoggedInUser.isLoggedIn, events.getTotal
 
 eventRouter.get('/hours', isLoggedInUser.isLoggedIn, events.getTotalHoursWorked);
 
+// Report Summary
+
 eventRouter.get('/totalDate', isLoggedInUser.isLoggedIn, events.getCustomDateRangeRecords);
 
 eventRouter.get('/month', isLoggedInUser.isLoggedIn, events.getMonthlyRecords);

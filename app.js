@@ -113,26 +113,6 @@ async function deleteTimeTrackingsNotInUsers() {
 getusers()
 async function getusers() {
     try {
-        // Step 1: Fetch all data from the timetracking and users collections
-        // const timeTrackings = await timeTracking.find();
-        // const userss = await User.find();
-
-        // // Step 2: Identify userId values from timetracking that do not exist in userss
-        // const userIdsInTimetracking = timeTrackings.map(entry =>
-        //     entry.userId);
-        // const userIdsInUsers = userss.map(user =>
-        //     user._id);
-
-        // // Alternatively, using set operations
-        // const userIdsToDelete = userIdsInTimetracking.filter(userId =>
-        //     !userIdsInUsers.some(user => user.toString() === userId.toString())
-        // );
-
-
-        // // Step 3: Delete data from timetracking for userIds that do not exist in users
-        // const deleteResult = await TimeTracking.deleteMany({ userId: { $in: userIdsToDelete } });
-
-        // console.log(`${deleteResult.deletedCount} documents deleted from TimeTracking`);
 
         // Query the "user" table to retrieve all users
         const users = await User.find();
@@ -146,6 +126,7 @@ async function getusers() {
             // Filter users whose 'lastActive' time is older than 5 minutes ago
 
             const lastActive = new Date(user.lastActive); // Check if 'lastActive' is older than 5 minutes ago
+            // const deleteResult = await timeTracking.deleteMany({ userId: '658ecc216b6b393708f3e12c' });
 
             // const timeTrackings = await timeTracking.find({ userId: '65408e5e8471cc001db7c0ae' });
 
