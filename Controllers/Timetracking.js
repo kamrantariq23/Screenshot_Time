@@ -795,6 +795,11 @@ const addScreenshotabcon = async (req, res) => {
 };
 
 const addScreenshotab = async (req, res) => {
+    if (req.method === 'OPTIONS') {
+        // Handle OPTIONS request separately
+        res.status(200).end();
+        return;
+    }
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
@@ -929,6 +934,11 @@ const addScreenshotab = async (req, res) => {
 };
 
 const addScreenshot = async (req, res) => {
+    if (req.method === 'OPTIONS') {
+        // Handle OPTIONS request separately
+        res.status(200).end();
+        return;
+    }
     const pusher = res.locals.pusher;
     const { timeEntryId } = req.params;
     const { description } = req.body;
